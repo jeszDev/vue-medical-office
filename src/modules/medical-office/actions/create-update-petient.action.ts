@@ -1,10 +1,10 @@
 import { medicalOfficeApi } from '@/api/medicalOfficeApi'
-import type { ChainCustody } from '../interfaces/chain-custody.interface'
+import type { Patient } from '../interfaces/patient'
 
-export const createUpdateChainCustodyAction = async (chainCusody: Partial<ChainCustody>) => {
+export const createUpdatePatientAction = async (patient: Partial<Patient>) => {
   try {
-    if (chainCusody.id && chainCusody.id !== '') {
-      return await updateChainCusody(chainCusody)
+    if (patient.id && patient.id !== '') {
+      return await updatePatient(patient)
     }
   } catch (error) {}
 }

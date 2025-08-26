@@ -1,3 +1,3 @@
-export * from './get-medical-office.action'
-export * from './get-medical-office-by-id.action'
-export * from './create-update-medical-office.action'
+export * from './get-patient.action'
+export * from './get-patient-by-id.action'
+export * from './create-update-petient.action'

@@ -6,7 +6,7 @@
         <button
           class="cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-(--color)/20 border-(--color)/60 text-(--color) hover:bg-(--color)/5 [--color:var(--color-primary)] h-10 px-4 py-2 box mr-2"
         >
-          Registrar nueva cadena de custodia
+          Registrar nuevo paciente
         </button>
         <!-- <div data-tw-placement="bottom-end" class="dropdown">
           <button
@@ -250,26 +250,26 @@
 </template>
 
 <script setup lang="ts">
-import { useQuery, useQueryClient } from '@tanstack/vue-query';
-import { computed, ref, watch } from 'vue';
-import { getChainsCustodyAction } from '../actions/get-chains-custody.action';
-import TablePagination from '@/modules/common/components/TablePagination.vue';
-import { Pagination } from '../../common/interfaces/pagination.interface';
-import { useRoute, useRouter, RouterLink } from 'vue-router';
-import AccordionComponent from '@/modules/common/components/AccordionComponent.vue';
-import DialogQuestion from '@/modules/common/components/DialogQuestion.vue';
-import DialogBasic from '@/modules/common/components/DialogBasic.vue';
-import EditIcon from '@/icons/EditIcon.vue';
-import DeleteIcon from '@/icons/DeleteIcon.vue';
-import SearchIcon from '@/icons/SearchIcon.vue';
+import { useQuery, useQueryClient } from '@tanstack/vue-query'
+import { computed, ref, watch } from 'vue'
+import { getChainsCustodyAction } from '../actions/get-chains-custody.action'
+import TablePagination from '@/modules/common/components/TablePagination.vue'
+import { Pagination } from '../../common/interfaces/pagination.interface'
+import { useRoute, useRouter, RouterLink } from 'vue-router'
+import AccordionComponent from '@/modules/common/components/AccordionComponent.vue'
+import DialogQuestion from '@/modules/common/components/DialogQuestion.vue'
+import DialogBasic from '@/modules/common/components/DialogBasic.vue'
+import EditIcon from '@/icons/EditIcon.vue'
+import DeleteIcon from '@/icons/DeleteIcon.vue'
+import SearchIcon from '@/icons/SearchIcon.vue'
 
 // const page = ref(Number(route.query.page) || 1);
-const route = useRoute();
-const router = useRouter();
-const page = ref<number>(1);
-const perPage = ref<number>(10);
-const search = ref<string>('');
-const queryClient = useQueryClient();
+const route = useRoute()
+const router = useRouter()
+const page = ref<number>(1)
+const perPage = ref<number>(10)
+const search = ref<string>('')
+const queryClient = useQueryClient()
 
 const {
   data: response,
@@ -278,9 +278,9 @@ const {
 } = useQuery({
   queryKey: ['chains', { page: page }],
   queryFn: () => getChainsCustodyAction(page.value, perPage.value, search.value),
-});
+})
 
-const chains = computed(() => response.value?.data || []);
+const chains = computed(() => response.value?.data || [])
 const pagination = computed<Pagination>(() => ({
   currentPage: response.value?.current_page || 1,
   firstPageUrl: response.value?.first_page_url || '',
@@ -293,19 +293,19 @@ const pagination = computed<Pagination>(() => ({
   total: response.value?.total || 0,
   to: response.value?.to || 0,
   from: response.value?.from || 0,
-}));
+}))
 
 function pageChange(pageNumber: number) {
-  page.value = pageNumber;
+  page.value = pageNumber
 
   router.push({
     query: { ...route.query, page: pageNumber, search: search.value || undefined },
-  });
+  })
 }
 
 function doSearch() {
-  page.value = 1; // opcional: reiniciar a la primera página
-  refetch();
+  page.value = 1 // opcional: reiniciar a la primera página
+  refetch()
 }
 
 watch(
@@ -314,10 +314,10 @@ watch(
     queryClient.prefetchQuery({
       queryKey: ['chains', { page: page.value + 1 }],
       queryFn: () => getChainsCustodyAction(page.value + 1, perPage.value),
-    });
+    })
   },
   { immediate: true },
-);
+)
 </script>
 
 <style scoped></style>

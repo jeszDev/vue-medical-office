@@ -1,5 +1,5 @@
 import { medicalOfficeApi } from '@/api/medicalOfficeApi'
-import type { ChainCustody } from '../interfaces/chain-custody.interface'
+import type { ChainCustody } from '../interfaces/patient'
 
 export const getChainCustodyByIdAction = async (chainCustodyId: string): Promise<ChainCustody> => {
   if (chainCustodyId === 'create') {

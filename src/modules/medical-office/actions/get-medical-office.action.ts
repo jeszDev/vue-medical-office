@@ -1,5 +1,5 @@
-import { bodegaApi } from '@/api/bodegaApi';
-import type { ChainCustodyPaginate } from '../interfaces/chain-custody-paginate.interface';
+import { bodegaApi } from '@/api/medicalOfficeApi'
+import type { ChainCustodyPaginate } from '../interfaces/chain-custody-paginate.interface'
 
 export const getChainsCustodyAction = async (
   page: number = 1,
@@ -9,13 +9,13 @@ export const getChainsCustodyAction = async (
   try {
     const { data } = await bodegaApi.get<ChainCustodyPaginate>(
       `/chains?page=${page}&per_page=${perPage}&search=${search}`,
-    );
+    )
 
     // console.log(data);
 
-    return data;
+    return data
   } catch (error) {
-    console.log(error);
-    throw new Error('Error getting chains of custody');
+    console.log(error)
+    throw new Error('Error getting chains of custody')
   }
-};
+}

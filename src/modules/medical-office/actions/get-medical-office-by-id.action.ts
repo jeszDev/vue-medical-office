@@ -1,4 +1,4 @@
-import { bodegaApi } from '@/api/medicalOfficeApi'
+import { medicalOfficeApi } from '@/api/medicalOfficeApi'
 import type { ChainCustody } from '../interfaces/chain-custody.interface'
 
 export const getChainCustodyByIdAction = async (chainCustodyId: string): Promise<ChainCustody> => {
@@ -18,7 +18,7 @@ export const getChainCustodyByIdAction = async (chainCustodyId: string): Promise
   try {
     console.log('Se va a realizar la peticion chain by id: ' + chainCustodyId)
 
-    const { data } = await bodegaApi.get<ChainCustody>(`/chains/${chainCustodyId}`)
+    const { data } = await medicalOfficeApi.get<ChainCustody>(`/chains/${chainCustodyId}`)
 
     console.log(data)
 

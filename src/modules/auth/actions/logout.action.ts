@@ -1,4 +1,4 @@
-import { bodegaApi } from '@/api/medicalOfficeApi'
+import { medicalOfficeApi } from '@/api/medicalOfficeApi'
 
 interface LogoutSuccess {
   success: true
@@ -12,7 +12,7 @@ interface LogoutError {
 
 export const logoutAction = async (): Promise<LogoutSuccess | LogoutError> => {
   try {
-    const { data } = await bodegaApi.post<LogoutSuccess>('/auth/logout')
+    const { data } = await medicalOfficeApi.post<LogoutSuccess>('/auth/logout')
 
     console.log(data)
 

@@ -1,4 +1,4 @@
-import { bodegaApi } from '@/api/medicalOfficeApi'
+import { medicalOfficeApi } from '@/api/medicalOfficeApi'
 import type { AuthResponse } from '../interfaces/auth.response'
 import { isAxiosError } from 'axios'
 import type { User } from '../interfaces/user.interface'
@@ -19,7 +19,7 @@ export const loginAction = async (
   password: string,
 ): Promise<LoginError | LoginSuccess> => {
   try {
-    const { data } = await bodegaApi.post<AuthResponse>('/auth/login', {
+    const { data } = await medicalOfficeApi.post<AuthResponse>('/auth/login', {
       email,
       password,
     })

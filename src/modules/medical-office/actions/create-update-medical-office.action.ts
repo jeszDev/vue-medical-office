@@ -1,4 +1,4 @@
-import { bodegaApi } from '@/api/medicalOfficeApi'
+import { medicalOfficeApi } from '@/api/medicalOfficeApi'
 import type { ChainCustody } from '../interfaces/chain-custody.interface'
 
 export const createUpdateChainCustodyAction = async (chainCusody: Partial<ChainCustody>) => {
@@ -18,7 +18,10 @@ const updateChainCusody = async (chainCustody: Partial<ChainCustody>) => {
   delete chainCustody.updated_at
 
   try {
-    const { data } = await bodegaApi.patch<ChainCustody>(`/chains/${chainCustodyId}`, chainCustody)
+    const { data } = await medicalOfficeApi.patch<ChainCustody>(
+      `/chains/${chainCustodyId}`,
+      chainCustody,
+    )
 
     return data
   } catch (error) {

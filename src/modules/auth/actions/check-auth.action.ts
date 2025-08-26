@@ -1,4 +1,4 @@
-import { bodegaApi } from '@/api/medicalOfficeApi'
+import { medicalOfficeApi } from '@/api/medicalOfficeApi'
 import type { AuthResponse, User } from '../interfaces'
 import { isAxiosError } from 'axios'
 
@@ -23,7 +23,7 @@ export const checkAuthAction = async (): Promise<CheckError | CheckSuccess> => {
       return { ok: false }
     }
 
-    const { data } = await bodegaApi.post<AuthResponse>('/auth/check-status')
+    const { data } = await medicalOfficeApi.post<AuthResponse>('/auth/check-status')
 
     console.log('check status response: ')
     console.log(data)

@@ -1,4 +1,4 @@
-import { bodegaApi } from '@/api/medicalOfficeApi'
+import { medicalOfficeApi } from '@/api/medicalOfficeApi'
 import type { ChainCustodyPaginate } from '../interfaces/chain-custody-paginate.interface'
 
 export const getChainsCustodyAction = async (
@@ -7,7 +7,7 @@ export const getChainsCustodyAction = async (
   search: string = '',
 ) => {
   try {
-    const { data } = await bodegaApi.get<ChainCustodyPaginate>(
+    const { data } = await medicalOfficeApi.get<ChainCustodyPaginate>(
       `/chains?page=${page}&per_page=${perPage}&search=${search}`,
     )
 

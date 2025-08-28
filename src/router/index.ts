@@ -29,9 +29,9 @@ const router = createRouter({
       component: TemplateApp,
       children: [
         {
-          path: 'chains-custody',
-          name: 'chains-custody.index',
-          component: () => import('@/modules/patient/views/PatientList.vue'),
+          path: 'patients',
+          name: 'patients.index',
+          component: () => import('@/modules/patient/views/PatientIndex.vue'),
         },
         // {
         //   path: 'chains-custody/create',

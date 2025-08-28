@@ -11,7 +11,7 @@ const isAuthenticatedGuard = async (
   console.log(authStore.authStatus);
 
   if (authStore.isAuthenticated) {
-    return next({ name: 'chain-custody.list' });
+    return next({ name: 'patients.index' });
   }
 
   return next();

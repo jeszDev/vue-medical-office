@@ -21,7 +21,7 @@ authStore.$subscribe(
     }
 
     if (route.path.includes('/auth') && state.authStatus === AuthStatus.Authenticated) {
-      router.replace({ name: 'chains-custody.index' })
+      router.replace({ name: 'patients.index' })
       return
     }
   },

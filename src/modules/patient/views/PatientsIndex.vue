@@ -222,8 +222,18 @@
     <!-- END: Delete Confirmation Modal -->
   </div>
 
-  <DialogQuestion />
-  <DialogBasic />
+  <ModalQuestion
+    id="modal-logout"
+    title="¿Quieres cerrar sesión?"
+    description="Si cierras sesión, tendrás que volver a iniciar sesión."
+    confirmText="Sí, cerrar sesión"
+    cancelText="Cancelar"
+    @confirm="handleLogout"
+  />
+
+  <!-- <ModalQuestion /> -->
+
+  <!-- <DialogBasic /> -->
 
   <!-- <div>{{ chains }}</div> -->
 </template>
@@ -236,11 +246,14 @@ import TablePagination from '@/modules/common/components/TablePagination.vue'
 import { Pagination } from '../../common/interfaces/pagination.interface'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
 import AccordionComponent from '@/modules/common/components/AccordionComponent.vue'
-import DialogQuestion from '@/modules/common/components/DialogQuestion.vue'
+import ModalQuestion from '@/modules/common/components/ModalQuestion.vue'
 import DialogBasic from '@/modules/common/components/DialogBasic.vue'
 import EditIcon from '@/icons/EditIcon.vue'
 import DeleteIcon from '@/icons/DeleteIcon.vue'
 import SearchIcon from '@/icons/SearchIcon.vue'
+import { useAuthStore } from '../../auth/stores/auth.store'
+
+const authStore = useAuthStore()
 
 // const page = ref(Number(route.query.page) || 1);
 const route = useRoute()
@@ -285,6 +298,19 @@ function pageChange(pageNumber: number) {
 function doSearch() {
   page.value = 1 // opcional: reiniciar a la primera página
   refetch()
+}
+
+const handleLogout = async () => {
+  console.log('cerrar sesion')
+
+  const modalElement = document.querySelector('.modal.show')
+  if (modalElement) {
+    console.log('entrtas')
+    window.tailwind.Modal.getOrCreateInstance(modalElement).hide()
+  }
+  setTimeout(() => {
+    authStore.logout()
+  }, 300)
 }
 
 watch(

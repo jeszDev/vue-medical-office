@@ -92,13 +92,13 @@
                 <th
                   class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
                 >
-                  NÚMERO DE CASO
+                  Nombre
                 </th>
-                <th
+                <!-- <th
                   class="h-12 px-4 font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-left"
                 >
                   DESCRICIÓN DE INDICIOS O ELEMENTOS PROBATORIOS
-                </th>
+                </th> -->
                 <th
                   class="h-12 px-4 font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-center"
                 >
@@ -108,8 +108,8 @@
             </thead>
             <tbody class="[&_tr:last-child]:border-0">
               <tr
-                v-for="(chain, index) in chains"
-                :key="chain.id"
+                v-for="(patient, index) in patients"
+                :key="patient.id"
                 class="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted border-b-0"
               >
                 <td
@@ -125,21 +125,11 @@
                   <!-- <a class="whitespace-nowrap font-medium" href=""> Apple MacBook Pro 13 </a>
                   <div class="mt-0.5 whitespace-nowrap text-xs opacity-70">PC & Laptop</div> -->
 
-                  {{ chain.numero_caso }}
+                  {{ patient.nombre }} {{patient.primer_apellido }} {{patient.segundo_apellido }}
                 </td>
-                <td
+                <!-- <td
                   class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r text-center"
                 >
-                  <!-- <div v-if="chain.clues && chain.clues.length > 0">
-                    <div v-for="clue in chain.clues" :key="clue.id" class="mb-1 last:mb-0">
-                      <span class="inline-block px-2 py-1 bg-muted rounded-md text-xs">
-                        {{ clue.identificador }}: {{ clue.descripcion }}
-                      </span>
-                    </div>
-                  </div>
-                  <div v-else class="text-muted-foreground text-xs">Sin clues</div> -->
-
-                  <!-- <template> -->
                   <AccordionComponent>
                     <template #title>
                       <span class="text-gray-500 cursor-pointer"
@@ -151,30 +141,18 @@
                         <div v-for="clue in chain.clues" :key="clue.id" class="border p-2 rounded">
                           <div class="text-start font-bold">{{ clue.identificador }}</div>
                           <div class="text-start text-sm text-muted-foreground">
-                            <!-- {{ clue.descripcion.substring(0, 50) }}... -->
                             {{ clue.descripcion }}
                           </div>
-                          <!-- <div class="text-xs text-muted-foreground mt-1">
-                              {{ formatDate(clue.recoleccion_fecha) }}
-                            </div> -->
                         </div>
                       </div>
                     </template>
                   </AccordionComponent>
-                  <!-- </template> -->
-                </td>
+                </td> -->
                 <td
                   width="20%"
                   class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                 >
-                  <div class="flex items-center justify-center">
-                    <!-- <a class="mr-3 flex items-center" href="#">
-                      <i
-                        data-lucide="check-square"
-                        class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 mr-1 size-4"
-                      ></i>
-                      Edit
-                    </a> -->
+                  <!-- <div class="flex items-center justify-center">
                     <RouterLink
                       class="mr-3 flex items-center"
                       :to="`chains-custody/${chain.id}/edit`"
@@ -191,7 +169,8 @@
                       <DeleteIcon />
                       Eliminar
                     </a>
-                  </div>
+                  </div> -->
+                  acciones
                 </td>
               </tr>
             </tbody>
@@ -252,7 +231,7 @@
 <script setup lang="ts">
 import { useQuery, useQueryClient } from '@tanstack/vue-query'
 import { computed, ref, watch } from 'vue'
-import { getChainsCustodyAction } from '../actions/get-chains-custody.action'
+import { getPatientsAction } from '../actions/get-patients.action'
 import TablePagination from '@/modules/common/components/TablePagination.vue'
 import { Pagination } from '../../common/interfaces/pagination.interface'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
@@ -276,11 +255,11 @@ const {
   isLoading,
   refetch,
 } = useQuery({
-  queryKey: ['chains', { page: page }],
-  queryFn: () => getChainsCustodyAction(page.value, perPage.value, search.value),
+  queryKey: ['patients', { page: page }],
+  queryFn: () => getPatientsAction(page.value, perPage.value, search.value),
 })
 
-const chains = computed(() => response.value?.data || [])
+const patients = computed(() => response.value?.data || [])
 const pagination = computed<Pagination>(() => ({
   currentPage: response.value?.current_page || 1,
   firstPageUrl: response.value?.first_page_url || '',
@@ -313,7 +292,7 @@ watch(
   () => {
     queryClient.prefetchQuery({
       queryKey: ['chains', { page: page.value + 1 }],
-      queryFn: () => getChainsCustodyAction(page.value + 1, perPage.value),
+      queryFn: () => getPatientsAction(page.value + 1, perPage.value),
     })
   },
   { immediate: true },

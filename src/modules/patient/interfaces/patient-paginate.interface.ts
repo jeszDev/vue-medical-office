@@ -1,8 +1,8 @@
-import type { ChainCustody } from './patient'
+import type { Patient } from './patient'
 
 export interface ChainCustodyPaginate {
   current_page: number
-  data: ChainCustody[]
+  data: Patient[]
   first_page_url: string
   from: number
   last_page: number

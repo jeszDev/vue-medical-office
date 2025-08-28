@@ -1,5 +1,5 @@
 import { medicalOfficeApi } from '@/api/medicalOfficeApi'
-import type { ChainCustodyPaginate } from '../interfaces/chain-custody-paginate.interface'
+import type { PatientPaginate } from '../interfaces/patient-paginate.interface'
 
 export const getChainsCustodyAction = async (
   page: number = 1,
@@ -7,8 +7,8 @@ export const getChainsCustodyAction = async (
   search: string = '',
 ) => {
   try {
-    const { data } = await medicalOfficeApi.get<ChainCustodyPaginate>(
-      `/chains?page=${page}&per_page=${perPage}&search=${search}`,
+    const { data } = await medicalOfficeApi.get<PatientPaginate>(
+      `/patients?page=${page}&per_page=${perPage}&search=${search}`,
     )
 
     // console.log(data);

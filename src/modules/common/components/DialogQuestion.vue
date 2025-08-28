@@ -12,9 +12,7 @@
         data-tw-dismiss="modal"
         href="#"
       >
-        <XIcon
-          class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-5 opacity-70"
-        />
+        <CloseIcon />
       </a>
       <div class="p-5 text-center">
         <i
@@ -48,27 +46,27 @@
 </template>
 
 <script setup lang="ts">
-import { X as XIcon, XCircle as XCircleIcon } from 'lucide-vue-next';
-import { useAuthStore } from '../../auth/stores/auth.store';
+import CloseIcon from '@/icons/CloseIcon.vue'
+import { useAuthStore } from '../../auth/stores/auth.store'
 
 // interface Props {
 //   title: string;
 // }
 
-const authStore = useAuthStore();
+const authStore = useAuthStore()
 
 const handleLogout = async () => {
-  const modalElement = document.querySelector('.modal.show');
+  const modalElement = document.querySelector('.modal.show')
   if (modalElement) {
-    console.log('entrtas');
+    console.log('entrtas')
 
-    window.tailwind.Modal.getOrCreateInstance(modalElement).hide();
+    window.tailwind.Modal.getOrCreateInstance(modalElement).hide()
   }
 
   setTimeout(() => {
-    authStore.logout();
-  }, 300);
-};
+    authStore.logout()
+  }, 300)
+}
 </script>
 
 <style scoped></style>

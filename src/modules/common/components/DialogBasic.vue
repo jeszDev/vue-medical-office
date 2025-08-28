@@ -12,9 +12,10 @@
         data-tw-dismiss="modal"
         href="#"
       >
-        <XIcon
+        <!-- <XIcon
           class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-5 opacity-70"
-        />
+        /> -->
+        <CloseIcon />
       </a>
       <div class="flex flex-col items-center gap-3 py-2 text-center">
         <h2 class="text-lg font-medium">What is Lorem Ipsum?</h2>
@@ -40,7 +41,8 @@
 </template>
 
 <script setup lang="ts">
-import { X as XIcon } from 'lucide-vue-next';
+// import { X as XIcon } from 'lucide-vue-next';
+import CloseIconVue from '@/icons/CloseIcon.vue'
 </script>
 
 <style scoped></style>

@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const medicalOfficeApi = axios.create({
-  baseURL: import.meta.env.VITE_BODEGA_API_URL,
+  baseURL: import.meta.env.VITE_MEDICAL_OFFICE_API_URL,
 })
 
 medicalOfficeApi.interceptors.request.use((config) => {

@@ -125,7 +125,7 @@
                   <!-- <a class="whitespace-nowrap font-medium" href=""> Apple MacBook Pro 13 </a>
                   <div class="mt-0.5 whitespace-nowrap text-xs opacity-70">PC & Laptop</div> -->
 
-                  {{ patient.nombre }} {{patient.primer_apellido }} {{patient.segundo_apellido }}
+                  {{ patient.nombre }} {{ patient.primer_apellido }} {{ patient.segundo_apellido }}
                 </td>
                 <!-- <td
                   class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r text-center"
@@ -291,7 +291,7 @@ watch(
   [page, perPage],
   () => {
     queryClient.prefetchQuery({
-      queryKey: ['chains', { page: page.value + 1 }],
+      queryKey: ['patients', { page: page.value + 1 }],
       queryFn: () => getPatientsAction(page.value + 1, perPage.value),
     })
   },

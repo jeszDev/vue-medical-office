@@ -119,7 +119,7 @@
               ></i>
               <div class="side-menu__link__title">Listado de cadenas de custodia</div>
             </a> -->
-            <RouterLink
+            <!-- <RouterLink
               class="side-menu__link side-menu__link--active"
               :to="{ name: 'chains-custody.index' }"
             >
@@ -128,7 +128,7 @@
                 class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 side-menu__link__icon"
               ></i>
               <div class="side-menu__link__title">Listado de cadenas de custodia</div>
-            </RouterLink>
+            </RouterLink> -->
             <!-- BEGIN: Third Child -->
             <!-- END: Third Child -->
           </li>
@@ -141,7 +141,7 @@
               <div class="side-menu__link__title">Overview 2</div>
             </a> -->
 
-            <RouterLink
+            <!-- <RouterLink
               class="side-menu__link side-menu__link--active"
               :to="{ name: 'chains-custody.create' }"
             >
@@ -150,7 +150,7 @@
                 class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 side-menu__link__icon"
               ></i>
               <div class="side-menu__link__title">Registro de cadena de custodia</div>
-            </RouterLink>
+            </RouterLink> -->
 
             <!-- BEGIN: Third Child -->
             <!-- END: Third Child -->
@@ -1239,11 +1239,11 @@
 </template>
 
 <script setup lang="ts">
-import { MoveRight } from 'lucide-vue-next';
-import SimpleBar from 'simplebar-vue';
-import { useAuthStore } from '../../auth/stores/auth.store';
+import { MoveRight } from 'lucide-vue-next'
+import SimpleBar from 'simplebar-vue'
+import { useAuthStore } from '../../auth/stores/auth.store'
 
-const authStore = useAuthStore();
+const authStore = useAuthStore()
 </script>
 
 <style scoped></style>

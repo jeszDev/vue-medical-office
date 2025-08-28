@@ -1,7 +1,7 @@
 import { medicalOfficeApi } from '@/api/medicalOfficeApi'
 import type { PatientPaginate } from '../interfaces/patient-paginate.interface'
 
-export const getChainsCustodyAction = async (
+export const getPatientsAction = async (
   page: number = 1,
   perPage: number = 10,
   search: string = '',

@@ -1,6 +1,6 @@
 import type { Patient } from './patient'
 
-export interface ChainCustodyPaginate {
+export interface PatientPaginate {
   current_page: number
   data: Patient[]
   first_page_url: string

@@ -7,9 +7,10 @@
             class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 h-10 px-4 py-2 border-transparent bg-transparent"
             @click="$emit('page-change', 1)"
           >
-            <ChevronsLeft
+            <!-- <ChevronsLeft
               class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
-            />
+            /> -->
+            <PaginateFistPageIcon />
           </button>
         </li>
 
@@ -18,9 +19,10 @@
             class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 h-10 px-4 py-2 border-transparent bg-transparent"
             @click="$emit('page-change', pagination.currentPage - 1)"
           >
-            <ChevronLeft
+            <!-- <ChevronLeft
               class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
-            />
+            /> -->
+            <PaginatePreviousIcon />
           </button>
         </li>
 
@@ -47,9 +49,10 @@
             class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 h-10 px-4 py-2 border-transparent bg-transparent"
             @click="$emit('page-change', pagination.currentPage + 1)"
           >
-            <ChevronRight
+            <!-- <ChevronRight
               class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
-            />
+            /> -->
+            <PaginateNextIcon />
           </button>
         </li>
 
@@ -58,9 +61,10 @@
             class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 h-10 px-4 py-2 border-transparent bg-transparent"
             @click="$emit('page-change', pagination.lastPage)"
           >
-            <ChevronsRight
+            <!-- <ChevronsRight
               class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
-            />
+            /> -->
+            <PaginaLastPageIcon />
           </button>
         </li>
 
@@ -131,18 +135,22 @@
 </template>
 
 <script setup lang="ts">
-import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight } from 'lucide-vue-next';
-import { Pagination } from '../interfaces/pagination.interface';
+// import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight } from 'lucide-vue-next';
+import PaginateFirtsPageIcon from '@/icons/PaginateFirtsPageIcon.vue'
+import PaginateLastPageIcon from '@/icons/PaginateLastPageIcon.vue'
+import PaginatePreviousIcon from '@/icons/PaginatePreviousIcon.vue'
+import PaginateNextIcon from '@/icons/PaginateNextIcon.vue'
+import { Pagination } from '../interfaces/pagination.interface'
 
 interface Props {
-  pagination: Pagination;
+  pagination: Pagination
 }
 
-defineProps<Props>();
+defineProps<Props>()
 
 defineEmits<{
-  (e: 'page-change', pageNumber: number): void;
-}>();
+  (e: 'page-change', pageNumber: number): void
+}>()
 </script>
 
 <style scoped></style>

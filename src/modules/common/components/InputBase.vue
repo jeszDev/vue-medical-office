@@ -1,7 +1,7 @@
 <template>
   <div>
     <input
-      type="text"
+      :type="type"
       :placeholder="placeholder ?? ''"
       class="h-10 w-full rounded-md border bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-foreground placeholder:text-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/5 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
       :name="name"
@@ -19,6 +19,7 @@
 import { useAttrs } from 'vue';
 
 interface Props {
+  type?: 'text' | 'email' | 'tel' | 'number' | 'password';
   modelValue?: string;
   error?: string;
   name: string;
@@ -26,7 +27,10 @@ interface Props {
   isDisabled?: boolean;
 }
 
-defineProps<Props>();
+withDefaults(defineProps<Props>(), {
+  type: 'text',
+});
+
 const attrs = useAttrs();
 defineEmits(['update:modelValue', 'blur']);
 </script>

@@ -17,8 +17,10 @@
         /> -->
         <CloseIcon />
       </a>
-      <div class="flex flex-col items-center gap-3 py-2 text-center">
-        <h2 class="text-lg font-medium">What is Lorem Ipsum?</h2>
+      <div class="flex flex-col items-center gap-3 py-2">
+
+        <PatientCreate :patientId="1" />
+        <!-- <h2 class="text-lg font-medium">What is Lorem Ipsum?</h2>
         <p class="opacity-80">
           Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
           been the industry's standard dummy text ever since the 1500s, when an unknown printer took
@@ -34,7 +36,7 @@
           type="button"
         >
           Close Dialog
-        </button>
+        </button> -->
       </div>
     </div>
   </div>
@@ -42,7 +44,8 @@
 
 <script setup lang="ts">
 // import { X as XIcon } from 'lucide-vue-next';
-import CloseIconVue from '@/icons/CloseIcon.vue'
+import CloseIcon from '@/icons/CloseIcon.vue'
+import PatientCreate from '@/modules/patient/views/PatientCreate.vue'
 </script>
 
 <style scoped></style>

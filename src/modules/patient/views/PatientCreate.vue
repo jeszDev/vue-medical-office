@@ -4,7 +4,7 @@
   > -->
   <div class="relative z-20">
     <div class="mt-8 flex items-center">
-      <h2 class="mr-auto text-lg font-medium">Registro de paciente</h2>
+      <h2 class="mr-auto text-lg font-medium">Registrar nuevo paciente</h2>
     </div>
     <!-- BEGIN: Wizard Layout -->
 

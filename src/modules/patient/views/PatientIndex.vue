@@ -5,6 +5,8 @@
       <div class="col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
         <button
           class="cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-(--color)/20 border-(--color)/60 text-(--color) hover:bg-(--color)/5 [--color:var(--color-primary)] h-10 px-4 py-2 box mr-2"
+          data-tw-toggle="modal"
+          data-tw-target="#basic-dialog"
         >
           Registrar nuevo paciente
         </button>
@@ -94,6 +96,11 @@
                 >
                   Nombre
                 </th>
+                <th
+                  class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
+                >
+                  Fecha de registro
+                </th>
                 <!-- <th
                   class="h-12 px-4 font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-left"
                 >
@@ -126,6 +133,14 @@
                   <div class="mt-0.5 whitespace-nowrap text-xs opacity-70">PC & Laptop</div> -->
 
                   {{ patient.nombre }} {{ patient.primer_apellido }} {{ patient.segundo_apellido }}
+                </td>
+                <td
+                  class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                >
+                  <!-- <a class="whitespace-nowrap font-medium" href=""> Apple MacBook Pro 13 </a>
+                  <div class="mt-0.5 whitespace-nowrap text-xs opacity-70">PC & Laptop</div> -->
+
+                  {{ patient.created_at }}
                 </td>
                 <!-- <td
                   class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r text-center"
@@ -192,10 +207,9 @@
     @confirm="handleLogout"
   />
 
-
   <!-- <ModalQuestion /> -->
 
-  <!-- <DialogBasic /> -->
+  <DialogBasic />
 
   <!-- <div>{{ chains }}</div> -->
 </template>

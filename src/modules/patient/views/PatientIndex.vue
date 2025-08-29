@@ -168,10 +168,7 @@
                   class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                 >
                   <div class="flex items-center justify-center">
-                    <RouterLink
-                      class="mr-3 flex items-center"
-                      :to="`patients/${patient.id}/edit`"
-                    >
+                    <RouterLink class="mr-3 flex items-center" :to="`patients/${patient.id}/edit`">
                       <EditIcon />
                       Editar
                     </RouterLink>
@@ -209,7 +206,7 @@
 
   <!-- <ModalQuestion /> -->
 
-  <DialogBasic />
+  <DialogBasic size="3xl" />
 
   <!-- <div>{{ chains }}</div> -->
 </template>
@@ -221,7 +218,6 @@ import { getPatientsAction } from '../actions/get-patients.action'
 import TablePagination from '@/modules/common/components/TablePagination.vue'
 import { Pagination } from '../../common/interfaces/pagination.interface'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
-import AccordionComponent from '@/modules/common/components/AccordionComponent.vue'
 import ModalQuestion from '@/modules/common/components/ModalQuestion.vue'
 import DialogBasic from '@/modules/common/components/DialogBasic.vue'
 import EditIcon from '@/icons/EditIcon.vue'

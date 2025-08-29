@@ -31,7 +31,7 @@ const router = createRouter({
         {
           path: 'patients',
           name: 'patients.index',
-          component: () => import('@/modules/patient/views/PatientsIndex.vue'),
+          component: () => import('@/modules/patient/views/PatientIndex.vue'),
         },
         // {
         //   path: 'chains-custody/create',

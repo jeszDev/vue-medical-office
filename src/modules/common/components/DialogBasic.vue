@@ -2,7 +2,7 @@
   <div
     data-tw-backdrop=""
     class="modal group bg-black/60 transition-[visibility,opacity] w-screen h-screen fixed left-0 top-0 [&:not(.show)]:duration-[0s,0.2s] [&:not(.show)]:delay-[0.2s,0s] [&:not(.show)]:invisible [&:not(.show)]:opacity-0 [&.show]:visible [&.show]:opacity-100 [&.show]:duration-[0s,0.4s]"
-    id="basic-dialog"
+    :id="id"
   >
     <div
       :class="[
@@ -18,7 +18,7 @@
         <CloseIcon />
       </a>
       <div class="flex flex-col items-center gap-3 py-2">
-        <PatientCreate :patientId="1" :is-inside-modal="true" />
+        <slot>Contenido de modal</slot>
       </div>
     </div>
   </div>
@@ -27,13 +27,14 @@
 <script setup lang="ts">
 // import { X as XIcon } from 'lucide-vue-next';
 import CloseIcon from '@/icons/CloseIcon.vue'
-import PatientCreate from '@/modules/patient/views/PatientCreate.vue'
 
 interface Props {
+  id: string
   size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
 }
 
 withDefaults(defineProps<Props>(), {
+  id: 'basic-dialog',
   size: 'md',
 })
 

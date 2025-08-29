@@ -5,8 +5,14 @@
       <div class="col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
         <button
           class="cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-(--color)/20 border-(--color)/60 text-(--color) hover:bg-(--color)/5 [--color:var(--color-primary)] h-10 px-4 py-2 box mr-2"
-          data-tw-toggle="modal"
-          data-tw-target="#basic-dialog"
+          @click="
+            () => {
+              selectedPatientId.value = 'create'
+              window.tailwind.Modal.getOrCreateInstance(
+                document.getElementById('modal-patient-create'),
+              ).show()
+            }
+          "
         >
           Registrar nuevo paciente
         </button>
@@ -168,7 +174,17 @@
                   class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                 >
                   <div class="flex items-center justify-center">
-                    <RouterLink class="mr-3 flex items-center" :to="`patients/${patient.id}/edit`">
+                    <RouterLink
+                      class="mr-3 flex items-center"
+                      @click.prevent="
+                        () => {
+                          selectedPatientId.value = patient.id
+                          window.tailwind.Modal.getOrCreateInstance(
+                            document.getElementById('basic-dialog'),
+                          ).show()
+                        }
+                      "
+                    >
                       <EditIcon />
                       Editar
                     </RouterLink>
@@ -206,7 +222,9 @@
 
   <!-- <ModalQuestion /> -->
 
-  <DialogBasic size="3xl" />
+  <DialogBasic id="modal-patient-create" size="3xl">
+    <PatientCreate :patient-id="selectedPatientId" :is-inside-modal="true" />
+  </DialogBasic>
 
   <!-- <div>{{ chains }}</div> -->
 </template>
@@ -224,6 +242,7 @@ import EditIcon from '@/icons/EditIcon.vue'
 import DeleteIcon from '@/icons/DeleteIcon.vue'
 import SearchIcon from '@/icons/SearchIcon.vue'
 import { useAuthStore } from '../../auth/stores/auth.store'
+import PatientCreate from '@/modules/patient/views/PatientCreate.vue'
 
 const authStore = useAuthStore()
 
@@ -234,6 +253,8 @@ const page = ref<number>(1)
 const perPage = ref<number>(10)
 const search = ref<string>('')
 const queryClient = useQueryClient()
+
+const selectedPatientId = ref<'create' | number | null>(null)
 
 const {
   data: response,
@@ -258,6 +279,8 @@ const pagination = computed<Pagination>(() => ({
   to: response.value?.to || 0,
   from: response.value?.from || 0,
 }))
+
+console.log(window.tailwind?.Modal)
 
 function pageChange(pageNumber: number) {
   page.value = pageNumber

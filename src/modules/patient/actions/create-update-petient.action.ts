@@ -9,18 +9,18 @@ export const createUpdatePatientAction = async (patient: Partial<Patient>) => {
   } catch (error) {}
 }
 
-const updateChainCusody = async (chainCustody: Partial<ChainCustody>) => {
-  const chainCustodyId = chainCustody.id
-  delete chainCustody.id
+const updatePatient = async (patient: Partial<Patient>) => {
+  const patientId = patient.id
+  delete patient.id
   // TODO: delete user_id
   // delete chainCustody.user_id;
-  delete chainCustody.created_at
-  delete chainCustody.updated_at
+  delete patient.created_at
+  delete patient.updated_at
 
   try {
-    const { data } = await medicalOfficeApi.patch<ChainCustody>(
-      `/chains/${chainCustodyId}`,
-      chainCustody,
+    const { data } = await medicalOfficeApi.patch<Patient>(
+      `/chains/${patientId}`,
+      patient,
     )
 
     return data

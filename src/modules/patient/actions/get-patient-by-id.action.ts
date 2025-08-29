@@ -1,30 +1,32 @@
 import { medicalOfficeApi } from '@/api/medicalOfficeApi'
-import type { ChainCustody } from '../interfaces/patient'
+import type { Patient } from '../interfaces/patient'
 
-export const getChainCustodyByIdAction = async (chainCustodyId: string): Promise<ChainCustody> => {
-  if (chainCustodyId === 'create') {
+export const getPatientByIdAction = async (patientId: string): Promise<Patient> => {
+  if (patientId === 'create') {
     return {
       id: '',
-      numero_unico_caso: '',
-      folio: '',
-      intervencion_lugar: '',
-      intervencion_hora_fecha: '',
-      motivo_registro: '',
+      nombre: '',
+      primer_apellido: '',
+      segundo_apellido: '',
+      fecha_nacimiento: '',
+      telefono: '',
+      correo_electronico: '',
+      observaciones: '',
       created_at: '',
       updated_at: '',
     }
   }
 
   try {
-    console.log('Se va a realizar la peticion chain by id: ' + chainCustodyId)
+    console.log('Se va a realizar la peticion patient by id: ' + patientId)
 
-    const { data } = await medicalOfficeApi.get<ChainCustody>(`/chains/${chainCustodyId}`)
+    const { data } = await medicalOfficeApi.get<Patient>(`/patients/${patientId}`)
 
     console.log(data)
 
     return data
   } catch (error) {
     console.log(error)
-    throw new Error(`Error getting chain by id ${chainCustodyId}`)
+    throw new Error(`Error getting chain by id ${patientId}`)
   }
 }

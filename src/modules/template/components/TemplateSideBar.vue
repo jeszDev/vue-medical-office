@@ -119,16 +119,16 @@
               ></i>
               <div class="side-menu__link__title">Listado de cadenas de custodia</div>
             </a> -->
-            <!-- <RouterLink
+            <RouterLink
               class="side-menu__link side-menu__link--active"
-              :to="{ name: 'chains-custody.index' }"
+              :to="{ name: 'patients.index' }"
             >
               <i
                 data-lucide="panel-bottom-close"
                 class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 side-menu__link__icon"
               ></i>
-              <div class="side-menu__link__title">Listado de cadenas de custodia</div>
-            </RouterLink> -->
+              <div class="side-menu__link__title">Listado de pacientes</div>
+            </RouterLink>
             <!-- BEGIN: Third Child -->
             <!-- END: Third Child -->
           </li>
@@ -141,16 +141,16 @@
               <div class="side-menu__link__title">Overview 2</div>
             </a> -->
 
-            <!-- <RouterLink
+            <RouterLink
               class="side-menu__link side-menu__link--active"
-              :to="{ name: 'chains-custody.create' }"
+              :to="{ name: 'patients.create' }"
             >
               <i
                 data-lucide="panel-bottom-close"
                 class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 side-menu__link__icon"
               ></i>
-              <div class="side-menu__link__title">Registro de cadena de custodia</div>
-            </RouterLink> -->
+              <div class="side-menu__link__title">Registro de paciente</div>
+            </RouterLink>
 
             <!-- BEGIN: Third Child -->
             <!-- END: Third Child -->

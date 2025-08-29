@@ -1,4 +1,5 @@
 export interface Patient {
+  id: string
   nombre: string
   primer_apellido: string
   segundo_apellido: string

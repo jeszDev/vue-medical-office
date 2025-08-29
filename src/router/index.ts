@@ -33,17 +33,17 @@ const router = createRouter({
           name: 'patients.index',
           component: () => import('@/modules/patient/views/PatientIndex.vue'),
         },
-        // {
-        //   path: 'chains-custody/create',
-        //   name: 'chains-custody.create',
-        //   component: () => import('@/modules/patient/views/ChainCustodyCreate.vue'),
-        // },
-        // {
-        //   path: 'chains-custody/:chainCustodyId/edit',
-        //   name: 'chains-custody.edit',
-        //   props: true,
-        //   component: () => import('@/modules/patient/views/ChainCustodyCreate.vue'),
-        // },
+        {
+          path: 'patients/create',
+          name: 'patients.create',
+          component: () => import('@/modules/patient/views/PatientCreate.vue'),
+        },
+        {
+          path: 'patients/:patientId/edit',
+          name: 'patients.edit',
+          props: true,
+          component: () => import('@/modules/patient/views/PatientCreate.vue'),
+        },
         // {
         //   path: 'product/create',
         //   name: 'product.create',

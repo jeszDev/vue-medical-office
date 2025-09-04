@@ -44,11 +44,11 @@ const router = createRouter({
           props: true,
           component: () => import('@/modules/patient/views/PatientCreate.vue'),
         },
-        // {
-        //   path: 'product/create',
-        //   name: 'product.create',
-        //   component: () => import('@/modules/products/views/ProductCreate.vue'),
-        // },
+        {
+          path: 'patients/appointments',
+          name: 'patients.appointments.index',
+          component: () => import('@/modules/patient/views/PatientAppointmentsIndex.vue'),
+        },
       ],
     },
   ],

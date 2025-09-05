@@ -22,9 +22,7 @@ export const getPatientByIdAction = async (patientId: string): Promise<Patient> 
 
     const { data } = await medicalOfficeApi.get<Patient>(`/patients/${patientId}`)
 
-    console.log(data)
-
-    return data
+    return data.data
   } catch (error) {
     console.log(error)
     throw new Error(`Error getting chain by id ${patientId}`)

@@ -167,13 +167,10 @@
                   class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                 >
                   <div class="flex items-center justify-center">
-                    <!-- <RouterLink
-                      class="mr-3 flex items-center"
-                      :to="`patients/${patient.id}/edit`"
-                    >
-                      <EditIcon />
-                      Editar
-                    </RouterLink> -->
+                    <RouterLink class="mr-3 flex items-center" :to="`patients/${patient}`">
+                      <PreviewIcon />
+                      Ver
+                    </RouterLink>
                     <div
                       class="mr-3 flex items-center cursor-pointer"
                       @click="handleModalCreateUpdate(patient.id)"
@@ -234,6 +231,7 @@ import DialogBasic from '@/modules/common/components/DialogBasic.vue'
 import EditIcon from '@/icons/EditIcon.vue'
 import DeleteIcon from '@/icons/DeleteIcon.vue'
 import SearchIcon from '@/icons/SearchIcon.vue'
+import PreviewIcon from '@/icons/PreviewIcon.vue'
 import { useAuthStore } from '../../auth/stores/auth.store'
 import PatientCreate from '@/modules/patient/views/PatientCreate.vue'
 

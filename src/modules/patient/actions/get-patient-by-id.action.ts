@@ -1,5 +1,5 @@
 import { medicalOfficeApi } from '@/api/medicalOfficeApi'
-import type { Patient } from '../interfaces/patient'
+import type { Patient } from '../interfaces/patient.interface'
 
 export const getPatientByIdAction = async (patientId: string): Promise<Patient> => {
   if (patientId === 'create') {

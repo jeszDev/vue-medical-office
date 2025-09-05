@@ -1,4 +1,4 @@
-import type { Patient } from './patient'
+import type { Patient } from './patient.interface'
 
 export interface PatientPaginate {
   current_page: number

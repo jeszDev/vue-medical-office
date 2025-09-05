@@ -16,10 +16,7 @@ const schema = yup.object({
   nombre: yup.string().required('Este campo es obligatorio'),
   primer_apellido: yup.string().required('Este campo es obligatorio'),
   segundo_apellido: yup.string(),
-  fecha_nacimiento: yup
-    .date()
-    .required('Indique la fecha de intervención')
-    .typeError('Debe ingresar una fecha y hora válidas'),
+  fecha_nacimiento: yup.string(),
   telefono: yup.string(),
   correo_electronico: yup.string(),
   observaciones: yup.string(),
@@ -46,14 +43,18 @@ export default defineComponent({
   setup(props) {
     const router = useRouter()
     // const modal = props.isInsideModal
+    // console.log(`patientId: ${props.patientId}`);
+
 
     const {
       data: patient,
       isError,
       isLoading,
+      refetch,
     } = useQuery({
       queryKey: ['patient', props.patientId],
       queryFn: () => getPatientByIdAction(props.patientId),
+      enabled: props.patientId !== 'create', // Evitar la consulta si es 'create'
       retry: false,
     })
 
@@ -82,6 +83,12 @@ export default defineComponent({
       console.log({ values })
 
       mutate(values)
+
+      if (props.isInsideModal) {
+        window.tailwind.Modal.getOrCreateInstance(
+          document.getElementById('modal-patient-create'),
+        ).hide()
+      }
     })
 
     watchEffect(() => {
@@ -90,20 +97,20 @@ export default defineComponent({
       }
     })
 
-    watch(
-      patient,
-      () => {
-        if (!patient) return
+    // watch(
+    //   patient,
+    //   () => {
+    //     if (!patient) return
 
-        resetForm({
-          values: patient.value,
-        })
-      },
-      {
-        deep: true,
-        immediate: true,
-      },
-    )
+    //     resetForm({
+    //       values: patient.value,
+    //     })
+    //   },
+    //   {
+    //     deep: true,
+    //     immediate: true,
+    //   },
+    // )
 
     watch(isUpdateSuccess, (value) => {
       if (!value) return
@@ -114,6 +121,60 @@ export default defineComponent({
         values: updatedPatient.value,
       })
     })
+
+    // Resetear el formulario si se cambia el patientId
+    watch(
+      () => props.patientId,
+      async (newPatientId) => {
+        if (newPatientId === 'create') {
+          // Limpiar el formulario si estamos creando un nuevo paciente
+          console.log('entra a limpiar');
+
+          resetForm({
+            values: {
+              id: '',
+              nombre: '',
+              primer_apellido: '',
+              segundo_apellido: '',
+              fecha_nacimiento: '',
+              telefono: '',
+              correo_electronico: '',
+              observaciones: ''
+            }
+          })
+        } else if (newPatientId) {
+          // Cuando el patientId cambia a un valor válido, recargar los datos del paciente
+          await refetch()
+
+          resetForm({
+            values: patient.value,
+          })
+        }
+      },
+      // { immediate: true }
+    )
+
+    // Redirigir en caso de error al cargar el paciente
+    watchEffect(() => {
+      if (isError.value && !isLoading.value) {
+        router.replace({ name: 'patients.index' })
+      }
+    })
+
+    // Cuando los datos del paciente son cargados correctamente, resetear el formulario
+    // watch(
+    //   patient,
+    //   (newPatient) => {
+    //     if (!newPatient) return
+    //     resetForm({
+    //       values: newPatient,
+    //     })
+    //   },
+    //   {
+    //     deep: true,
+    //     immediate: true,
+    //   }
+    // )
 
     return {
       // modal,

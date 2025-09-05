@@ -5,14 +5,7 @@
       <div class="col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
         <button
           class="cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-(--color)/20 border-(--color)/60 text-(--color) hover:bg-(--color)/5 [--color:var(--color-primary)] h-10 px-4 py-2 box mr-2"
-          @click="
-            () => {
-              selectedPatientId.value = 'create'
-              window.tailwind.Modal.getOrCreateInstance(
-                document.getElementById('modal-patient-create'),
-              ).show()
-            }
-          "
+          @click="handleModalCreateUpdate('create')"
         >
           Registrar nuevo paciente
         </button>
@@ -105,7 +98,7 @@
                 <th
                   class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
                 >
-                  Fecha de registro
+                  Fecha en que se registro al paciente
                 </th>
                 <!-- <th
                   class="h-12 px-4 font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-left"
@@ -174,20 +167,20 @@
                   class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                 >
                   <div class="flex items-center justify-center">
-                    <RouterLink
+                    <!-- <RouterLink
                       class="mr-3 flex items-center"
-                      @click.prevent="
-                        () => {
-                          selectedPatientId.value = patient.id
-                          window.tailwind.Modal.getOrCreateInstance(
-                            document.getElementById('basic-dialog'),
-                          ).show()
-                        }
-                      "
+                      :to="`patients/${patient.id}/edit`"
                     >
                       <EditIcon />
                       Editar
-                    </RouterLink>
+                    </RouterLink> -->
+                    <div
+                      class="mr-3 flex items-center cursor-pointer"
+                       @click="handleModalCreateUpdate(patient.id)"
+                    >
+                      <EditIcon />
+                      Editar
+                    </div>
                     <a
                       class="text-danger flex items-center"
                       data-tw-toggle="modal"
@@ -223,7 +216,7 @@
   <!-- <ModalQuestion /> -->
 
   <DialogBasic id="modal-patient-create" size="3xl">
-    <PatientCreate :patient-id="selectedPatientId" :is-inside-modal="true" />
+    <PatientCreate :patient-id="String(selectedPatientId)" :is-inside-modal="true" />
   </DialogBasic>
 
   <!-- <div>{{ chains }}</div> -->
@@ -254,7 +247,7 @@ const perPage = ref<number>(10)
 const search = ref<string>('')
 const queryClient = useQueryClient()
 
-const selectedPatientId = ref<'create' | number | null>(null)
+const selectedPatientId = ref<'create' | number>('create')
 
 const {
   data: response,
@@ -280,8 +273,6 @@ const pagination = computed<Pagination>(() => ({
   from: response.value?.from || 0,
 }))
 
-console.log(window.tailwind?.Modal)
-
 function pageChange(pageNumber: number) {
   page.value = pageNumber
 
@@ -293,6 +284,15 @@ function pageChange(pageNumber: number) {
 function doSearch() {
   page.value = 1 // opcional: reiniciar a la primera página
   refetch()
+}
+
+const handleModalCreateUpdate = (patientId : 'create' | number) => {
+  console.log(patientId);
+
+  selectedPatientId.value = patientId
+  window.tailwind.Modal.getOrCreateInstance(
+    document.getElementById('modal-patient-create'),
+  ).show()
 }
 
 const handleLogout = async () => {

@@ -6,6 +6,10 @@ export const createUpdatePatientAction = async (patient: Partial<Patient>) => {
     if (patient.id && patient.id !== '') {
       return await updatePatient(patient)
     }
+
+    const { data } = await medicalOfficeApi.post<Patient>(`/patients`, patient)
+
+    return data
   } catch (error) {}
 }
 
@@ -26,6 +30,6 @@ const updatePatient = async (patient: Partial<Patient>) => {
     return data
   } catch (error) {
     console.log(error)
-    throw new Error('Error updating chain custody')
+    throw new Error('Error updating patient')
   }
 }

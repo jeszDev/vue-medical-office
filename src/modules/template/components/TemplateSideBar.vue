@@ -152,6 +152,17 @@
               <div class="side-menu__link__title">Registro de paciente</div>
             </RouterLink>
 
+            <RouterLink
+              class="side-menu__link side-menu__link--active"
+              :to="{ name: 'patients.appointments.index' }"
+            >
+              <i
+                data-lucide="panel-bottom-close"
+                class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 side-menu__link__icon"
+              ></i>
+              <div class="side-menu__link__title">Citas</div>
+            </RouterLink>
+
             <!-- BEGIN: Third Child -->
             <!-- END: Third Child -->
           </li>

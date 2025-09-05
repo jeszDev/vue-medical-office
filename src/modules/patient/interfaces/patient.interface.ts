@@ -1,3 +1,5 @@
+import type { AppointmentDetail } from "@/modules/appointment/interfaces/appointment-detail.interface";
+
 export interface Patient {
   id: number;
   nombre: string;
@@ -8,4 +10,6 @@ export interface Patient {
   correo_electronico: string | null;
   creado_el: string;
   nombre_completo: string;
+
+  detalle_cita?: AppointmentDetail;
 }

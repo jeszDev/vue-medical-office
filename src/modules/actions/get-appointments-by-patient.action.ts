@@ -1,16 +1,11 @@
-import { medicalOfficeApi } from "@/api/medicalOfficeApi"
+import { medicalOfficeApi } from '@/api/medicalOfficeApi'
 
-export const getAppointmentsByPatient = async(patientId: string) => {
+export const getAppointmentsByPatient = async (patientId: string) => {
   try {
     const { data } = await medicalOfficeApi.get(`/patients/${patientId}/appointments`)
 
-    console.log(data.data);
+    console.log(data.data)
 
-
-
-    return data.data;
-
-  } catch (error) {
-
-  }
+    return data.data
+  } catch (error) {}
 }

@@ -176,7 +176,7 @@
                     </RouterLink> -->
                     <div
                       class="mr-3 flex items-center cursor-pointer"
-                       @click="handleModalCreateUpdate(patient.id)"
+                      @click="handleModalCreateUpdate(patient.id)"
                     >
                       <EditIcon />
                       Editar
@@ -286,13 +286,11 @@ function doSearch() {
   refetch()
 }
 
-const handleModalCreateUpdate = (patientId : 'create' | number) => {
-  console.log(patientId);
+const handleModalCreateUpdate = (patientId: 'create' | number) => {
+  console.log(patientId)
 
   selectedPatientId.value = patientId
-  window.tailwind.Modal.getOrCreateInstance(
-    document.getElementById('modal-patient-create'),
-  ).show()
+  window.tailwind.Modal.getOrCreateInstance(document.getElementById('modal-patient-create')).show()
 }
 
 const handleLogout = async () => {

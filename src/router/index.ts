@@ -47,6 +47,7 @@ const router = createRouter({
         {
           path: 'patients/appointments',
           name: 'patients.appointments.index',
+          // props: true,
           component: () => import('@/modules/patient/views/PatientAppointmentsIndex.vue'),
         },
       ],

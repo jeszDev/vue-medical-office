@@ -167,7 +167,7 @@
                   class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                 >
                   <div class="flex items-center justify-center">
-                    <RouterLink class="mr-3 flex items-center" :to="`patients/${patient}`">
+                    <RouterLink class="mr-3 flex items-center" :to="`patients/${patient.id}`">
                       <PreviewIcon />
                       Ver
                     </RouterLink>

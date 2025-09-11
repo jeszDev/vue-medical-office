@@ -11,33 +11,11 @@
       >
         <div class="flex flex-col p-5 lg:flex-row">
           <div class="flex items-center justify-center flex-1 px-5 lg:justify-start">
-            <!-- <div class="relative">
-              <span
-                data-content=""
-                class="tooltip border-(--color)/5 block relative flex-none overflow-hidden rounded-full ring-1 ring-(--color)/25 [--color:var(--color-primary)] border-5 size-20 sm:size-24 lg:size-32"
-                alt="Midone - Tailwind Admin Dashboard Template"
-              >
-                <img
-                  class="absolute top-0 size-full object-cover"
-                  src="dist/images/fakers/profile-3.jpg"
-                  alt="Midone - Tailwind Admin Dashboard Template"
-                />
-              </span>
-              <div
-                class="bg-(--color)/70 border-3 border-background absolute bottom-0 right-0 mb-1 mr-1 flex items-center justify-center rounded-full p-2 text-white [--color:var(--color-primary)]"
-              >
-                <i
-                  data-lucide="camera"
-                  class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
-                ></i>
-              </div>
-            </div> -->
             <div class="ml-5">
               <div class="opacity-70">Nombre</div>
-              <div class="w-24 text-lg font-medium truncate sm:w-40 sm:whitespace-normal">
+              <div class="w-20 text-lg font-medium truncate sm:w-40 sm:whitespace-normal">
                 {{ patient.nombre_completo }}
               </div>
-              <!-- <div class="opacity-70">Backend Engineer</div> -->
             </div>
           </div>
           <div
@@ -85,82 +63,24 @@
           >
             <div class="grid grid-cols-3 gap-5">
               <div class="text-center">
-                <div class="text-xl font-medium">201</div>
-                <div class="opacity-70">Orders</div>
+                <ButtonRounded text="Ver citas del paciente" :icon="PreviewIcon" color="primary" />
               </div>
               <div class="text-center">
-                <div class="text-xl font-medium">1k</div>
-                <div class="opacity-70">Purchases</div>
+                <ButtonRounded text="Editar paciente" :icon="EditIcon" color="secondary" />
               </div>
               <div class="text-center">
-                <div class="text-xl font-medium">492</div>
-                <div class="opacity-70">Reviews</div>
+                <ButtonRounded text="Eliminar paciente" :icon="DeleteIcon" color="danger" />
               </div>
             </div>
           </div>
         </div>
-        <!-- <div class="px-5 py-4">
-          <ul
-            role="tablist"
-            class="bg-foreground/5 relative z-0 flex h-10 w-full select-none items-center justify-center rounded-xl p-1 [&&gt;*]:flex-1 mb-0"
-          >
-            <li role="presentation" class="z-20 w-full">
-              <button
-                class="[&.active]:bg-background inline-flex w-full cursor-pointer items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 font-medium [&.active]:shadow"
-                type="button"
-                role="tab"
-              >
-                <i
-                  data-lucide="airplay"
-                  class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 mr-2 size-4"
-                ></i>
-                Profile
-              </button>
-            </li>
-            <li role="presentation" class="z-20 w-full">
-              <button
-                class="[&.active]:bg-background inline-flex w-full cursor-pointer items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 font-medium [&.active]:shadow"
-                type="button"
-                role="tab"
-              >
-                <i
-                  data-lucide="aperture"
-                  class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 mr-2 size-4"
-                ></i>
-                Account
-              </button>
-            </li>
-            <li role="presentation" class="z-20 w-full">
-              <button
-                class="[&.active]:bg-background inline-flex w-full cursor-pointer items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 font-medium [&.active]:shadow"
-                type="button"
-                role="tab"
-              >
-                <i
-                  data-lucide="package-check"
-                  class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 mr-2 size-4"
-                ></i>
-                Change Password
-              </button>
-            </li>
-            <li role="presentation" class="z-20 w-full">
-              <button
-                class="[&.active]:bg-background inline-flex w-full cursor-pointer items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 font-medium [&.active]:shadow"
-                type="button"
-                role="tab"
-              >
-                <i
-                  data-lucide="palette"
-                  class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 mr-2 size-4"
-                ></i>
-                Settings
-              </button>
-            </li>
-          </ul>
-        </div> -->
       </div>
     </div>
   </div>
+
+  <DialogBasic id="modal-patient-create" size="3xl">
+    <PatientCreate :patient-id="patientId" :is-inside-modal="true" />
+  </DialogBasic>
 </template>
 
 <script setup lang="ts">
@@ -169,7 +89,13 @@ import { getPatientByIdAction } from '../actions/get-patient-by-id.action'
 import CalendarBirthdayIcon from '@/icons/CalendarBirthdayIcon.vue'
 import CalendarDateRegisterIcon from '@/icons/CalendarDateRegisterIcon.vue'
 import EmailIcon from '@/icons/EmailIcon.vue'
+import EditIcon from '@/icons/EditIcon.vue'
+import DeleteIcon from '@/icons/DeleteIcon.vue'
+import PreviewIcon from '@/icons/PreviewIcon.vue'
 import PhoneIcon from '@/icons/PhoneIcon.vue'
+import DialogBasic from '@/modules/common/components/DialogBasic.vue'
+import ButtonRounded from '@/modules/common/components/ButtonRounded.vue'
+import PatientCreate from '@/modules/patient/views/PatientCreate.vue'
 
 interface Props {
   patientId: string

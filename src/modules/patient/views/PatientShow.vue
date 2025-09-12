@@ -1,5 +1,5 @@
 <template>
-  <div class="relative z-20">
+  <div class="relative">
     <div class="mt-8 flex items-center">
       <h2 class="mr-auto text-lg font-medium">Información del paciente</h2>
     </div>
@@ -69,8 +69,10 @@
     class="flex items-center justify-center flex-1 px-5 pt-5 mt-6 border-t lg:mt-0 lg:border-0 lg:pt-0"
   >
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full">
-      <ButtonBase text="Ver citas" :icon="PreviewIcon" color="primary" />
-      <ButtonBase text="Editar" :icon="EditIcon" color="secondary" />
+      <ButtonBase text="Ver citas" :icon="PreviewIcon" color="primary" data-tw-toggle="modal"
+                          data-tw-target="#modal-patient-appointments" />
+      <ButtonBase text="Editar" :icon="EditIcon" color="secondary" data-tw-toggle="modal"
+                          data-tw-target="#modal-patient-edit" />
       <ButtonBase text="Eliminar" :icon="DeleteIcon" color="danger" />
     </div>
   </div>
@@ -80,7 +82,11 @@
     </div>
   </div>
 
-  <DialogBasic id="modal-patient-create" size="3xl">
+  <DialogBasic id="modal-patient-appointments" size="3xl">
+    <PatientAppointmentsIndex :patient-id="patientId" />
+  </DialogBasic>
+
+  <DialogBasic id="modal-patient-edit" size="3xl">
     <PatientCreate :patient-id="patientId" :is-inside-modal="true" />
   </DialogBasic>
 </template>
@@ -97,6 +103,7 @@ import PreviewIcon from '@/icons/PreviewIcon.vue'
 import PhoneIcon from '@/icons/PhoneIcon.vue'
 import DialogBasic from '@/modules/common/components/DialogBasic.vue'
 import ButtonBase from '@/modules/common/components/ButtonBase.vue'
+import PatientAppointmentsIndex from '@/modules/patient/views/PatientAppointmentsIndex.vue'
 import PatientCreate from '@/modules/patient/views/PatientCreate.vue'
 
 interface Props {

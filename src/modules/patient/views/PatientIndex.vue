@@ -171,14 +171,14 @@
                       <PreviewIcon />
                       Ver
                     </RouterLink>
-                    <div
+                    <!-- <div
                       class="mr-3 flex items-center cursor-pointer"
                       @click="handleModalCreateUpdate(patient.id)"
                     >
                       <EditIcon />
                       Editar
-                    </div>
-                    <a
+                    </div> -->
+                    <!-- <a
                       class="text-danger flex items-center"
                       data-tw-toggle="modal"
                       data-tw-target="#delete-confirmation-dialog"
@@ -186,7 +186,7 @@
                     >
                       <DeleteIcon />
                       Eliminar
-                    </a>
+                    </a> -->
                   </div>
                 </td>
               </tr>

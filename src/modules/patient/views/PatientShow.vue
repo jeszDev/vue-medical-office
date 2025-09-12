@@ -69,9 +69,9 @@
     class="flex items-center justify-center flex-1 px-5 pt-5 mt-6 border-t lg:mt-0 lg:border-0 lg:pt-0"
   >
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full">
-      <ButtonRounded text="Ver citas" :icon="PreviewIcon" color="primary" />
-      <ButtonRounded text="Editar" :icon="EditIcon" color="secondary" />
-      <ButtonRounded text="Eliminar" :icon="DeleteIcon" color="danger" />
+      <ButtonBase text="Ver citas" :icon="PreviewIcon" color="primary" />
+      <ButtonBase text="Editar" :icon="EditIcon" color="secondary" />
+      <ButtonBase text="Eliminar" :icon="DeleteIcon" color="danger" />
     </div>
   </div>
 </div>
@@ -96,7 +96,7 @@ import DeleteIcon from '@/icons/DeleteIcon.vue'
 import PreviewIcon from '@/icons/PreviewIcon.vue'
 import PhoneIcon from '@/icons/PhoneIcon.vue'
 import DialogBasic from '@/modules/common/components/DialogBasic.vue'
-import ButtonRounded from '@/modules/common/components/ButtonRounded.vue'
+import ButtonBase from '@/modules/common/components/ButtonBase.vue'
 import PatientCreate from '@/modules/patient/views/PatientCreate.vue'
 
 interface Props {

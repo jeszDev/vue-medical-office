@@ -1,5 +1,5 @@
 <template>
-  <div class="relative pl-8 sm:pl-32 py-6 group">
+  <div class="relative pl-8 sm:pl-32 py-6 border-b group">
     <!-- Purple label -->
     <!-- <div class="font-medium text-amber-950 mb-1 sm:mb-0">{{ appointment.estatus }}</div> -->
     <div
@@ -33,13 +33,13 @@
 </template>
 
 <script setup lang="ts">
-import { Appointment } from '../../appointment/interfaces/appointment.interface'
+import { Appointment } from '../../appointment/interfaces/appointment.interface';
 
 interface Props {
-  appointment: Appointment
+  appointment: Appointment;
 }
 
-defineProps<Props>()
+defineProps<Props>();
 </script>
 
 <style scoped></style>

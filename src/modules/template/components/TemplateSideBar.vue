@@ -154,7 +154,7 @@
 
             <RouterLink
               class="side-menu__link side-menu__link--active"
-              :to="{ name: 'patients.appointments.index' }"
+              :to="{ name: 'patients.appointments.index', params: { patientId: 4 } }"
             >
               <i
                 data-lucide="panel-bottom-close"
@@ -1250,11 +1250,11 @@
 </template>
 
 <script setup lang="ts">
-import { MoveRight } from 'lucide-vue-next'
-import SimpleBar from 'simplebar-vue'
-import { useAuthStore } from '../../auth/stores/auth.store'
+import { MoveRight } from 'lucide-vue-next';
+import SimpleBar from 'simplebar-vue';
+import { useAuthStore } from '../../auth/stores/auth.store';
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 </script>
 
 <style scoped></style>

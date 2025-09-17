@@ -1,16 +1,16 @@
-import ButtonPrimary from '@/modules/common/components/ButtonPrimary.vue'
-import InputLabel from '@/modules/common/components/InputLabel.vue'
-import InputBase from '@/modules/common/components/InputBase.vue'
-import InputBaseDate from '@/modules/common/components/InputBaseDate.vue'
-import TextArea from '@/modules/common/components/TextArea.vue'
-import { computed, defineComponent, ref, watchEffect } from 'vue'
-import { useRouter } from 'vue-router'
-import { useMutation, useQuery } from '@tanstack/vue-query'
-import { useForm, useFieldArray } from 'vee-validate'
-import * as yup from 'yup'
+import ButtonPrimary from '@/modules/common/components/ButtonPrimary.vue';
+import InputLabel from '@/modules/common/components/InputLabel.vue';
+import InputBase from '@/modules/common/components/InputBase.vue';
+import InputBaseDate from '@/modules/common/components/InputBaseDate.vue';
+import TextArea from '@/modules/common/components/TextArea.vue';
+import { computed, defineComponent, ref, watchEffect } from 'vue';
+import { useRouter } from 'vue-router';
+import { useMutation, useQuery } from '@tanstack/vue-query';
+import { useForm, useFieldArray } from 'vee-validate';
+import * as yup from 'yup';
 
-import { createUpdatePatientAction, getPatientByIdAction } from '../actions'
-import { watch } from 'vue'
+import { createUpdatePatientAction, getPatientByIdAction } from '../actions';
+import { watch } from 'vue';
 
 const schema = yup.object({
   nombre: yup.string().required('Este campo es obligatorio'),
@@ -20,7 +20,7 @@ const schema = yup.object({
   telefono: yup.string(),
   correo_electronico: yup.string(),
   observaciones: yup.string(),
-})
+});
 
 export default defineComponent({
   components: {
@@ -41,10 +41,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const router = useRouter()
+    const router = useRouter();
     // const modal = props.isInsideModal
-    // console.log(`patientId: ${props.patientId}`);
-
+    console.log(`patientIddd: ${props.patientId}`);
 
     const {
       data: patient,
@@ -54,9 +53,9 @@ export default defineComponent({
     } = useQuery({
       queryKey: ['patient', props.patientId],
       queryFn: () => getPatientByIdAction(props.patientId),
-      enabled: props.patientId !== 'create', // Evitar la consulta si es 'create'
-      retry: false,
-    })
+      // enabled: props.patientId !== 'create', // Evitar la consulta si es 'create'
+      // retry: false,
+    });
 
     const {
       mutate,
@@ -65,37 +64,37 @@ export default defineComponent({
       data: updatedPatient,
     } = useMutation({
       mutationFn: createUpdatePatientAction,
-    })
+    });
 
     const { values, defineField, validateField, errors, handleSubmit, resetForm, meta } = useForm({
       validationSchema: schema,
-    })
-    const [nombre, nombreAttrs] = defineField('nombre')
-    const [primer_apellido, primer_apellidoAttrs] = defineField('primer_apellido')
-    const [segundo_apellido, segundo_apellidoAttrs] = defineField('segundo_apellido')
-    const [fecha_nacimiento, fecha_nacimientoAttrs] = defineField('fecha_nacimiento')
-    const [telefono, telefonoAttrs] = defineField('telefono')
-    const [correo_electronico, correo_electronicoAttrs] = defineField('correo_electronico')
-    const [observaciones, observacionesAttrs] = defineField('observaciones')
+    });
+    const [nombre, nombreAttrs] = defineField('nombre');
+    const [primer_apellido, primer_apellidoAttrs] = defineField('primer_apellido');
+    const [segundo_apellido, segundo_apellidoAttrs] = defineField('segundo_apellido');
+    const [fecha_nacimiento, fecha_nacimientoAttrs] = defineField('fecha_nacimiento');
+    const [telefono, telefonoAttrs] = defineField('telefono');
+    const [correo_electronico, correo_electronicoAttrs] = defineField('correo_electronico');
+    const [observaciones, observacionesAttrs] = defineField('observaciones');
 
     const onSubmit = handleSubmit(async (values) => {
-      console.log('onsubmit')
-      console.log({ values })
+      console.log('onsubmit');
+      console.log({ values });
 
-      mutate(values)
+      mutate(values);
 
       if (props.isInsideModal) {
         window.tailwind.Modal.getOrCreateInstance(
           document.getElementById('modal-patient-create'),
-        ).hide()
+        ).hide();
       }
-    })
+    });
 
     watchEffect(() => {
       if (isError.value && !isLoading.value) {
-        router.replace({ name: 'patients.index' })
+        router.replace({ name: 'patients.index' });
       }
-    })
+    });
 
     // watch(
     //   patient,
@@ -113,14 +112,14 @@ export default defineComponent({
     // )
 
     watch(isUpdateSuccess, (value) => {
-      if (!value) return
+      if (!value) return;
 
       // todo: toast(Cadena actualizada)
 
       resetForm({
         values: updatedPatient.value,
-      })
-    })
+      });
+    });
 
     // Resetear el formulario si se cambia el patientId
     watch(
@@ -139,27 +138,27 @@ export default defineComponent({
               fecha_nacimiento: '',
               telefono: '',
               correo_electronico: '',
-              observaciones: ''
-            }
-          })
+              observaciones: '',
+            },
+          });
         } else if (newPatientId) {
           // Cuando el patientId cambia a un valor válido, recargar los datos del paciente
-          await refetch()
+          // await refetch();
 
           resetForm({
             values: patient.value,
-          })
+          });
         }
       },
       // { immediate: true }
-    )
+    );
 
     // Redirigir en caso de error al cargar el paciente
     watchEffect(() => {
       if (isError.value && !isLoading.value) {
-        router.replace({ name: 'patients.index' })
+        router.replace({ name: 'patients.index' });
       }
-    })
+    });
 
     // Cuando los datos del paciente son cargados correctamente, resetear el formulario
     // watch(
@@ -203,6 +202,6 @@ export default defineComponent({
 
       // actions
       onSubmit,
-    }
+    };
   },
-})
+});

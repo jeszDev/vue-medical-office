@@ -17,7 +17,7 @@
       >
         <CloseIcon />
       </a>
-      <div class="flex flex-col items-center gap-3 py-2">
+      <div class="flex flex-col items-center gap-3 overflow-y-auto max-h-[70vh] w-full px-2">
         <slot>Contenido de modal</slot>
       </div>
     </div>
@@ -26,17 +26,17 @@
 
 <script setup lang="ts">
 // import { X as XIcon } from 'lucide-vue-next';
-import CloseIcon from '@/icons/CloseIcon.vue'
+import CloseIcon from '@/icons/CloseIcon.vue';
 
 interface Props {
-  id: string
-  size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
+  id: string;
+  size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 }
 
 withDefaults(defineProps<Props>(), {
   id: 'basic-dialog',
   size: 'md',
-})
+});
 
 const sizes = {
   sm: 'sm:!max-w-sm',
@@ -45,7 +45,7 @@ const sizes = {
   xl: 'sm:!max-w-xl',
   '2xl': 'sm:!max-w-2xl',
   '3xl': 'sm:!max-w-3xl',
-}
+};
 </script>
 
 <style scoped></style>

@@ -1,6 +1,6 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import TemplateApp from '@/modules/template/TemplateApp.vue'
-import { authRoutes } from '@/modules/auth/routes'
+import { createRouter, createWebHistory } from 'vue-router';
+import TemplateApp from '@/modules/template/TemplateApp.vue';
+import { authRoutes } from '@/modules/auth/routes';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,14 +51,14 @@ const router = createRouter({
           component: () => import('@/modules/patient/views/PatientCreate.vue'),
         },
         {
-          path: 'patients/appointments',
+          path: 'patients/:patientId/appointments',
           name: 'patients.appointments.index',
-          // props: true,
+          props: true,
           component: () => import('@/modules/patient/views/PatientAppointmentsIndex.vue'),
         },
       ],
     },
   ],
-})
+});
 
-export default router
+export default router;

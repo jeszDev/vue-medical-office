@@ -1,5 +1,5 @@
-import { medicalOfficeApi } from '@/api/medicalOfficeApi'
-import type { Patient } from '../interfaces/patient.interface'
+import { medicalOfficeApi } from '@/api/medicalOfficeApi';
+import type { Patient } from '../interfaces/patient.interface';
 
 export const getPatientByIdAction = async (patientId: string): Promise<Patient> => {
   if (patientId === 'create') {
@@ -14,17 +14,19 @@ export const getPatientByIdAction = async (patientId: string): Promise<Patient> 
       observaciones: '',
       created_at: '',
       updated_at: '',
-    }
+    };
   }
 
   try {
-    console.log('Se va a realizar la peticion patient by id: ' + patientId)
+    console.log('Se va a realizar la peticion patient by id: ' + patientId);
 
-    const { data } = await medicalOfficeApi.get<Patient>(`/patients/${patientId}`)
+    const { data } = await medicalOfficeApi.get<Patient>(`/patients/${patientId}`);
 
-    return data.data
+    console.log(data.data);
+
+    return data.data;
   } catch (error) {
-    console.log(error)
-    throw new Error(`Error getting chain by id ${patientId}`)
+    console.log(error);
+    throw new Error(`Error getting chain by id ${patientId}`);
   }
-}
+};

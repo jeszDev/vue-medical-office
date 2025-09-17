@@ -83,16 +83,16 @@
           </div>
         </div>
       </div>
+
+      <DialogBasic id="modal-patient-appointments" size="3xl">
+        <PatientAppointmentsIndex :patientId :is-inside-modal="true" />
+      </DialogBasic>
+
+      <DialogBasic id="modal-patient-edit" size="3xl">
+        <PatientCreate :patientId :is-inside-modal="true" />
+      </DialogBasic>
     </template>
   </TemplateView>
-
-  <DialogBasic id="modal-patient-appointments" size="3xl">
-    <PatientAppointmentsIndex :patient-id="patientId" />
-  </DialogBasic>
-
-  <DialogBasic id="modal-patient-edit" size="3xl">
-    <PatientCreate :patient-id="patientId" :is-inside-modal="true" />
-  </DialogBasic>
 </template>
 
 <script setup lang="ts">

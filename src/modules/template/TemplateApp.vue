@@ -1,15 +1,15 @@
 <script setup lang="ts">
 // import { RouterLink, RouterView } from 'vue-router'
 
-import { onMounted } from 'vue'
+import { onMounted } from 'vue';
 // import { ChartNoAxesColumn, ChevronLeft, X, Power as PowerIcon } from 'lucide-vue-next'; // Importa el icono que necesites
 
-import { useMenuReactive } from './composables/useMenuReactive'
+import { useMenuReactive } from './composables/useMenuReactive';
 
 // import TemplateContent from './components/TemplateContent.vue';
-import TemplateSideBar from './components/TemplateSideBar.vue'
-import { useAuthStore } from '../auth/stores/auth.store'
-import BurgueMenuIcon from '@/icons/BurguerMenuIcon.vue'
+import TemplateSideBar from './components/TemplateSideBar.vue';
+import { useAuthStore } from '../auth/stores/auth.store';
+import BurguerMenuIcon from '@/icons/BurguerMenuIcon.vue';
 
 const {
   initMenu,
@@ -19,24 +19,24 @@ const {
   contentScrollAreaRef,
   closeMobileMenuRef,
   toggleCompactMenu,
-} = useMenuReactive()
+} = useMenuReactive();
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 
 onMounted(() => {
   // Page loader animation
   setTimeout(() => {
-    const pageLoader = document.querySelector('.page-loader')
+    const pageLoader = document.querySelector('.page-loader');
     if (pageLoader) {
-      pageLoader.classList.add('opacity-0')
+      pageLoader.classList.add('opacity-0');
       setTimeout(() => {
-        pageLoader.classList.add('hidden')
-      }, 1000)
+        pageLoader.classList.add('hidden');
+      }, 1000);
     }
 
-    initMenu()
-  }, 1000)
-})
+    initMenu();
+  }, 1000);
+});
 </script>
 
 <template>

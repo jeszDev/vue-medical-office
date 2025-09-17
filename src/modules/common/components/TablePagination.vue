@@ -10,7 +10,7 @@
             <!-- <ChevronsLeft
               class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
             /> -->
-            <PaginateFistPageIcon />
+            <PaginateFirstPageIcon />
           </button>
         </li>
 
@@ -64,7 +64,7 @@
             <!-- <ChevronsRight
               class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
             /> -->
-            <PaginaLastPageIcon />
+            <PaginateLastPageIcon />
           </button>
         </li>
 
@@ -136,21 +136,21 @@
 
 <script setup lang="ts">
 // import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight } from 'lucide-vue-next';
-import PaginateFirtsPageIcon from '@/icons/PaginateFirtsPageIcon.vue'
-import PaginateLastPageIcon from '@/icons/PaginateLastPageIcon.vue'
-import PaginatePreviousIcon from '@/icons/PaginatePreviousIcon.vue'
-import PaginateNextIcon from '@/icons/PaginateNextIcon.vue'
-import { Pagination } from '../interfaces/pagination.interface'
+import PaginateFirstPageIcon from '@/icons/PaginateFirstPageIcon.vue';
+import PaginateLastPageIcon from '@/icons/PaginateLastPageIcon.vue';
+import PaginatePreviousIcon from '@/icons/PaginatePreviousIcon.vue';
+import PaginateNextIcon from '@/icons/PaginateNextIcon.vue';
+import { Pagination } from '../interfaces/pagination.interface';
 
 interface Props {
-  pagination: Pagination
+  pagination: Pagination;
 }
 
-defineProps<Props>()
+defineProps<Props>();
 
 defineEmits<{
-  (e: 'page-change', pageNumber: number): void
-}>()
+  (e: 'page-change', pageNumber: number): void;
+}>();
 </script>
 
 <style scoped></style>

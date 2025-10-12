@@ -1,5 +1,5 @@
 <template>
-  <TemplateView title="Información del paciente">
+  <TemplateView v-if="!isLoading" title="Información del paciente">
     <template #main>
       <div
         class="box relative before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:bg-background/30 before:shadow-[0px_3px_5px_#0000000b] before:z-[-1] before:rounded-xl after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-[0px_3px_5px_#0000000b] after:rounded-xl after:z-[-1] after:backdrop-blur-md p-0 mt-5"

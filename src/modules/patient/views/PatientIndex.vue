@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="mt-10 text-lg font-medium">Listado de registros de cadenas de custodia</h2>
+    <h2 class="mt-10 text-lg font-medium">LISTADO DE PACIENTES</h2>
     <div class="mt-5 grid grid-cols-12 gap-6">
       <div class="col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
         <button

@@ -93,12 +93,12 @@
                 <th
                   class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
                 >
-                  Nombre
+                  NOMBRE
                 </th>
                 <th
                   class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
                 >
-                  Fecha en que se registro al paciente
+                  FECHA DE REGISTRO DEL PACIENTE
                 </th>
                 <!-- <th
                   class="h-12 px-4 font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-left"
@@ -220,32 +220,32 @@
 </template>
 
 <script setup lang="ts">
-import { useQuery, useQueryClient } from '@tanstack/vue-query'
-import { computed, ref, watch } from 'vue'
-import { getPatientsAction } from '../actions/get-patients.action'
-import TablePagination from '@/modules/common/components/TablePagination.vue'
-import { Pagination } from '../../common/interfaces/pagination.interface'
-import { useRoute, useRouter, RouterLink } from 'vue-router'
-import ModalQuestion from '@/modules/common/components/ModalQuestion.vue'
-import DialogBasic from '@/modules/common/components/DialogBasic.vue'
-import EditIcon from '@/icons/EditIcon.vue'
-import DeleteIcon from '@/icons/DeleteIcon.vue'
-import SearchIcon from '@/icons/SearchIcon.vue'
-import PreviewIcon from '@/icons/PreviewIcon.vue'
-import { useAuthStore } from '../../auth/stores/auth.store'
-import PatientCreate from '@/modules/patient/views/PatientCreate.vue'
+import { useQuery, useQueryClient } from '@tanstack/vue-query';
+import { computed, ref, watch } from 'vue';
+import { getPatientsAction } from '../actions/get-patients.action';
+import TablePagination from '@/modules/common/components/TablePagination.vue';
+import { Pagination } from '../../common/interfaces/pagination.interface';
+import { useRoute, useRouter, RouterLink } from 'vue-router';
+import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
+import DialogBasic from '@/modules/common/components/DialogBasic.vue';
+import EditIcon from '@/icons/EditIcon.vue';
+import DeleteIcon from '@/icons/DeleteIcon.vue';
+import SearchIcon from '@/icons/SearchIcon.vue';
+import PreviewIcon from '@/icons/PreviewIcon.vue';
+import { useAuthStore } from '../../auth/stores/auth.store';
+import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 
 // const page = ref(Number(route.query.page) || 1);
-const route = useRoute()
-const router = useRouter()
-const page = ref<number>(1)
-const perPage = ref<number>(10)
-const search = ref<string>('')
-const queryClient = useQueryClient()
+const route = useRoute();
+const router = useRouter();
+const page = ref<number>(1);
+const perPage = ref<number>(10);
+const search = ref<string>('');
+const queryClient = useQueryClient();
 
-const selectedPatientId = ref<'create' | number>('create')
+const selectedPatientId = ref<'create' | number>('create');
 
 const {
   data: response,
@@ -254,9 +254,9 @@ const {
 } = useQuery({
   queryKey: ['patients', { page: page }],
   queryFn: () => getPatientsAction(page.value, perPage.value, search.value),
-})
+});
 
-const patients = computed(() => response.value?.data || [])
+const patients = computed(() => response.value?.data || []);
 const pagination = computed<Pagination>(() => ({
   currentPage: response.value?.current_page || 1,
   firstPageUrl: response.value?.first_page_url || '',
@@ -269,40 +269,40 @@ const pagination = computed<Pagination>(() => ({
   total: response.value?.total || 0,
   to: response.value?.to || 0,
   from: response.value?.from || 0,
-}))
+}));
 
 function pageChange(pageNumber: number) {
-  page.value = pageNumber
+  page.value = pageNumber;
 
   router.push({
     query: { ...route.query, page: pageNumber, search: search.value || undefined },
-  })
+  });
 }
 
 function doSearch() {
-  page.value = 1 // opcional: reiniciar a la primera página
-  refetch()
+  page.value = 1; // opcional: reiniciar a la primera página
+  refetch();
 }
 
 const handleModalCreateUpdate = (patientId: 'create' | number) => {
-  console.log(patientId)
+  console.log(patientId);
 
-  selectedPatientId.value = patientId
-  window.tailwind.Modal.getOrCreateInstance(document.getElementById('modal-patient-create')).show()
-}
+  selectedPatientId.value = patientId;
+  window.tailwind.Modal.getOrCreateInstance(document.getElementById('modal-patient-create')).show();
+};
 
 const handleLogout = async () => {
-  console.log('cerrar sesion')
+  console.log('cerrar sesion');
 
-  const modalElement = document.querySelector('.modal.show')
+  const modalElement = document.querySelector('.modal.show');
   if (modalElement) {
-    console.log('entrtas')
-    window.tailwind.Modal.getOrCreateInstance(modalElement).hide()
+    console.log('entrtas');
+    window.tailwind.Modal.getOrCreateInstance(modalElement).hide();
   }
   setTimeout(() => {
-    authStore.logout()
-  }, 300)
-}
+    authStore.logout();
+  }, 300);
+};
 
 watch(
   [page, perPage],
@@ -310,10 +310,10 @@ watch(
     queryClient.prefetchQuery({
       queryKey: ['patients', { page: page.value + 1 }],
       queryFn: () => getPatientsAction(page.value + 1, perPage.value),
-    })
+    });
   },
   { immediate: true },
-)
+);
 </script>
 
 <style scoped></style>

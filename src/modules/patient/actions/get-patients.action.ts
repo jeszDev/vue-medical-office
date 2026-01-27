@@ -1,5 +1,5 @@
-import { medicalOfficeApi } from '@/api/medicalOfficeApi'
-import type { PatientPaginate } from '../interfaces/patient-paginate.interface'
+import { medicalOfficeApi } from '@/api/medicalOfficeApi';
+import type { PatientPaginate } from '../interfaces/patient-paginate.interface';
 
 export const getPatientsAction = async (
   page: number = 1,
@@ -9,13 +9,13 @@ export const getPatientsAction = async (
   try {
     const { data } = await medicalOfficeApi.get<PatientPaginate>(
       `/patients?page=${page}&per_page=${perPage}&search=${search}`,
-    )
+    );
 
     // console.log(data);
 
-    return data
+    return data;
   } catch (error) {
-    console.log(error)
-    throw new Error('Error getting chains of custody')
+    console.log(error);
+    throw new Error('Error getting chains of custody');
   }
-}
+};

@@ -1,6 +1,26 @@
 <template>
   <TemplateView v-if="!isLoading" title="Información del paciente">
     <template #main>
+      <div class="flex flex-col gap-2 lg:flex-row">
+          <!-- <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full"> -->
+              <ButtonBase
+                text="Ver citas del paciente"
+                :icon="PreviewIcon"
+                color="primary"
+                data-tw-toggle="modal"
+                data-tw-target="#modal-patient-appointments"
+              />
+              <ButtonBase
+                text="Editar datos del paciente"
+                :icon="EditIcon"
+                color="secondary"
+                data-tw-toggle="modal"
+                data-tw-target="#modal-patient-edit"
+              />
+              <ButtonBase text="Eliminar paciente" :icon="DeleteIcon" color="danger" />
+            <!-- </div> -->
+        </div>
+
       <div
         class="box relative before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:bg-background/30 before:shadow-[0px_3px_5px_#0000000b] before:z-[-1] before:rounded-xl after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-[0px_3px_5px_#0000000b] after:rounded-xl after:z-[-1] after:backdrop-blur-md p-0 mt-5"
       >
@@ -63,23 +83,24 @@
           <div
             class="flex items-center justify-center flex-1 px-5 pt-5 mt-6 border-t lg:mt-0 lg:border-0 lg:pt-0"
           >
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full">
+            <!-- <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full">
               <ButtonBase
-                text="Ver citas"
+                text="Ver citas del paciente"
                 :icon="PreviewIcon"
                 color="primary"
                 data-tw-toggle="modal"
                 data-tw-target="#modal-patient-appointments"
               />
               <ButtonBase
-                text="Editar"
+                text="Editar datos del paciente"
                 :icon="EditIcon"
                 color="secondary"
                 data-tw-toggle="modal"
                 data-tw-target="#modal-patient-edit"
               />
-              <ButtonBase text="Eliminar" :icon="DeleteIcon" color="danger" />
-            </div>
+              <ButtonBase text="Eliminar paciente" :icon="DeleteIcon" color="danger" />
+            </div> -->
+            <div>{{ patient.observaciones }}</div>
           </div>
         </div>
       </div>

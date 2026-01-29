@@ -4,7 +4,7 @@
   > -->
   <div class="relative z-20">
     <div class="mt-8 flex items-center">
-      <h2 class="mr-auto text-lg font-medium">Registrar nuevo paciente</h2>
+      <h2 class="mr-auto text-lg font-medium">{{ action === 'create' ? 'Registro de nuevo paciente' : 'Editar paciente' }}</h2>
     </div>
     <!-- BEGIN: Wizard Layout -->
 
@@ -90,7 +90,7 @@
         </div>
 
         <div class="col-span-12 mt-10 flex items-center justify-center sm:justify-end">
-          <ButtonPrimary text="Registrar" @click="onSubmit" />
+          <ButtonPrimary :text="action === 'create' ? 'Registrar' : 'Editar' " @click="onSubmit" />
         </div>
       </form>
     </div>

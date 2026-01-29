@@ -4,7 +4,7 @@ import type { Patient } from '../interfaces/patient.interface';
 export const getPatientByIdAction = async (patientId: string): Promise<Patient> => {
   if (patientId === 'create') {
     return {
-      id: '',
+      id: 0,
       nombre: '',
       primer_apellido: '',
       segundo_apellido: '',
@@ -12,18 +12,13 @@ export const getPatientByIdAction = async (patientId: string): Promise<Patient> 
       telefono: '',
       correo_electronico: '',
       observaciones: '',
-      created_at: '',
-      updated_at: '',
+      creado_el: '',
+      nombre_completo: '',
     };
   }
 
   try {
-    console.log('Se va a realizar la peticion patient by id: ' + patientId);
-
     const { data } = await medicalOfficeApi.get<Patient>(`/patients/${patientId}`);
-
-    console.log(data.data);
-
     return data.data;
   } catch (error) {
     console.log(error);

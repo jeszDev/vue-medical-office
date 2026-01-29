@@ -96,21 +96,6 @@ export default defineComponent({
       }
     });
 
-    // watch(
-    //   patient,
-    //   () => {
-    //     if (!patient) return
-
-    //     resetForm({
-    //       values: patient.value,
-    //     })
-    //   },
-    //   {
-    //     deep: true,
-    //     immediate: true,
-    //   },
-    // )
-
     watch(isUpdateSuccess, (value) => {
       if (!value) return;
 
@@ -121,14 +106,24 @@ export default defineComponent({
       });
     });
 
-    // Resetear el formulario si se cambia el patientId
+    watch(
+      patient,
+      (newPatient) => {
+        if (!newPatient) return;
+
+        resetForm({
+          values: newPatient,
+        });
+      },
+      {
+        immediate: true,
+      }
+    );
+
     watch(
       () => props.patientId,
-      async (newPatientId) => {
+      (newPatientId) => {
         if (newPatientId === 'create') {
-          // Limpiar el formulario si estamos creando un nuevo paciente
-          console.log('entra a limpiar');
-
           resetForm({
             values: {
               id: '',
@@ -141,17 +136,10 @@ export default defineComponent({
               observaciones: '',
             },
           });
-        } else if (newPatientId) {
-          // Cuando el patientId cambia a un valor válido, recargar los datos del paciente
-          // await refetch();
-
-          resetForm({
-            values: patient.value,
-          });
         }
-      },
-      // { immediate: true }
+      }
     );
+
 
     // Redirigir en caso de error al cargar el paciente
     watchEffect(() => {
@@ -160,24 +148,8 @@ export default defineComponent({
       }
     });
 
-    // Cuando los datos del paciente son cargados correctamente, resetear el formulario
-    // watch(
-    //   patient,
-    //   (newPatient) => {
-    //     if (!newPatient) return
-    //     resetForm({
-    //       values: newPatient,
-    //     })
-    //   },
-    //   {
-    //     deep: true,
-    //     immediate: true,
-    //   }
-    // )
-
     return {
-      // modal,
-
+      //props
       values,
       errors,
       meta,
@@ -199,6 +171,7 @@ export default defineComponent({
       observacionesAttrs,
 
       // getters
+      action: props.patientId === 'create' ? 'create' : 'edit',
 
       // actions
       onSubmit,

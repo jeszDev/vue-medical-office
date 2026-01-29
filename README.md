@@ -37,3 +37,9 @@ npm run build
 ```sh
 npm run lint
 ```
+
+### Iconos [Lucide](https://lucide.dev/)
+
+```sh
+Paquete de iconos
+```

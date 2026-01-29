@@ -18,7 +18,7 @@ const schema = yup.object({
   segundo_apellido: yup.string(),
   fecha_nacimiento: yup.string(),
   telefono: yup.string(),
-  correo_electronico: yup.string(),
+  correo_electronico: yup.string().nullable().email('Correo electrónico inválido'),
   observaciones: yup.string(),
 });
 

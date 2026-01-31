@@ -10,6 +10,8 @@ import { useForm, useFieldArray } from 'vee-validate';
 import * as yup from 'yup';
 
 import { createUpdatePatientAction, getPatientByIdAction } from '../actions';
+import formatDateToInput from '@/helpers/format-date-to-input.helper';
+
 import { watch } from 'vue';
 
 const schema = yup.object({
@@ -111,13 +113,18 @@ export default defineComponent({
       (newPatient) => {
         if (!newPatient) return;
 
+        const formattedPatient = {
+          ...newPatient,
+          fecha_nacimiento: formatDateToInput(newPatient.fecha_nacimiento),
+        };
+
         resetForm({
-          values: newPatient,
+          values: formattedPatient,
         });
       },
       {
         immediate: true,
-      }
+      },
     );
 
     watch(
@@ -137,9 +144,8 @@ export default defineComponent({
             },
           });
         }
-      }
+      },
     );
-
 
     // Redirigir en caso de error al cargar el paciente
     watchEffect(() => {

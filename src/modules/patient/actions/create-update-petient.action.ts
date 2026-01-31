@@ -1,13 +1,18 @@
 import { medicalOfficeApi } from '@/api/medicalOfficeApi'
 import type { Patient } from '../interfaces/patient.interface'
+import { useToast } from "vue-toastification";
 
 export const createUpdatePatientAction = async (patient: Partial<Patient>) => {
+  const toast = useToast();
+
   try {
     if (patient.id && patient.id !== '') {
       return await updatePatient(patient)
     }
 
     const { data } = await medicalOfficeApi.post<Patient>(`/patients`, patient)
+
+    toast.success('Paciente creado correctamente');
 
     return data
   } catch (error) {}

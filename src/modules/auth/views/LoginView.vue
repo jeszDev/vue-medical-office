@@ -78,6 +78,8 @@
 import { useAuthStore } from '../stores/auth.store';
 import { ref } from 'vue';
 
+import { useToast } from "vue-toastification";
+
 const authStore = useAuthStore();
 // const toast = useToast();
 const emailInputRef = ref<HTMLInputElement | null>(null);
@@ -86,12 +88,16 @@ const passwordInputRef = ref<HTMLInputElement | null>(null);
 const email = ref('');
 const password = ref('');
 
+const toast = useToast();
+
 const handleLogin = async () => {
   if (email.value === '') {
+    toast.error("Ingrese su correo electrónico");
     return emailInputRef.value?.focus();
   }
 
   if (password.value.length < 8) {
+    toast.error("Ingrese su contraseña");
     return passwordInputRef.value?.focus();
   }
 
@@ -99,7 +105,7 @@ const handleLogin = async () => {
 
   if (ok) return;
 
-  // toast.error('Usuario o contraseña incorrectos');
+  toast.error('Usuario  y/o contraseña incorrectos');
 };
 </script>
 

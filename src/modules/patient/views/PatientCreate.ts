@@ -45,6 +45,7 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
+    const toast = useToast();
     // const modal = props.isInsideModal
     // console.log(`patientIddd: ${props.patientId}`);
 
@@ -98,6 +99,10 @@ export default defineComponent({
 
     watch(isUpdateSuccess, (value) => {
       if (!value) return;
+
+      props.patientId === 'create'
+        ? toast.success('Paciente creado correctamente')
+        : toast.success('Paciente editado correctamente');
 
       resetForm({
         values: updatedPatient.value,

@@ -8,6 +8,7 @@ import { useRouter } from 'vue-router';
 import { useMutation, useQuery } from '@tanstack/vue-query';
 import { useForm, useFieldArray } from 'vee-validate';
 import * as yup from 'yup';
+import { useToast } from 'vue-toastification';
 
 import { createUpdatePatientAction, getPatientByIdAction } from '../actions';
 import formatDateToInput from '@/helpers/format-date-to-input.helper';
@@ -17,11 +18,11 @@ import { watch } from 'vue';
 const schema = yup.object({
   nombre: yup.string().required('Este campo es obligatorio'),
   primer_apellido: yup.string().required('Este campo es obligatorio'),
-  segundo_apellido: yup.string(),
-  fecha_nacimiento: yup.string(),
-  telefono: yup.string(),
-  correo_electronico: yup.string().nullable().email('Correo electrónico inválido'),
-  observaciones: yup.string(),
+  segundo_apellido: yup.string().nullable(),
+  fecha_nacimiento: yup.string().nullable(),
+  telefono: yup.string().nullable().notRequired(),
+  correo_electronico: yup.string().nullable().notRequired().email('Correo electrónico inválido'),
+  observaciones: yup.string().nullable(),
 });
 
 export default defineComponent({
@@ -45,7 +46,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     // const modal = props.isInsideModal
-    console.log(`patientIddd: ${props.patientId}`);
+    // console.log(`patientIddd: ${props.patientId}`);
 
     const {
       data: patient,
@@ -80,9 +81,6 @@ export default defineComponent({
     const [observaciones, observacionesAttrs] = defineField('observaciones');
 
     const onSubmit = handleSubmit(async (values) => {
-      console.log('onsubmit');
-      console.log({ values });
-
       mutate(values);
 
       if (props.isInsideModal) {
@@ -100,8 +98,6 @@ export default defineComponent({
 
     watch(isUpdateSuccess, (value) => {
       if (!value) return;
-
-      // todo: toast(Cadena actualizada)
 
       resetForm({
         values: updatedPatient.value,

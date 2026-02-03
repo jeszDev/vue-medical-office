@@ -2,24 +2,24 @@
   <TemplateView v-if="!isLoading" title="Información del paciente">
     <template #main>
       <div class="flex flex-col gap-2 lg:flex-row">
-          <!-- <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full"> -->
-              <ButtonBase
-                text="Ver citas del paciente"
-                :icon="PreviewIcon"
-                color="primary"
-                data-tw-toggle="modal"
-                data-tw-target="#modal-patient-appointments"
-              />
-              <ButtonBase
-                text="Editar datos del paciente"
-                :icon="EditIcon"
-                color="secondary"
-                data-tw-toggle="modal"
-                data-tw-target="#modal-patient-edit"
-              />
-              <ButtonBase text="Eliminar paciente" :icon="DeleteIcon" color="danger" />
-            <!-- </div> -->
-        </div>
+        <!-- <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full"> -->
+        <ButtonBase
+          text="Ver citas del paciente"
+          :icon="PreviewIcon"
+          color="primary"
+          data-tw-toggle="modal"
+          data-tw-target="#modal-patient-appointments"
+        />
+        <ButtonBase
+          text="Editar datos del paciente"
+          :icon="EditIcon"
+          color="secondary"
+          data-tw-toggle="modal"
+          data-tw-target="#modal-patient-create-or-edit"
+        />
+        <ButtonBase text="Eliminar paciente" :icon="DeleteIcon" color="danger" />
+        <!-- </div> -->
+      </div>
 
       <div
         class="box relative before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:bg-background/30 before:shadow-[0px_3px_5px_#0000000b] before:z-[-1] before:rounded-xl after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-[0px_3px_5px_#0000000b] after:rounded-xl after:z-[-1] after:backdrop-blur-md p-0 mt-5"
@@ -96,7 +96,7 @@
                 :icon="EditIcon"
                 color="secondary"
                 data-tw-toggle="modal"
-                data-tw-target="#modal-patient-edit"
+                data-tw-target="#modal-patient-create-or-edit"
               />
               <ButtonBase text="Eliminar paciente" :icon="DeleteIcon" color="danger" />
             </div> -->
@@ -109,7 +109,7 @@
         <PatientAppointmentsIndex :patientId :is-inside-modal="true" />
       </DialogBasic>
 
-      <DialogBasic id="modal-patient-edit" size="3xl">
+      <DialogBasic id="modal-patient-create-or-edit" size="3xl">
         <PatientCreate :patientId :is-inside-modal="true" />
       </DialogBasic>
     </template>

@@ -86,7 +86,7 @@ export default defineComponent({
 
       if (props.isInsideModal) {
         window.tailwind.Modal.getOrCreateInstance(
-          document.getElementById('modal-patient-create'),
+          document.getElementById('modal-patient-create-or-edit'),
         ).hide();
       }
     });

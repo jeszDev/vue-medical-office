@@ -212,7 +212,7 @@
 
   <!-- <ModalQuestion /> -->
 
-  <DialogBasic id="modal-patient-create" size="3xl">
+  <DialogBasic id="modal-patient-create-or-edit" size="3xl">
     <PatientCreate :patient-id="String(selectedPatientId)" :is-inside-modal="true" />
   </DialogBasic>
 
@@ -288,7 +288,9 @@ const handleModalCreateUpdate = (patientId: 'create' | number) => {
   console.log(patientId);
 
   selectedPatientId.value = patientId;
-  window.tailwind.Modal.getOrCreateInstance(document.getElementById('modal-patient-create')).show();
+  window.tailwind.Modal.getOrCreateInstance(
+    document.getElementById('modal-patient-create-or-edit'),
+  ).show();
 };
 
 const handleLogout = async () => {

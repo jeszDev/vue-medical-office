@@ -56,6 +56,12 @@ const router = createRouter({
           props: true,
           component: () => import('@/modules/patient/views/PatientAppointmentsIndex.vue'),
         },
+        {
+          path: 'appointments/create',
+          name: 'appointments.create',
+          props: true,
+          component: () => import('@/modules/appointment/views/AppointmentCreate.vue'),
+        },
       ],
     },
   ],

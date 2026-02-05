@@ -10,7 +10,7 @@ import { useForm, useFieldArray } from 'vee-validate';
 import * as yup from 'yup';
 import { useToast } from 'vue-toastification';
 
-import { createUpdatePatientAction, getPatientByIdAction } from '../actions';
+import { createUpdatePatientAction, getAppointmentByIdAction } from '../actions';
 import formatDateToInput from '@/helpers/format-date-to-input.helper';
 
 import { watch } from 'vue';

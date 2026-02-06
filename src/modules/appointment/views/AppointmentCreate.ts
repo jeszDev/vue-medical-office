@@ -72,7 +72,7 @@ export default defineComponent({
     const [motivo, motivoAttrs] = defineField('motivo');
     const [fecha_hora_inicio, fecha_hora_inicioAttrs] = defineField('fecha_hora_inicio');
     const [fecha_hora_termino, fecha_hora_terminoAttrs] = defineField('fecha_hora_termino');
-    const [observaciones, observacionesAttrs] = defineField('observaciones');
+    const [observaciones_cita, observaciones_citaAttrs] = defineField('observaciones_cita');
 
     const onSubmit = handleSubmit(async (values) => {
       mutate(values);
@@ -156,12 +156,12 @@ export default defineComponent({
       motivo,
       fecha_hora_inicio,
       fecha_hora_termino,
-      observaciones,
+      observaciones_cita,
 
       motivoAttrs,
       fecha_hora_inicioAttrs,
       fecha_hora_terminoAttrs,
-      observacionesAttrs,
+      observaciones_citaAttrs,
 
       // getters
       action: props.appointmentId === 'create' ? 'create' : 'edit',

@@ -6,14 +6,13 @@ export const getAppointmentByIdAction = async (appointmentId: string): Promise<A
   if (appointmentId === 'create') {
     return {
       id: 0,
-      fecha: '',
-      hora_inicio: '',
-      hora_fin: '',
+      fecha_hora_inicio: '',
+      fecha_hora_termino: '',
       motivo: '',
-      observaciones: '',
+      observaciones_cita: '',
       medico_id: 0,
       cita_estatus_id: 0,
-      pacientes: Patient[],
+      // pacientes: Patient[],
     };
   }
 

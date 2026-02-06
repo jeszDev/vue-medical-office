@@ -13,7 +13,7 @@
     >
       <time
         class="sm:absolute left-0 translate-y-0.5 inline-flex items-center justify-center text-xs font-semibold uppercase w-20 h-6 mb-3 sm:mb-0 [--color:var(--color-warning)] bg-(--color)/20 border-(--color)/60 text-(--color) rounded-full"
-        >{{ appointment.fecha }}</time
+        >{{ appointment.fecha_hora_inicio }}</time
       >
       <div class="text-base font-bold text-amber-950">{{ appointment.motivo }}</div>
       <!-- <div class="text-sm font-bold text-slate-900">{{ appointment.estatus }}</div> -->
@@ -21,7 +21,7 @@
     <!-- Content -->
     <div class="mb-1.5">
       <div class="text-blue-800 font-medium">Observaciones:</div>
-      <div class="text-slate-500">{{ appointment.observaciones }}</div>
+      <div class="text-slate-500">{{ appointment.observaciones_cita }}</div>
     </div>
     <div class="text-slate-500">
       <div class="text-blue-800 font-medium">Pacientes:</div>

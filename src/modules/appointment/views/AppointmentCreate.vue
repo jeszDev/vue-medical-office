@@ -4,36 +4,49 @@
   > -->
   <div class="relative z-20">
     <div class="mt-8 flex items-center">
-      <h2 class="mr-auto text-lg font-medium">Crear nueva cita</h2>
+      <h2 class="mr-auto text-lg font-medium">Agendar nueva cita</h2>
     </div>
     <!-- BEGIN: Wizard Layout -->
 
     <div :class="['mt-10 border-t pt-10', !isInsideModal ? 'px-5 sm:px-20' : '']">
       <form @submit="onSubmit">
         <div class="mt-5 grid grid-cols-12 gap-4 gap-y-5">
-          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-4">
-            <InputLabel label="Motivo de la cita" :isRequired="false" />
+          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-12">
+            <InputLabel label="Motivo de la cita" :isRequired="true" />
             <InputBase
               type="text"
-              name="segundo_apellido"
+              v-model="motivo"
+              v-bind="motivoAttrs"
               placeholder="Ejemplo: realizar ultrasonido"
+              name="motivo"
             />
           </div>
-          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-4">
+          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-6">
             <InputLabel label="Fecha y hora de inicio de la cita" :isRequired="true" />
-            <InputBaseDate type="datetime-local" name="fecha_hora_inicio" />
+            <InputBaseDate
+              type="datetime-local"
+              v-model="fecha_hora_inicio"
+              v-bind="fecha_hora_inicioAttrs"
+              name="fecha_hora_inicio"
+            />
           </div>
-          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-4">
+          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-6">
             <InputLabel label="Fecha y hora de termino de la cita" :isRequired="true" />
-            <InputBaseDate type="datetime-local" name="fecha_hora_termino" />
+            <InputBaseDate
+              type="datetime-local"
+              v-model="fecha_hora_termino"
+              v-bind="fecha_hora_terminoAttrs"
+              name="fecha_hora_termino"
+            />
           </div>
 
           <div class="flex flex-col gap-2.5 col-span-12">
             <InputLabel label="Observaciones / anotaciones sobre la cita" :isRequired="false" />
             <TextArea
-              v-model="observaciones"
-              name="observaciones"
+              v-model="observaciones_cita"
+              v-bind="observaciones_citaAttrs"
               placeholder="Ejemplo: traer estudios sobre la tiroides"
+              name="observaciones"
               :error="observaciones"
             />
           </div>
@@ -46,7 +59,7 @@
     </div>
   </div>
 
-  <!-- <div class="grid grid-cols-2 mt-2">
+  <div class="grid grid-cols-2 mt-2">
     <pre class="bg-blue-200 p-2">
       {{ JSON.stringify(values, null, 2) }}
     </pre>
@@ -56,7 +69,7 @@
     <pre class="bg-green-200 p-2 col-span-2">
       {{ JSON.stringify(meta, null, 2) }}
     </pre>
-  </div> -->
+  </div>
 </template>
 
 <script src="./AppointmentCreate.ts" lang="ts"></script>

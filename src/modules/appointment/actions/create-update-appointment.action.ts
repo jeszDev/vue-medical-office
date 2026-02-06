@@ -1,7 +1,7 @@
 import { medicalOfficeApi } from '@/api/medicalOfficeApi';
 import type { Appointment } from '../interfaces/appointment.interface';
 
-export const createUpdateappointmentAction = async (appointment: Partial<Appointment>) => {
+export const createUpdateAppointmentAction = async (appointment: Partial<Appointment>) => {
   // const toast = useToast();
 
   try {

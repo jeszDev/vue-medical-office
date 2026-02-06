@@ -10,7 +10,7 @@ import { useForm, useFieldArray } from 'vee-validate';
 import * as yup from 'yup';
 import { useToast } from 'vue-toastification';
 
-import { createUpdatePatientAction, getAppointmentByIdAction } from '../actions';
+import { createUpdateAppointmentAction, getAppointmentByIdAction } from '../actions';
 import formatDateToInput from '@/helpers/format-date-to-input.helper';
 
 import { watch } from 'vue';
@@ -34,6 +34,7 @@ export default defineComponent({
     appointmentId: {
       type: String,
       required: true,
+      default: 'create',
     },
     isInsideModal: {
       type: Boolean,
@@ -60,7 +61,7 @@ export default defineComponent({
       mutate,
       isPending,
       isSuccess: isUpdateSuccess,
-      data: updatedPatient,
+      data: updatedAppointment,
     } = useMutation({
       mutationFn: createUpdateAppointmentAction,
     });
@@ -92,27 +93,27 @@ export default defineComponent({
     watch(isUpdateSuccess, (value) => {
       if (!value) return;
 
-      props.patientId === 'create'
-        ? toast.success('Paciente creado correctamente')
-        : toast.success('Paciente editado correctamente');
+      props.appointmentId === 'create'
+        ? toast.success('Cita agendada correctamente')
+        : toast.success('Cita editada correctamente');
 
       resetForm({
-        values: updatedPatient.value,
+        values: updatedAppointment.value,
       });
     });
 
     watch(
-      patient,
-      (newPatient) => {
-        if (!newPatient) return;
+      appointment,
+      (newAppointment) => {
+        if (!newAppointment) return;
 
-        const formattedPatient = {
-          ...newPatient,
-          fecha_nacimiento: formatDateToInput(newPatient.fecha_nacimiento),
-        };
+        // const formattedPatient = {
+        //   ...newPatient,
+        //   fecha_nacimiento: formatDateToInput(newPatient.fecha_nacimiento),
+        // };
 
         resetForm({
-          values: formattedPatient,
+          values: newAppointment,
         });
       },
       {
@@ -121,19 +122,18 @@ export default defineComponent({
     );
 
     watch(
-      () => props.patientId,
-      (newPatientId) => {
-        if (newPatientId === 'create') {
+      () => props.appointmentId,
+      (newAppointmentId) => {
+        if (newAppointmentId === 'create') {
           resetForm({
             values: {
               id: '',
-              nombre: '',
-              primer_apellido: '',
-              segundo_apellido: '',
-              fecha_nacimiento: '',
-              telefono: '',
-              correo_electronico: '',
-              observaciones: '',
+              fecha_hora_inicio: '',
+              fecha_hora_termino: '',
+              motivo: '',
+              observaciones_cita: '',
+              medico_id: '',
+              cita_estatus_id: '',
             },
           });
         }

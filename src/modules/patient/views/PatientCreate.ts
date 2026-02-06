@@ -37,6 +37,7 @@ export default defineComponent({
     patientId: {
       type: String,
       required: true,
+      default: 'create',
     },
     isInsideModal: {
       type: Boolean,

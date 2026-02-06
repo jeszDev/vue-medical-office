@@ -13,7 +13,11 @@
         <div class="mt-5 grid grid-cols-12 gap-4 gap-y-5">
           <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-4">
             <InputLabel label="Motivo de la cita" :isRequired="false" />
-            <InputBase type="text" name="segundo_apellido" placeholder="Revisión" />
+            <InputBase
+              type="text"
+              name="segundo_apellido"
+              placeholder="Ejemplo: realizar ultrasonido"
+            />
           </div>
           <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-4">
             <InputLabel label="Fecha y hora de inicio de la cita" :isRequired="true" />
@@ -25,11 +29,11 @@
           </div>
 
           <div class="flex flex-col gap-2.5 col-span-12">
-            <InputLabel label="Observaciones / anotaciones de la cita" :isRequired="false" />
+            <InputLabel label="Observaciones / anotaciones sobre la cita" :isRequired="false" />
             <TextArea
               v-model="observaciones"
               name="observaciones"
-              placeholder="Ejemplo: tipo de alergias"
+              placeholder="Ejemplo: traer estudios sobre la tiroides"
               :error="observaciones"
             />
           </div>
@@ -55,6 +59,6 @@
   </div> -->
 </template>
 
-<!-- <script src="./PatientCreate.ts" lang="ts"></script> -->
+<script src="./AppointmentCreate.ts" lang="ts"></script>
 
 <style scoped></style>

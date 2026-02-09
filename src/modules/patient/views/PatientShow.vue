@@ -4,6 +4,13 @@
       <div class="flex flex-col gap-2 lg:flex-row">
         <!-- <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full"> -->
         <ButtonBase
+          text="Agendar cita"
+          :icon="PreviewIcon"
+          color="primary"
+          data-tw-toggle="modal"
+          data-tw-target="#modal-appointment-create-or-edit"
+        />
+        <ButtonBase
           text="Ver citas del paciente"
           :icon="PreviewIcon"
           color="primary"
@@ -105,6 +112,10 @@
         </div>
       </div>
 
+      <DialogBasic id="modal-appointment-create-or-edit" size="3xl">
+        <AppointmentCreateUpdate :patientId :is-inside-modal="true" />
+      </DialogBasic>
+
       <DialogBasic id="modal-patient-appointments" size="3xl">
         <PatientAppointmentsIndex :patientId :is-inside-modal="true" />
       </DialogBasic>
@@ -131,6 +142,7 @@ import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import PatientAppointmentsIndex from '@/modules/patient/views/PatientAppointmentsIndex.vue';
 import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
+import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
 
 interface Props {
   patientId: string;

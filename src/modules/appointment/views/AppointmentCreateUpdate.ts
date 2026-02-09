@@ -36,6 +36,11 @@ export default defineComponent({
       required: true,
       default: 'create',
     },
+    patientId: {
+      type: String,
+      required: true,
+      default: '0',
+    },
     isInsideModal: {
       type: Boolean,
       default: false,
@@ -75,11 +80,11 @@ export default defineComponent({
     const [observaciones_cita, observaciones_citaAttrs] = defineField('observaciones_cita');
 
     const onSubmit = handleSubmit(async (values) => {
-      mutate(values);
+      mutate({ ...values, patient_id: props.patientId });
 
       if (props.isInsideModal) {
         window.tailwind.Modal.getOrCreateInstance(
-          document.getElementById('modal-patient-create-or-edit'),
+          document.getElementById('modal-appointment-create-or-edit'),
         ).hide();
       }
     });

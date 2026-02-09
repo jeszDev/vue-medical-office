@@ -10,8 +10,8 @@ export const getAppointmentByIdAction = async (appointmentId: string): Promise<A
       fecha_hora_termino: '',
       motivo: '',
       observaciones_cita: '',
-      medico_id: 0,
-      cita_estatus_id: 0,
+      // medico_id: 0,
+      // cita_estatus_id: 0,
       // pacientes: Patient[],
     };
   }

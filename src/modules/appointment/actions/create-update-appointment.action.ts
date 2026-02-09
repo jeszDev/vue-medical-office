@@ -1,5 +1,8 @@
 import { medicalOfficeApi } from '@/api/medicalOfficeApi';
 import type { Appointment } from '../interfaces/appointment.interface';
+import { useAuthStore } from '@/modules/auth/stores/auth.store';
+
+const authStore = useAuthStore();
 
 export const createUpdateAppointmentAction = async (appointment: Partial<Appointment>) => {
   // const toast = useToast();
@@ -9,7 +12,10 @@ export const createUpdateAppointmentAction = async (appointment: Partial<Appoint
       return await updateappointment(appointment);
     }
 
-    const { data } = await medicalOfficeApi.post<Appointment>(`/appointments`, appointment);
+    const { data } = await medicalOfficeApi.post<Appointment>(
+      `/patients/${appointment.patientId}/appointments`,
+      { ...appointment, medico_id: authStore.user!.id },
+    );
 
     return data;
   } catch (error) {}

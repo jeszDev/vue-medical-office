@@ -17,6 +17,7 @@
               type="text"
               v-model="motivo"
               v-bind="motivoAttrs"
+              :error="errors.motivo"
               placeholder="Ejemplo: realizar ultrasonido"
               name="motivo"
             />
@@ -27,6 +28,7 @@
               type="datetime-local"
               v-model="fecha_hora_inicio"
               v-bind="fecha_hora_inicioAttrs"
+              :error="errors.fecha_hora_inicio"
               name="fecha_hora_inicio"
             />
           </div>
@@ -36,6 +38,7 @@
               type="datetime-local"
               v-model="fecha_hora_termino"
               v-bind="fecha_hora_terminoAttrs"
+              :error="errors.fecha_hora_termino"
               name="fecha_hora_termino"
             />
           </div>
@@ -47,7 +50,7 @@
               v-bind="observaciones_citaAttrs"
               placeholder="Ejemplo: traer estudios sobre la tiroides"
               name="observaciones"
-              :error="observaciones"
+              :error="errors.observaciones_cita"
             />
           </div>
         </div>
@@ -72,6 +75,6 @@
   </div>
 </template>
 
-<script src="./AppointmentCreate.ts" lang="ts"></script>
+<script src="./AppointmentCreateUpdate.ts" lang="ts"></script>
 
 <style scoped></style>

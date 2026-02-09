@@ -60,7 +60,7 @@ const router = createRouter({
           path: 'appointments/create',
           name: 'appointments.create',
           props: true,
-          component: () => import('@/modules/appointment/views/AppointmentCreate.vue'),
+          component: () => import('@/modules/appointment/views/AppointmentCreateUpdate.vue'),
         },
       ],
     },

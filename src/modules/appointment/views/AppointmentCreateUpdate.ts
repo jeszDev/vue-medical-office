@@ -32,7 +32,20 @@ const schema = yup.object({
         return new Date(value) >= validStarDate;
       },
     ),
-  fecha_hora_termino: yup.string().required('Este campo es obligatorio'),
+  fecha_hora_termino: yup
+    .string()
+    .required('Este campo es obligatorio')
+    .test(
+      'termino-mayor-que-inicio',
+      'La fecha/hora del término de la cita debe ser mayor a la fecha/hora de inicio de la cita',
+      function (value) {
+        const { fecha_hora_inicio } = this.parent;
+
+        if (!fecha_hora_inicio || !value) return true;
+
+        return new Date(value) > new Date(fecha_hora_inicio);
+      },
+    ),
   observaciones: yup.string().nullable(),
 });
 

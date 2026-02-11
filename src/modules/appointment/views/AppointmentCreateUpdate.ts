@@ -81,12 +81,6 @@ export default defineComponent({
 
     const onSubmit = handleSubmit(async (values) => {
       mutate({ ...values, patient_id: props.patientId });
-
-      if (props.isInsideModal) {
-        window.tailwind.Modal.getOrCreateInstance(
-          document.getElementById('modal-appointment-create-or-edit'),
-        ).hide();
-      }
     });
 
     watchEffect(() => {
@@ -97,6 +91,12 @@ export default defineComponent({
 
     watch(isUpdateSuccess, (value) => {
       if (!value) return;
+
+      if (props.isInsideModal) {
+        window.tailwind.Modal.getOrCreateInstance(
+          document.getElementById('modal-appointment-create-or-edit'),
+        ).hide();
+      }
 
       props.appointmentId === 'create'
         ? toast.success('Cita agendada correctamente')

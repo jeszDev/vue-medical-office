@@ -132,6 +132,15 @@
           <div class="side-menu__link__title">Crear cita</div>
         </RouterLink>
       </li>
+      <li>
+        <RouterLink class="side-menu__link" :to="{ name: 'appointments.index' }">
+          <i
+            data-lucide="panel-bottom-close"
+            class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 side-menu__link__icon"
+          ></i>
+          <div class="side-menu__link__title">Calendario de citas</div>
+        </RouterLink>
+      </li>
     </ul>
   </SimpleBar>
 </template>

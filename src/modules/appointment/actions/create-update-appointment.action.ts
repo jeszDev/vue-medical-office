@@ -1,26 +1,19 @@
 import { medicalOfficeApi } from '@/api/medicalOfficeApi';
 import type { Appointment } from '../interfaces/appointment.interface';
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
-import type { AxiosError } from 'axios';
 import { useToast } from 'vue-toastification';
 
-interface ApiErrorResponse {
-  message: string;
-  code?: string;
-}
 const toast = useToast();
 const authStore = useAuthStore();
 
 export const createUpdateAppointmentAction = async (appointment: Partial<Appointment>) => {
-  // const toast = useToast();
-
   try {
     if (appointment.id && appointment.id !== '') {
       return await updateappointment(appointment);
     }
 
     const { data } = await medicalOfficeApi.post<Appointment>(
-      `/patients/${appointment.patientId}/appointments`,
+      `/patients/${appointment.patient_id}/appointments`,
       { ...appointment, medico_id: authStore.user!.id },
     );
 
@@ -28,11 +21,12 @@ export const createUpdateAppointmentAction = async (appointment: Partial<Appoint
 
     return data;
   } catch (error) {
-    const err = error as AxiosError<ApiErrorResponse>;
-
-    if (err.response?.status === 409 && err.response.data.code === 'APPOINTMENT_OVERLAP') {
-      throw new Error(err.response.data.message);
-      toast.error('Ya existe una cita con esa fecha y horario');
+    if (
+      error.response?.status === 409 &&
+      error.response.data.code === 'APPOINTMENT_ALREADY_EXISTS'
+    ) {
+      toast.error('Ya existe una cita programada en esa fecha y hora');
+      throw new Error(error.response.data.message);
     }
   }
 };

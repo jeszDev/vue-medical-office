@@ -17,7 +17,21 @@ import { watch } from 'vue';
 
 const schema = yup.object({
   motivo: yup.string().required('Este campo es obligatorio'),
-  fecha_hora_inicio: yup.string().required('Este campo es obligatorio'),
+  fecha_hora_inicio: yup
+    .string()
+    .required('Este campo es obligatorio')
+    .test(
+      'hora-cita-5-min-mayor-hora-actual',
+      'La fecha/hora de inicio debe ser al menos 5 minutos después de la hora actual',
+      (value) => {
+        if (!value) return true;
+
+        const validStarDate = new Date();
+        validStarDate.setMinutes(validStarDate.getMinutes() + 5);
+
+        return new Date(value) >= validStarDate;
+      },
+    ),
   fecha_hora_termino: yup.string().required('Este campo es obligatorio'),
   observaciones: yup.string().nullable(),
 });

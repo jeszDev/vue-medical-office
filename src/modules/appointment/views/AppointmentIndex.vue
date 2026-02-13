@@ -18,10 +18,12 @@
       <vue-cal
         locale="es"
         active-view="week"
-        :time="true"
         :time-from="8 * 60"
-        :time-to="20 * 60"
         :time-step="30"
+        :time-to="20 * 60"
+        :time="true"
+        :today-button="false"
+        :views="['day', 'week']"
         :events="calendarEvents"
       />
     </template>

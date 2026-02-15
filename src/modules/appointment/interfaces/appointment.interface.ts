@@ -7,7 +7,7 @@ export interface Appointment {
   motivo: string;
   observaciones_cita: string;
   medico: string;
-  estatus: string;
+  estatus: 'Pendiente' | 'Cancelada' | 'Atendida' | 'No asistió';
   pacientes: Patient[];
 
   fecha_inicio: string;

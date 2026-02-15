@@ -20,6 +20,14 @@
           </div>
         </div>
         <div class="col-span-12 sm:col-span-12 md:col-span-12">
+          <div class="text-xs opacity-70">PACIENTE</div>
+          <div class="mt-1.5 flex items-center">
+            <div v-for="(patient, index) in appointment.pacientes" :key="index" class="text-base">
+              {{ patient.nombre_completo }}
+            </div>
+          </div>
+        </div>
+        <div class="col-span-12 sm:col-span-12 md:col-span-12">
           <div class="text-xs opacity-70">MEDICO</div>
           <div class="mt-1.5 flex items-center">
             <div class="text-base">{{ appointment.medico }}</div>

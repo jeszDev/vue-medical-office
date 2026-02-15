@@ -6,9 +6,14 @@ export interface Appointment {
   fecha_hora_termino: string;
   motivo: string;
   observaciones_cita: string;
-  // medico_id: number;
-  // cita_estatus_id: number;
+  medico: string;
+  estatus: string;
   pacientes: Patient[];
 
-  patient_id: string;
+  fecha_inicio: string;
+  fecha_termino: string;
+  hora_inicio: string;
+  hora_termino: string;
+
+  patient_id?: string;
 }

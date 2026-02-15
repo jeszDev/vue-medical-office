@@ -9,7 +9,7 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-12 gap-x-10 gap-y-9">
+      <div class="grid grid-cols-12 gap-x-10 gap-y-6">
         <div class="col-span-12 sm:col-span-12 md:col-span-12">
           <div class="text-xs opacity-70">FECHA Y HORA DE LA CITA</div>
           <div class="mt-1.5 flex items-center">
@@ -46,6 +46,17 @@
           </div>
         </div>
       </div>
+
+      <div class="mt-10 border-t pt-10 flex flex-wrap justify-center gap-3">
+        <ButtonBase
+          text="Editar cita"
+          :icon="EditIcon"
+          color="secondary"
+          data-tw-toggle="modal"
+          data-tw-target="#modal-patient-create-or-edit"
+        />
+        <ButtonBase text="Cancelar cita" :icon="CancelIcon" color="danger" />
+      </div>
     </template>
   </TemplateView>
   <div v-else>cargando...</div>
@@ -53,6 +64,10 @@
 
 <script setup lang="ts">
 import TemplateView from '@/modules/template/components/TemplateView.vue';
+import ButtonBase from '@/modules/common/components/ButtonBase.vue';
+import EditIcon from '@/icons/EditIcon.vue';
+import CancelIcon from '@/icons/CancelIcon.vue';
+
 import { Appointment } from '../interfaces/appointment.interface';
 
 interface Props {

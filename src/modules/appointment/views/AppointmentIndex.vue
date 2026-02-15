@@ -41,6 +41,19 @@ const toDate = ref<string | null>('2026-02-28');
 
 const selectedAppointment = ref<null | Appointment>(null);
 
+const getStatusClass = (status: string) => {
+  switch (status) {
+    case 'Pendiente':
+      return 'event-pendiente';
+    case 'Confirmada':
+      return 'event-confirmada';
+    case 'Cancelada':
+      return 'event-cancelada';
+    default:
+      return 'event-default';
+  }
+};
+
 const {
   data: events,
   isLoading,
@@ -52,8 +65,9 @@ const {
     data.map((appointment: Appointment) => ({
       start: new Date(appointment.fecha_hora_inicio),
       end: new Date(appointment.fecha_hora_termino),
-      title: `${appointment.motivo}` ?? 'Cita médica',
+      title: `${appointment.pacientes[0].nombre_completo}` ?? 'Cita médica',
       appointment,
+      class: getStatusClass(appointment.estatus),
     })),
 });
 
@@ -70,4 +84,28 @@ const onEventClick = ({ event }: CalendarEvent) => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+:deep(.vuecal__event.event-pendiente) {
+  background-color: #facc15;
+  border: none;
+  color: #000;
+}
+
+:deep(.vuecal__event.event-confirmada) {
+  background-color: #22c55e;
+  border: none;
+  color: white;
+}
+
+:deep(.vuecal__event.event-cancelada) {
+  background-color: #ef4444;
+  border: none;
+  color: white;
+}
+
+:deep(.vuecal__event.event-default) {
+  background-color: #3b82f6;
+  border: none;
+  color: white;
+}
+</style>

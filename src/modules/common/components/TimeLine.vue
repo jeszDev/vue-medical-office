@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import TimeLineItem from './TimeLineItem.vue';
-import { getAppointmentsByPatient } from '../../actions/get-appointments-by-patient.action';
+import { getAppointmentsByPatientAction } from '@/modules/appointment/actions/get-appointments-by-patient.action';
 import { useQuery } from '@tanstack/vue-query';
 
 interface Props {
@@ -37,7 +37,7 @@ const {
   refetch,
 } = useQuery({
   queryKey: ['appointments', { patientId: props.patientId }],
-  queryFn: () => getAppointmentsByPatient(props.patientId),
+  queryFn: () => getAppointmentsByPatientAction(props.patientId),
 });
 
 console.log(appointments);

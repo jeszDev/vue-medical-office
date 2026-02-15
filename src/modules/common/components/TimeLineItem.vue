@@ -27,7 +27,7 @@
     <div class="mb-1.5">
       <div class="text-slate-500 font-medium">Fecha de la cita:</div>
       <div class="text-black">
-        {{ appointment.cita_fecha }} a las {{ appointment.cita_hora }} horas.
+        {{ appointment.fecha_inicio }} a las {{ appointment.hora_inicio }} horas.
       </div>
     </div>
     <div class="mb-5">

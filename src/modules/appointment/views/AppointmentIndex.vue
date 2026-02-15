@@ -22,17 +22,18 @@
 </template>
 
 <script setup lang="ts">
+import TemplateView from '@/modules/template/components/TemplateView.vue';
+import DialogBasic from '@/modules/common/components/DialogBasic.vue';
+import AppointmentCalendar from '@/modules/appointment/Views/AppointmentCalendar.vue';
+
+import { ref, computed } from 'vue';
 import { VueCal } from 'vue-cal';
 import 'vue-cal/style';
+import { useQuery } from '@tanstack/vue-query';
 
 import { Appointment } from '../interfaces/appointment.interface';
 import { CalendarEvent } from '../interfaces/calendar-event.interface';
 
-import TemplateView from '@/modules/template/components/TemplateView.vue';
-import DialogBasic from '@/modules/common/components/DialogBasic.vue';
-import AppointmentCalendar from '@/modules/appointment/Views/AppointmentCalendar.vue';
-import { ref, computed } from 'vue';
-import { useQuery } from '@tanstack/vue-query';
 import { getAppointmentsAction } from '../actions/get-appointments.action';
 
 const fromDate = ref<string | null>('2026-02-01');

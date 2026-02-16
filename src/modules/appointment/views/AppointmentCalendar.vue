@@ -55,8 +55,23 @@
           data-tw-toggle="modal"
           data-tw-target="#modal-patient-create-or-edit"
         />
-        <ButtonBase text="Cancelar cita" :icon="CancelIcon" color="danger" />
+        <ButtonBase
+          text="Cancelar cita"
+          :icon="CancelIcon"
+          color="danger"
+          data-tw-toggle="modal"
+          data-tw-target="#modal-appointment-cancel"
+        />
       </div>
+
+      <ModalQuestion
+        id="modal-appointment-cancel"
+        title="¿Quieres cancelar la cita?"
+        description="Está acción es irrevesible."
+        confirmText="Sí, cancelar cita"
+        cancelText="Cerrar"
+        @confirm="onCancel"
+      />
     </template>
   </TemplateView>
   <div v-else>cargando...</div>
@@ -65,16 +80,54 @@
 <script setup lang="ts">
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
+import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
 import EditIcon from '@/icons/EditIcon.vue';
 import CancelIcon from '@/icons/CancelIcon.vue';
 
 import { Appointment } from '../interfaces/appointment.interface';
+import { useMutation } from '@tanstack/vue-query';
+import { cancelAppointmentAction } from '../actions/cancel-appointment.action';
+import { useToast } from 'vue-toastification';
+import { watch } from 'vue';
 
 interface Props {
   appointment: Appointment;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+const toast = useToast();
+
+const {
+  mutate,
+  isPending,
+  isSuccess: isUpdateSuccess,
+  data: updatedAppointment,
+} = useMutation({
+  mutationFn: cancelAppointmentAction,
+});
+
+const onCancel = () => {
+  mutate(props.appointment.id.toString());
+};
+
+watch(isUpdateSuccess, (value) => {
+  if (!value) return;
+
+  window.tailwind.Modal.getOrCreateInstance(
+    document.getElementById('modal-appointment-cancel'),
+  ).hide();
+
+  toast.success('Cita cancelada correctamente');
+
+  // props.appointmentId === 'create'
+  //   ? toast.success('Cita agendada correctamente')
+  //   : toast.success('Cita editada correctamente');
+
+  // resetForm({
+  //   values: updatedAppointment.value,
+  // });
+});
 </script>
 
 <style scoped></style>

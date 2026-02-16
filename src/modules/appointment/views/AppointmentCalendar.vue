@@ -52,6 +52,7 @@
           text="Editar cita"
           :icon="EditIcon"
           color="secondary"
+          :disabled="appointment.estatus === 'Cancelada' || isPending"
           data-tw-toggle="modal"
           data-tw-target="#modal-patient-create-or-edit"
         />
@@ -59,6 +60,7 @@
           text="Cancelar cita"
           :icon="CancelIcon"
           color="danger"
+          :disabled="appointment.estatus === 'Cancelada' || isPending"
           data-tw-toggle="modal"
           data-tw-target="#modal-appointment-cancel"
         />
@@ -70,6 +72,7 @@
         description="Está acción es irrevesible."
         confirmText="Sí, cancelar cita"
         cancelText="Cerrar"
+        :loading="isPending"
         @confirm="onCancel"
       />
     </template>
@@ -89,6 +92,7 @@ import { useMutation } from '@tanstack/vue-query';
 import { cancelAppointmentAction } from '../actions/cancel-appointment.action';
 import { useToast } from 'vue-toastification';
 import { watch } from 'vue';
+import { useQueryClient } from '@tanstack/vue-query';
 
 interface Props {
   appointment: Appointment;
@@ -96,38 +100,44 @@ interface Props {
 
 const props = defineProps<Props>();
 
+const queryClient = useQueryClient();
 const toast = useToast();
 
-const {
-  mutate,
-  isPending,
-  isSuccess: isUpdateSuccess,
-  data: updatedAppointment,
-} = useMutation({
+const emit = defineEmits<{
+  (e: 'updated', appointment: Appointment): void;
+}>();
+
+const { mutateAsync, isPending } = useMutation({
   mutationFn: cancelAppointmentAction,
+
+  onSuccess: (updatedAppointment) => {
+    toast.success('Cita cancelada correctamente');
+
+    queryClient.invalidateQueries({
+      queryKey: ['appointments'],
+    });
+
+    emit('updated', updatedAppointment);
+
+    window.tailwind.Modal.getOrCreateInstance(
+      document.getElementById('modal-appointment-cancel'),
+    )?.hide();
+  },
+
+  onError: (error: Error) => {
+    toast.error(error.message);
+  },
 });
 
-const onCancel = () => {
-  mutate(props.appointment.id.toString());
+const onCancel = async () => {
+  if (isPending.value) return;
+
+  // mutate(props.appointment.id.toString());
+
+  try {
+    await mutateAsync(props.appointment.id.toString());
+  } catch {}
 };
-
-watch(isUpdateSuccess, (value) => {
-  if (!value) return;
-
-  window.tailwind.Modal.getOrCreateInstance(
-    document.getElementById('modal-appointment-cancel'),
-  ).hide();
-
-  toast.success('Cita cancelada correctamente');
-
-  // props.appointmentId === 'create'
-  //   ? toast.success('Cita agendada correctamente')
-  //   : toast.success('Cita editada correctamente');
-
-  // resetForm({
-  //   values: updatedAppointment.value,
-  // });
-});
 </script>
 
 <style scoped></style>

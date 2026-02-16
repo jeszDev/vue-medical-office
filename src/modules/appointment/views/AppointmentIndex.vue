@@ -11,11 +11,15 @@
         :today-button="false"
         :views="['day', 'week']"
         :events="calendarEvents"
+        :overlaps-per-time-step="true"
         @event-click="onEventClick"
       />
 
       <DialogBasic id="modal-appointment-calendar" size="3xl">
-        <AppointmentCalendar :appointment="selectedAppointment" />
+        <AppointmentCalendar
+          :appointment="selectedAppointment"
+          @updated="selectedAppointment = $event"
+        />
       </DialogBasic>
     </template>
   </TemplateView>
@@ -98,9 +102,11 @@ const onEventClick = ({ event }: CalendarEvent) => {
 }
 
 :deep(.vuecal__event.event-cancelada) {
-  background-color: #ef4444;
+  background-color: #9ca3af;
   border: none;
   color: white;
+  opacity: 0.6;
+  text-decoration: line-through;
 }
 
 :deep(.vuecal__event.event-default) {

@@ -38,15 +38,18 @@
           <button
             class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 bg-background border-(--color)/20 h-10 px-4 py-2 mr-1 w-24"
             data-tw-dismiss="modal"
+            :disabled="isLoading"
             @click="handleCancel"
           >
             {{ cancelText }}
           </button>
           <button
             class="cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-(--color)/20 border-(--color)/60 text-(--color) hover:bg-(--color)/5 [--color:var(--color-danger)] h-10 px-4 py-2"
+            :disabled="isLoading"
             @click="handleConfirm"
           >
-            {{ confirmText }}
+            <span v-if="isLoading">{{ loadingText }}</span>
+            <span v-else>{{ confirmText }}</span>
           </button>
         </slot>
       </div>
@@ -55,16 +58,18 @@
 </template>
 
 <script setup lang="ts">
-import CloseIcon from '@/icons/CloseIcon.vue'
+import CloseIcon from '@/icons/CloseIcon.vue';
 
 interface Props {
-  id: string
-  title: string
-  description: string
-  confirmText?: string
-  cancelText?: string
-  onCancel?: () => void
-  onConfirm?: () => void
+  id: string;
+  title: string;
+  description: string;
+  confirmText?: string;
+  cancelText?: string;
+  isLoading?: boolean;
+  loadingText?: string;
+  onCancel?: () => void;
+  onConfirm?: () => void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -73,30 +78,32 @@ const props = withDefaults(defineProps<Props>(), {
   description: '¿Estás seguro de continuar?',
   confirmText: 'Aceptar',
   cancelText: 'Cancelar',
+  isLoading: false,
+  loadingText: 'Cargando...',
   onConfirm: () => {},
   onCancel: () => {},
-})
+});
 
 /**
  * Emits
  */
 const emit = defineEmits<{
-  (e: 'confirm'): void
-  (e: 'cancel'): void
-}>()
+  (e: 'confirm'): void;
+  (e: 'cancel'): void;
+}>();
 
 /**
  * Métodos internos
  */
 const handleConfirm = () => {
-  props.onConfirm?.()
-  emit('confirm')
-}
+  props.onConfirm?.();
+  emit('confirm');
+};
 
 const handleCancel = () => {
-  props.onCancel?.()
-  emit('cancel')
-}
+  props.onCancel?.();
+  emit('cancel');
+};
 </script>
 
 <style scoped></style>

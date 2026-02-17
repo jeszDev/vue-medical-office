@@ -6,6 +6,7 @@
       <template v-else>
         <div class="flex flex-col gap-2 lg:flex-row">
           <!-- <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full"> -->
+          <ButtonBase text="Citas" :icon="PreviewIcon" color="primary" @click="goToAppointments" />
           <ButtonBase
             text="Agendar cita"
             :icon="PreviewIcon"
@@ -13,13 +14,13 @@
             data-tw-toggle="modal"
             data-tw-target="#modal-appointment-create-or-edit"
           />
-          <ButtonBase
+          <!-- <ButtonBase
             text="Ver citas del paciente"
             :icon="PreviewIcon"
             color="primary"
             data-tw-toggle="modal"
             data-tw-target="#modal-patient-appointments"
-          />
+          /> -->
           <ButtonBase
             text="Editar datos del paciente"
             :icon="EditIcon"
@@ -111,9 +112,9 @@
         <DialogBasic id="modal-appointment-create-or-edit" size="3xl">
           <AppointmentCreateUpdate :patientId :is-inside-modal="true" />
         </DialogBasic>
-        <DialogBasic id="modal-patient-appointments" size="3xl">
+        <!-- <DialogBasic id="modal-patient-appointments" size="3xl">
           <PatientAppointmentsIndex :patientId :is-inside-modal="true" />
-        </DialogBasic>
+        </DialogBasic> -->
         <DialogBasic id="modal-patient-create-or-edit" size="3xl">
           <PatientCreate :patientId :is-inside-modal="true" />
         </DialogBasic>
@@ -139,12 +140,14 @@ import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
+import { useRouter } from 'vue-router';
 
 interface Props {
   patientId: string;
 }
 
 const props = defineProps<Props>();
+const router = useRouter();
 
 const {
   data: patient,
@@ -154,6 +157,13 @@ const {
   queryKey: ['patient', { patientId: props.patientId }],
   queryFn: () => getPatientByIdAction(props.patientId),
 });
+
+const goToAppointments = () => {
+  router.push({
+    name: 'patients.appointments.index',
+    params: { id: props.patientId },
+  });
+};
 </script>
 
 <style scoped></style>

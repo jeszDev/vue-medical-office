@@ -1,26 +1,30 @@
 <template>
-  <TemplateView v-if="!isLoading" title="Calendario de citas">
+  <TemplateView title="Calendario de citas">
     <template #main>
-      <vue-cal
-        locale="es"
-        active-view="week"
-        :time-from="8 * 60"
-        :time-step="30"
-        :time-to="20 * 60"
-        :time="true"
-        :today-button="false"
-        :views="['day', 'week']"
-        :events="calendarEvents"
-        :overlaps-per-time-step="true"
-        @event-click="onEventClick"
-      />
+      <FullScreenLoader v-if="isLoading" />
 
-      <DialogBasic id="modal-appointment-calendar" size="3xl">
-        <AppointmentCalendar
-          :appointment="selectedAppointment"
-          @updated="selectedAppointment = $event"
+      <template v-else>
+        <vue-cal
+          locale="es"
+          active-view="week"
+          :time-from="8 * 60"
+          :time-step="30"
+          :time-to="20 * 60"
+          :time="true"
+          :today-button="false"
+          :views="['day', 'week']"
+          :events="calendarEvents"
+          :overlaps-per-time-step="true"
+          @event-click="onEventClick"
         />
-      </DialogBasic>
+
+        <DialogBasic id="modal-appointment-calendar" size="3xl">
+          <AppointmentCalendar
+            :appointment="selectedAppointment"
+            @updated="selectedAppointment = $event"
+          />
+        </DialogBasic>
+      </template>
     </template>
   </TemplateView>
 </template>
@@ -29,6 +33,7 @@
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import AppointmentCalendar from '@/modules/appointment/Views/AppointmentCalendar.vue';
+import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 
 import { ref, computed } from 'vue';
 import { VueCal } from 'vue-cal';

@@ -6,21 +6,12 @@
       <template v-else>
         <div class="flex flex-col gap-2 lg:flex-row">
           <!-- <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full"> -->
-          <ButtonBase text="Citas" :icon="PreviewIcon" color="primary" @click="goToAppointments" />
           <ButtonBase
-            text="Agendar cita"
+            text="Ver citas"
             :icon="PreviewIcon"
             color="primary"
-            data-tw-toggle="modal"
-            data-tw-target="#modal-appointment-create-or-edit"
+            @click="goToAppointments"
           />
-          <!-- <ButtonBase
-            text="Ver citas del paciente"
-            :icon="PreviewIcon"
-            color="primary"
-            data-tw-toggle="modal"
-            data-tw-target="#modal-patient-appointments"
-          /> -->
           <ButtonBase
             text="Editar datos del paciente"
             :icon="EditIcon"
@@ -109,12 +100,6 @@
             </div>
           </div>
         </div>
-        <DialogBasic id="modal-appointment-create-or-edit" size="3xl">
-          <AppointmentCreateUpdate :patientId :is-inside-modal="true" />
-        </DialogBasic>
-        <!-- <DialogBasic id="modal-patient-appointments" size="3xl">
-          <PatientAppointmentsIndex :patientId :is-inside-modal="true" />
-        </DialogBasic> -->
         <DialogBasic id="modal-patient-create-or-edit" size="3xl">
           <PatientCreate :patientId :is-inside-modal="true" />
         </DialogBasic>
@@ -135,10 +120,8 @@ import PreviewIcon from '@/icons/PreviewIcon.vue';
 import PhoneIcon from '@/icons/PhoneIcon.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
-import PatientAppointmentsIndex from '@/modules/patient/views/PatientAppointmentsIndex.vue';
 import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
-import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 import { useRouter } from 'vue-router';
 

@@ -1,128 +1,123 @@
 <template>
-  <TemplateView v-if="!isLoading" title="Información del paciente">
+  <TemplateView title="Información del paciente">
     <template #main>
-      <div class="flex flex-col gap-2 lg:flex-row">
-        <!-- <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full"> -->
-        <ButtonBase
-          text="Agendar cita"
-          :icon="PreviewIcon"
-          color="primary"
-          data-tw-toggle="modal"
-          data-tw-target="#modal-appointment-create-or-edit"
-        />
-        <ButtonBase
-          text="Ver citas del paciente"
-          :icon="PreviewIcon"
-          color="primary"
-          data-tw-toggle="modal"
-          data-tw-target="#modal-patient-appointments"
-        />
-        <ButtonBase
-          text="Editar datos del paciente"
-          :icon="EditIcon"
-          color="secondary"
-          data-tw-toggle="modal"
-          data-tw-target="#modal-patient-create-or-edit"
-        />
-        <ButtonBase text="Eliminar paciente" :icon="DeleteIcon" color="danger" />
-        <!-- </div> -->
-      </div>
+      <FullScreenLoader v-if="isLoading" />
 
-      <div
-        class="box relative before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:bg-background/30 before:shadow-[0px_3px_5px_#0000000b] before:z-[-1] before:rounded-xl after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-[0px_3px_5px_#0000000b] after:rounded-xl after:z-[-1] after:backdrop-blur-md p-0 mt-5"
-      >
-        <div class="flex flex-col p-5 lg:flex-row">
-          <!-- Nombre -->
-          <div class="flex items-center justify-center flex-[0.7] px-5 lg:justify-start">
-            <div class="ml-5">
-              <div class="opacity-70">Nombre</div>
-              <div
-                class="max-w-[180px] text-base font-medium truncate sm:max-w-[220px] sm:whitespace-normal lg:text-sm"
-              >
-                {{ patient.nombre_completo }}
+      <template v-else>
+        <div class="flex flex-col gap-2 lg:flex-row">
+          <!-- <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full"> -->
+          <ButtonBase
+            text="Agendar cita"
+            :icon="PreviewIcon"
+            color="primary"
+            data-tw-toggle="modal"
+            data-tw-target="#modal-appointment-create-or-edit"
+          />
+          <ButtonBase
+            text="Ver citas del paciente"
+            :icon="PreviewIcon"
+            color="primary"
+            data-tw-toggle="modal"
+            data-tw-target="#modal-patient-appointments"
+          />
+          <ButtonBase
+            text="Editar datos del paciente"
+            :icon="EditIcon"
+            color="secondary"
+            data-tw-toggle="modal"
+            data-tw-target="#modal-patient-create-or-edit"
+          />
+          <ButtonBase text="Eliminar paciente" :icon="DeleteIcon" color="danger" />
+          <!-- </div> -->
+        </div>
+        <div
+          class="box relative before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:bg-background/30 before:shadow-[0px_3px_5px_#0000000b] before:z-[-1] before:rounded-xl after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-[0px_3px_5px_#0000000b] after:rounded-xl after:z-[-1] after:backdrop-blur-md p-0 mt-5"
+        >
+          <div class="flex flex-col p-5 lg:flex-row">
+            <!-- Nombre -->
+            <div class="flex items-center justify-center flex-[0.7] px-5 lg:justify-start">
+              <div class="ml-5">
+                <div class="opacity-70">Nombre</div>
+                <div
+                  class="max-w-[180px] text-base font-medium truncate sm:max-w-[220px] sm:whitespace-normal lg:text-sm"
+                >
+                  {{ patient.nombre_completo }}
+                </div>
               </div>
             </div>
-          </div>
-
-          <!-- Datos del paciente -->
-          <div
-            class="flex-1 px-5 pt-5 mt-6 border-t border-l border-r lg:mt-0 lg:border-t-0 lg:pt-0"
-          >
-            <div class="flex font-medium text-center lg:mt-3 lg:text-left">
-              <CalendarBirthdayIcon /> Fecha de nacimiento
-            </div>
-            <div class="flex flex-col items-center justify-center mt-1 lg:items-start">
-              <div class="flex items-center truncate sm:whitespace-normal ps-6">
-                {{ patient.fecha_nacimiento ?? 'Fecha de nacimiento no registrado' }}
+            <!-- Datos del paciente -->
+            <div
+              class="flex-1 px-5 pt-5 mt-6 border-t border-l border-r lg:mt-0 lg:border-t-0 lg:pt-0"
+            >
+              <div class="flex font-medium text-center lg:mt-3 lg:text-left">
+                <CalendarBirthdayIcon /> Fecha de nacimiento
               </div>
-              <div v-if="patient.edad" class="ps-6">({{ patient.edad }} años)</div>
-            </div>
-
-            <div class="flex font-medium text-center lg:mt-3 lg:text-left">
-              <PhoneIcon /> Télefono
-            </div>
-            <div class="flex flex-col items-center justify-center mt-1 lg:items-start">
-              <div class="flex items-center truncate sm:whitespace-normal ps-6">
-                {{ patient.telefono ?? 'Télefono no registrado' }}
+              <div class="flex flex-col items-center justify-center mt-1 lg:items-start">
+                <div class="flex items-center truncate sm:whitespace-normal ps-6">
+                  {{ patient.fecha_nacimiento ?? 'Fecha de nacimiento no registrado' }}
+                </div>
+                <div v-if="patient.edad" class="ps-6">({{ patient.edad }} años)</div>
               </div>
-            </div>
-
-            <div class="flex font-medium text-center lg:mt-3 lg:text-left">
-              <EmailIcon /> Correo electrónico
-            </div>
-            <div class="flex flex-col items-center justify-center mt-1 lg:items-start">
-              <div class="flex items-center truncate sm:whitespace-normal ps-6">
-                {{ patient.correo_electronico ?? 'Correo electrónico no registrado' }}
+              <div class="flex font-medium text-center lg:mt-3 lg:text-left">
+                <PhoneIcon /> Télefono
               </div>
-            </div>
-
-            <div class="flex font-medium text-center lg:mt-3 lg:text-left">
-              <CalendarDateRegisterIcon /> Fecha de registro en sistema
-            </div>
-            <div class="flex flex-col items-center justify-center mt-1 lg:items-start">
-              <div class="flex items-center truncate sm:whitespace-normal ps-6">
-                {{ patient.creado_el }}
+              <div class="flex flex-col items-center justify-center mt-1 lg:items-start">
+                <div class="flex items-center truncate sm:whitespace-normal ps-6">
+                  {{ patient.telefono ?? 'Télefono no registrado' }}
+                </div>
+              </div>
+              <div class="flex font-medium text-center lg:mt-3 lg:text-left">
+                <EmailIcon /> Correo electrónico
+              </div>
+              <div class="flex flex-col items-center justify-center mt-1 lg:items-start">
+                <div class="flex items-center truncate sm:whitespace-normal ps-6">
+                  {{ patient.correo_electronico ?? 'Correo electrónico no registrado' }}
+                </div>
+              </div>
+              <div class="flex font-medium text-center lg:mt-3 lg:text-left">
+                <CalendarDateRegisterIcon /> Fecha de registro en sistema
+              </div>
+              <div class="flex flex-col items-center justify-center mt-1 lg:items-start">
+                <div class="flex items-center truncate sm:whitespace-normal ps-6">
+                  {{ patient.creado_el }}
+                </div>
               </div>
             </div>
-          </div>
-
-          <!-- Acciones -->
-          <div
-            class="flex items-center justify-center flex-1 px-5 pt-5 mt-6 border-t lg:mt-0 lg:border-0 lg:pt-0"
-          >
-            <!-- <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full">
-              <ButtonBase
-                text="Ver citas del paciente"
-                :icon="PreviewIcon"
-                color="primary"
-                data-tw-toggle="modal"
-                data-tw-target="#modal-patient-appointments"
-              />
-              <ButtonBase
-                text="Editar datos del paciente"
-                :icon="EditIcon"
-                color="secondary"
-                data-tw-toggle="modal"
-                data-tw-target="#modal-patient-create-or-edit"
-              />
-              <ButtonBase text="Eliminar paciente" :icon="DeleteIcon" color="danger" />
-            </div> -->
-            <div>{{ patient.observaciones }}</div>
+            <!-- Acciones -->
+            <div
+              class="flex items-center justify-center flex-1 px-5 pt-5 mt-6 border-t lg:mt-0 lg:border-0 lg:pt-0"
+            >
+              <!-- <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full">
+                <ButtonBase
+                  text="Ver citas del paciente"
+                  :icon="PreviewIcon"
+                  color="primary"
+                  data-tw-toggle="modal"
+                  data-tw-target="#modal-patient-appointments"
+                />
+                <ButtonBase
+                  text="Editar datos del paciente"
+                  :icon="EditIcon"
+                  color="secondary"
+                  data-tw-toggle="modal"
+                  data-tw-target="#modal-patient-create-or-edit"
+                />
+                <ButtonBase text="Eliminar paciente" :icon="DeleteIcon" color="danger" />
+              </div> -->
+              <div>{{ patient.observaciones }}</div>
+            </div>
           </div>
         </div>
-      </div>
-
-      <DialogBasic id="modal-appointment-create-or-edit" size="3xl">
-        <AppointmentCreateUpdate :patientId :is-inside-modal="true" />
-      </DialogBasic>
-
-      <DialogBasic id="modal-patient-appointments" size="3xl">
-        <PatientAppointmentsIndex :patientId :is-inside-modal="true" />
-      </DialogBasic>
-
-      <DialogBasic id="modal-patient-create-or-edit" size="3xl">
-        <PatientCreate :patientId :is-inside-modal="true" />
-      </DialogBasic>
+        <DialogBasic id="modal-appointment-create-or-edit" size="3xl">
+          <AppointmentCreateUpdate :patientId :is-inside-modal="true" />
+        </DialogBasic>
+        <DialogBasic id="modal-patient-appointments" size="3xl">
+          <PatientAppointmentsIndex :patientId :is-inside-modal="true" />
+        </DialogBasic>
+        <DialogBasic id="modal-patient-create-or-edit" size="3xl">
+          <PatientCreate :patientId :is-inside-modal="true" />
+        </DialogBasic>
+      </template>
     </template>
   </TemplateView>
 </template>
@@ -143,6 +138,7 @@ import PatientAppointmentsIndex from '@/modules/patient/views/PatientAppointment
 import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
+import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 
 interface Props {
   patientId: string;

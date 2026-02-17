@@ -4,7 +4,7 @@
       <div class="flex justify-end mb-2">
         <ButtonBase
           text="Nueva cita"
-          :icon="PreviewIcon"
+          :icon="PlusIcon"
           color="primary"
           data-tw-toggle="modal"
           data-tw-target="#modal-appointment-create-or-edit"
@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
-import PreviewIcon from '@/icons/PreviewIcon.vue';
+import PlusIcon from '@/icons/PlusIcon.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import TimeLine from '@/modules/common/components/TimeLine.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';

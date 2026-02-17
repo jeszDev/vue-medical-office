@@ -18,7 +18,7 @@
       >
         <div class="w-28">
           <div class="w-full truncate font-medium">{{ authStore.user.name }}</div>
-          <div class="w-full truncate text-xs opacity-60">Administrator</div>
+          <div class="w-full truncate text-xs opacity-60">{{ authStore.user.roles[0] }}</div>
         </div>
         <!-- <i
                 data-lucide="move-right"

@@ -92,7 +92,8 @@
       <li class="side-menu__group-label">APPS</li>
       <li>
         <RouterLink
-          class="side-menu__link side-menu__link--active"
+          class="side-menu__link"
+          exact-active-class="side-menu__link--active"
           :to="{ name: 'patients.index' }"
         >
           <i
@@ -102,7 +103,7 @@
           <div class="side-menu__link__title">Listado de pacientes</div>
         </RouterLink>
       </li>
-      <li>
+      <!-- <li>
         <RouterLink
           class="side-menu__link"
           :to="{ name: 'patients.appointments.index', params: { patientId: 4 } }"
@@ -131,9 +132,13 @@
           ></i>
           <div class="side-menu__link__title">Crear cita</div>
         </RouterLink>
-      </li>
+      </li> -->
       <li>
-        <RouterLink class="side-menu__link" :to="{ name: 'appointments.index' }">
+        <RouterLink
+          class="side-menu__link"
+          exact-active-class="side-menu__link--active"
+          :to="{ name: 'appointments.index' }"
+        >
           <i
             data-lucide="panel-bottom-close"
             class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 side-menu__link__icon"

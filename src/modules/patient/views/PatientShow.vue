@@ -1,5 +1,5 @@
 <template>
-  <TemplateView title="Información del paciente">
+  <TemplateView title="INFORMACIÓN DEL PACIENTE">
     <template #main>
       <FullScreenLoader v-if="isLoading" />
 

@@ -1,5 +1,5 @@
 <template>
-  <TemplateView title="Calendario de citas">
+  <TemplateView title="CALENDARIO DE CITAS">
     <template #main>
       <FullScreenLoader v-if="isLoading" />
 

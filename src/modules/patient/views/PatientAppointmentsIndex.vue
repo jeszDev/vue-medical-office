@@ -125,61 +125,64 @@
                 </tr>
               </thead>
               <tbody class="[&_tr:last-child]:border-0">
-                <tr
-                  v-for="(appointment, index) in appointments"
-                  :key="appointment.id"
-                  class="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted border-b-0"
-                >
-                  <td
-                    width="5%"
-                    class="text-center shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                <template v-for="(appointment, index) in appointments" :key="appointment.id">
+                  <tr
+                    class="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted border-b-0"
                   >
-                    {{ index + 1 }}
-                  </td>
-                  <td
-                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
-                  >
-                    {{ appointment.fecha_inicio }}
-                  </td>
-                  <td
-                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
-                  >
-                    {{ appointment.hora_inicio }} - {{ appointment.hora_termino }}
-                  </td>
-                  <td
-                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
-                    :class="getStatusClass(appointment.estatus)"
-                  >
-                    {{ appointment.estatus }}
-                  </td>
-                  <td
-                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
-                  >
-                    {{ appointment.motivo }}
-                  </td>
-                  <td
-                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
-                  >
-                    {{ appointment.medico }}
-                  </td>
-                  <td
-                    width="20%"
-                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
-                  >
-                    <!-- <div class="flex items-center justify-center gap-3">
-                    <span @click="expandedRow = appointment.id">
-                      {{ expandedRow === appointment.id ? 'Ocultar' : 'Ver' }}
-                    </span>
-                  </div> -->
-                  </td>
-                </tr>
-                <!-- <tr v-if="expandedRow === appointment.id">
-                <td colspan="4" class="bg-gray-50 p-4">
-                  <div><strong>Diagnóstico:</strong>wer</div>
-                  <div><strong>Tratamiento:</strong>asd</div>
-                  <div><strong>Notas:</strong>dfdf</div>
-                </td>
-              </tr> -->
+                    <td
+                      width="5%"
+                      class="text-center shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                    >
+                      {{ index + 1 }}
+                    </td>
+                    <td
+                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                    >
+                      {{ appointment.fecha_inicio }}
+                    </td>
+                    <td
+                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                    >
+                      {{ appointment.hora_inicio }} - {{ appointment.hora_termino }}
+                    </td>
+                    <td
+                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                      :class="getStatusClass(appointment.estatus)"
+                    >
+                      {{ appointment.estatus }}
+                    </td>
+                    <td
+                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                    >
+                      {{ appointment.motivo }}
+                    </td>
+                    <td
+                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                    >
+                      {{ appointment.medico }}
+                    </td>
+                    <td
+                      width="20%"
+                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                    >
+                      <div class="flex items-center justify-center gap-3">
+                        <span @click="toggleRow(appointment.id)">
+                          {{ expandedRow === appointment.id ? 'Ocultar' : 'Ver' }}
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr v-if="expandedRow === appointment.id" class="">
+                    <td
+                      colspan="7"
+                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                    >
+                      <div><strong>Diagnóstico:</strong>wer</div>
+                      <div><strong>Tratamiento:</strong>asd</div>
+                      <div><strong>Notas:</strong>dfdf</div>
+                    </td>
+                  </tr>
+                </template>
               </tbody>
             </table>
           </div>
@@ -211,7 +214,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const expandedRow = ref<number>(0);
+const expandedRow = ref<null | number>(null);
 
 console.log(props.patientId);
 
@@ -226,6 +229,10 @@ const {
 });
 
 console.log(appointments.value);
+
+const toggleRow = (id: number) => {
+  expandedRow.value = expandedRow.value === id ? null : id;
+};
 
 const getStatusClass = (status: string) => {
   switch (status) {

@@ -144,7 +144,7 @@ const {
 const goToAppointments = () => {
   router.push({
     name: 'patients.appointments.index',
-    params: { id: props.patientId },
+    params: { patientId: props.patientId },
   });
 };
 </script>

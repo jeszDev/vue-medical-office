@@ -166,9 +166,20 @@
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
                       <div class="flex items-center justify-center gap-3">
-                        <span @click="toggleRow(appointment.id)">
+                        <!-- <span @click="toggleRow(appointment.id)">
                           {{ expandedRow === appointment.id ? 'Ocultar' : 'Ver' }}
-                        </span>
+                        </span> -->
+
+                        <PreviewIcon
+                          class="cursor-pointer"
+                          @click="toggleRow(appointment.id)"
+                          v-if="expandedRow != appointment.id"
+                        />
+                        <PreviewHideIcon
+                          class="cursor-pointer"
+                          @click="toggleRow(appointment.id)"
+                          v-else
+                        />
                       </div>
                     </td>
                   </tr>
@@ -188,6 +199,10 @@
           </div>
         </div>
       </div>
+
+      <DialogBasic id="modal-appointment-create-or-edit" size="3xl">
+        <AppointmentCreateUpdate :patientId appointmentId="create" :is-inside-modal="true" />
+      </DialogBasic>
     </template>
   </TemplateView>
 </template>
@@ -202,6 +217,7 @@ import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCrea
 import { useQuery } from '@tanstack/vue-query';
 import { getPatientByIdAction } from '../actions/get-patient-by-id.action';
 import PreviewIcon from '@/icons/PreviewIcon.vue';
+import PreviewHideIcon from '@/icons/PreviewHideIcon.vue';
 import DeleteIcon from '@/icons/DeleteIcon.vue';
 import EditIcon from '@/icons/EditIcon.vue';
 import { getAppointmentsByPatientAction } from '../../appointment/actions/get-appointments-by-patient.action';

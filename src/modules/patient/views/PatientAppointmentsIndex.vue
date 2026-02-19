@@ -147,9 +147,12 @@
                     </td>
                     <td
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
-                      :class="getStatusClass(appointment.estatus)"
                     >
-                      {{ appointment.estatus }}
+                      <PillBadge
+                        size="sm"
+                        :color="getAppointmentStatusColor(appointment.estatus)"
+                        :label="appointment.estatus"
+                      />
                     </td>
                     <td
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
@@ -221,8 +224,10 @@ import PreviewHideIcon from '@/icons/PreviewHideIcon.vue';
 import DeleteIcon from '@/icons/DeleteIcon.vue';
 import EditIcon from '@/icons/EditIcon.vue';
 import { getAppointmentsByPatientAction } from '../../appointment/actions/get-appointments-by-patient.action';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
+import PillBadge from '@/modules/common/components/PillBadge.vue';
+import { getAppointmentStatusColor } from '@/modules/appointment/helpers/get-appointment-status-color.mapper';
 
 interface Props {
   patientId: string;
@@ -248,21 +253,6 @@ console.log(appointments.value);
 
 const toggleRow = (id: number) => {
   expandedRow.value = expandedRow.value === id ? null : id;
-};
-
-const getStatusClass = (status: string) => {
-  switch (status) {
-    case 'Pendiente':
-      return 'bg-yellow-100 text-yellow-800';
-    case 'Confirmada':
-      return 'bg-green-100 text-green-800';
-    case 'Cancelada':
-      return 'bg-gray-200 text-gray-600 line-through';
-    case 'Completada':
-      return 'bg-blue-100 text-blue-800';
-    default:
-      return 'bg-muted';
-  }
 };
 </script>
 

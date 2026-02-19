@@ -25,11 +25,52 @@
         <div
           class="box relative before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:bg-background/30 before:shadow-[0px_3px_5px_#0000000b] before:z-[-1] before:rounded-xl after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-[0px_3px_5px_#0000000b] after:rounded-xl after:z-[-1] after:backdrop-blur-md p-0 mt-5"
         >
+          <!-- <div class="grid grid-cols-12 gap-x-10 gap-y-6">
+            <div class="col-span-12 sm:col-span-12 md:col-span-12">
+              <div class="text-xs opacity-70 flex"><CalendarBirthdayIcon /> FECHA NACIMIENTO</div>
+              <div class="mt-1.5 flex items-center">
+                <div class="text-base"></div>
+              </div>
+            </div>
+            <div class="col-span-12 sm:col-span-12 md:col-span-12">
+              <div class="text-xs opacity-70 flex"><UserIcon /> PACIENTE</div>
+              <div class="mt-1.5 flex items-center">
+                <div
+                  v-for="(patient, index) in appointment.pacientes"
+                  :key="index"
+                  class="text-base"
+                >
+                  {{ patient.nombre_completo }}
+                </div>
+              </div>
+            </div>
+            <div class="col-span-12 sm:col-span-12 md:col-span-12">
+              <div class="text-xs opacity-70 flex"><UserIcon /> MÉDICO</div>
+              <div class="mt-1.5 flex items-center">
+                <div class="text-base">{{ appointment.medico }}</div>
+              </div>
+            </div>
+            <div class="col-span-12 sm:col-span-12 md:col-span-12">
+              <div class="text-xs opacity-70 flex"><MessageIcon /> MOTIVO DE LA CITA</div>
+              <div class="mt-1.5 flex items-center">
+                <div class="text-base">{{ appointment.motivo }}</div>
+              </div>
+            </div>
+            <div class="col-span-12 sm:col-span-12 md:col-span-12">
+              <div class="text-xs opacity-70 flex"><ObservationsIcon /> OBSERVACIONES</div>
+              <div class="mt-1.5 flex items-center">
+                <div class="text-base">
+                  {{ appointment.observaciones_cita || 'SIN OBSERVACIONES' }}
+                </div>
+              </div>
+            </div>
+          </div> -->
+
           <div class="flex flex-col p-5 lg:flex-row">
             <!-- Nombre -->
             <div class="flex items-center justify-center flex-[0.7] px-5 lg:justify-start">
               <div class="ml-5">
-                <div class="opacity-70">Nombre</div>
+                <div class="opacity-70">NOMBRE</div>
                 <div
                   class="max-w-[180px] text-base font-medium truncate sm:max-w-[220px] sm:whitespace-normal lg:text-sm"
                 >
@@ -41,37 +82,37 @@
             <div
               class="flex-1 px-5 pt-5 mt-6 border-t border-l border-r lg:mt-0 lg:border-t-0 lg:pt-0"
             >
-              <div class="flex font-medium text-center lg:mt-3 lg:text-left">
-                <CalendarBirthdayIcon /> Fecha de nacimiento
-              </div>
-              <div class="flex flex-col items-center justify-center mt-1 lg:items-start">
-                <div class="flex items-center truncate sm:whitespace-normal ps-6">
-                  {{ patient.fecha_nacimiento ?? 'Fecha de nacimiento no registrado' }}
+              <div class="grid grid-cols-12 gap-x-10 gap-y-6">
+                <div class="col-span-12 sm:col-span-12 md:col-span-12">
+                  <div class="text-xs opacity-70 flex">
+                    <CalendarBirthdayIcon /> FECHA DE NACIMIENTO
+                  </div>
+                  <div class="mt-1.5 flex items-center">
+                    <div class="text-base">
+                      {{ patient.fecha_nacimiento ?? 'Fecha de nacimiento no registrado' }}
+                      ~ <span v-if="patient.edad" class="">{{ patient.edad }} años</span>
+                    </div>
+                  </div>
                 </div>
-                <div v-if="patient.edad" class="ps-6">({{ patient.edad }} años)</div>
-              </div>
-              <div class="flex font-medium text-center lg:mt-3 lg:text-left">
-                <PhoneIcon /> Télefono
-              </div>
-              <div class="flex flex-col items-center justify-center mt-1 lg:items-start">
-                <div class="flex items-center truncate sm:whitespace-normal ps-6">
-                  {{ patient.telefono ?? 'Télefono no registrado' }}
+                <div class="col-span-12 sm:col-span-12 md:col-span-12">
+                  <div class="text-xs opacity-70 flex"><PhoneIcon /> TÉLEFONO</div>
+                  <div class="mt-1.5 flex items-center">
+                    <div class="text-base">{{ patient.telefono }}</div>
+                  </div>
                 </div>
-              </div>
-              <div class="flex font-medium text-center lg:mt-3 lg:text-left">
-                <EmailIcon /> Correo electrónico
-              </div>
-              <div class="flex flex-col items-center justify-center mt-1 lg:items-start">
-                <div class="flex items-center truncate sm:whitespace-normal ps-6">
-                  {{ patient.correo_electronico ?? 'Correo electrónico no registrado' }}
+                <div class="col-span-12 sm:col-span-12 md:col-span-12">
+                  <div class="text-xs opacity-70 flex"><EmailIcon /> CORREO ELECTRÓNICO</div>
+                  <div class="mt-1.5 flex items-center">
+                    {{ patient.correo_electronico ?? 'Correo electrónico no registrado' }}
+                  </div>
                 </div>
-              </div>
-              <div class="flex font-medium text-center lg:mt-3 lg:text-left">
-                <CalendarDateRegisterIcon /> Fecha de registro en sistema
-              </div>
-              <div class="flex flex-col items-center justify-center mt-1 lg:items-start">
-                <div class="flex items-center truncate sm:whitespace-normal ps-6">
-                  {{ patient.creado_el }}
+                <div class="col-span-12 sm:col-span-12 md:col-span-12">
+                  <div class="text-xs opacity-70 flex">
+                    <CalendarDateRegisterIcon /> FECHA DE REGISTRO EN SISTEMA
+                  </div>
+                  <div class="mt-1.5 flex items-center">
+                    <div class="text-base">{{ patient.creado_el }}</div>
+                  </div>
                 </div>
               </div>
             </div>

@@ -1,5 +1,5 @@
 <template>
-  <TemplateView v-if="appointment" title="Detalles de la cita">
+  <TemplateView v-if="appointment" title="DETALLES DE LA CITA">
     <template #main>
       <div class="flex flex-wrap justify-end">
         <PillBadge
@@ -11,7 +11,7 @@
 
       <div class="grid grid-cols-12 gap-x-10 gap-y-6">
         <div class="col-span-12 sm:col-span-12 md:col-span-12">
-          <div class="text-xs opacity-70">FECHA Y HORA DE LA CITA</div>
+          <div class="text-xs opacity-70 flex"><CalendarIcon /> FECHA Y HORA DE LA CITA</div>
           <div class="mt-1.5 flex items-center">
             <div class="text-base">
               {{ appointment.fecha_inicio }} de las {{ appointment.hora_inicio }} a las
@@ -20,7 +20,7 @@
           </div>
         </div>
         <div class="col-span-12 sm:col-span-12 md:col-span-12">
-          <div class="text-xs opacity-70">PACIENTE</div>
+          <div class="text-xs opacity-70 flex"><UserIcon /> PACIENTE</div>
           <div class="mt-1.5 flex items-center">
             <div v-for="(patient, index) in appointment.pacientes" :key="index" class="text-base">
               {{ patient.nombre_completo }}
@@ -28,19 +28,19 @@
           </div>
         </div>
         <div class="col-span-12 sm:col-span-12 md:col-span-12">
-          <div class="text-xs opacity-70">MEDICO</div>
+          <div class="text-xs opacity-70 flex"><UserIcon /> MÉDICO</div>
           <div class="mt-1.5 flex items-center">
             <div class="text-base">{{ appointment.medico }}</div>
           </div>
         </div>
         <div class="col-span-12 sm:col-span-12 md:col-span-12">
-          <div class="text-xs opacity-70">MOTIVO DE LA CITA</div>
+          <div class="text-xs opacity-70 flex"><MessageIcon /> MOTIVO DE LA CITA</div>
           <div class="mt-1.5 flex items-center">
             <div class="text-base">{{ appointment.motivo }}</div>
           </div>
         </div>
         <div class="col-span-12 sm:col-span-12 md:col-span-12">
-          <div class="text-xs opacity-70">OBSERVACIONES</div>
+          <div class="text-xs opacity-70 flex"><ObservationsIcon /> OBSERVACIONES</div>
           <div class="mt-1.5 flex items-center">
             <div class="text-base">{{ appointment.observaciones_cita || 'SIN OBSERVACIONES' }}</div>
           </div>
@@ -94,6 +94,10 @@ import { cancelAppointmentAction } from '../actions/cancel-appointment.action';
 import { useToast } from 'vue-toastification';
 import { computed, watch } from 'vue';
 import { useQueryClient } from '@tanstack/vue-query';
+import CalendarIcon from '@/icons/CalendarIcon.vue';
+import UserIcon from '@/icons/UserIcon.vue';
+import MessageIcon from '@/icons/MessageIcon.vue';
+import ObservationsIcon from '@/icons/ObservationsIcon.vue';
 
 interface Props {
   appointment: Appointment;

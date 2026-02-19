@@ -2,11 +2,11 @@
   <TemplateView v-if="appointment" title="Detalles de la cita">
     <template #main>
       <div class="flex flex-wrap justify-end">
-        <div
-          class="bg-(--color)/20 border-(--color)/60 text-(--color) flex cursor-pointer items-center rounded-full border text-xs px-5 py-2 [--color:var(--color-pending)]"
-        >
-          CITA {{ appointment.estatus.toUpperCase() }}
-        </div>
+        <PillBadge
+          size="lg"
+          :color="badgeColor"
+          :label="`CITA ${appointment.estatus.toUpperCase()}`"
+        />
       </div>
 
       <div class="grid grid-cols-12 gap-x-10 gap-y-6">
@@ -86,12 +86,13 @@ import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
 import EditIcon from '@/icons/EditIcon.vue';
 import CancelIcon from '@/icons/CancelIcon.vue';
+import PillBadge from '@/modules/common/components/PillBadge.vue';
 
 import { Appointment } from '../interfaces/appointment.interface';
 import { useMutation } from '@tanstack/vue-query';
 import { cancelAppointmentAction } from '../actions/cancel-appointment.action';
 import { useToast } from 'vue-toastification';
-import { watch } from 'vue';
+import { computed, watch } from 'vue';
 import { useQueryClient } from '@tanstack/vue-query';
 
 interface Props {
@@ -138,6 +139,18 @@ const onCancel = async () => {
     await mutateAsync(props.appointment.id.toString());
   } catch {}
 };
+
+const badgeColor = computed(() => {
+  const status = props.appointment.estatus.toLowerCase();
+
+  const map: Record<string, 'primary' | 'warning' | 'success' | 'danger' | 'pending'> = {
+    confirmada: 'success',
+    cancelada: 'danger',
+    pendiente: 'pending',
+  };
+
+  return map[status] ?? 'primary';
+});
 </script>
 
 <style scoped></style>

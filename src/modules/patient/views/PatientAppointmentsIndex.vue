@@ -105,7 +105,7 @@
                   <th
                     class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
                   >
-                    ESTATUS
+                    MÉDICO
                   </th>
                   <th
                     class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
@@ -115,7 +115,7 @@
                   <th
                     class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
                   >
-                    MÉDICO
+                    ESTATUS
                   </th>
                   <th
                     class="h-12 px-4 font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-center"
@@ -148,11 +148,7 @@
                     <td
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
-                      <PillBadge
-                        size="sm"
-                        :color="getAppointmentStatusColor(appointment.estatus)"
-                        :label="appointment.estatus"
-                      />
+                      {{ appointment.medico }}
                     </td>
                     <td
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
@@ -162,7 +158,11 @@
                     <td
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
-                      {{ appointment.medico }}
+                      <PillBadge
+                        size="sm"
+                        :color="getAppointmentStatusColor(appointment.estatus)"
+                        :label="appointment.estatus"
+                      />
                     </td>
                     <td
                       width="20%"
@@ -173,16 +173,15 @@
                           {{ expandedRow === appointment.id ? 'Ocultar' : 'Ver' }}
                         </span> -->
 
-                        <PreviewIcon
-                          class="cursor-pointer"
-                          @click="toggleRow(appointment.id)"
-                          v-if="expandedRow != appointment.id"
-                        />
-                        <PreviewHideIcon
-                          class="cursor-pointer"
-                          @click="toggleRow(appointment.id)"
-                          v-else
-                        />
+                        <div v-if="expandedRow != appointment.id">
+                          <PreviewIcon class="cursor-pointer" @click="toggleRow(appointment.id)" />
+                        </div>
+                        <div v-else>
+                          <PreviewHideIcon
+                            class="cursor-pointer"
+                            @click="toggleRow(appointment.id)"
+                          />
+                        </div>
                       </div>
                     </td>
                   </tr>

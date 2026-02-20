@@ -49,6 +49,13 @@
 
       <div class="mt-10 border-t pt-10 flex flex-wrap justify-center gap-3">
         <ButtonBase
+          text="Atender cita"
+          :icon="stethoscopeIcon"
+          color="primary"
+          :disabled="appointment.estatus === 'Cancelada' || isPending"
+          @click="goToConsultation()"
+        />
+        <ButtonBase
           text="Editar cita"
           :icon="EditIcon"
           color="secondary"
@@ -97,7 +104,9 @@ import { useQueryClient } from '@tanstack/vue-query';
 import CalendarIcon from '@/icons/CalendarIcon.vue';
 import UserIcon from '@/icons/UserIcon.vue';
 import MessageIcon from '@/icons/MessageIcon.vue';
+import stethoscopeIcon from '@/icons/stethoscopeIcon.vue';
 import ObservationsIcon from '@/icons/ObservationsIcon.vue';
+import { useRouter } from 'vue-router';
 
 interface Props {
   appointment: Appointment;
@@ -108,8 +117,11 @@ const props = defineProps<Props>();
 const queryClient = useQueryClient();
 const toast = useToast();
 
+const router = useRouter();
+
 const emit = defineEmits<{
   (e: 'updated', appointment: Appointment): void;
+  (e: 'consultation', appointmentId: number): void;
 }>();
 
 const { mutateAsync, isPending } = useMutation({
@@ -155,6 +167,10 @@ const badgeColor = computed(() => {
 
   return map[status] ?? 'primary';
 });
+
+const goToConsultation = () => {
+  emit('consultation', props.appointment.id);
+};
 </script>
 
 <style scoped></style>

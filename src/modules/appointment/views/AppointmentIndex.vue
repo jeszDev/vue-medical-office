@@ -22,6 +22,7 @@
           <AppointmentCalendar
             :appointment="selectedAppointment"
             @updated="selectedAppointment = $event"
+            @consultation="goToConsultation($event)"
           />
         </DialogBasic>
       </template>
@@ -44,6 +45,9 @@ import { Appointment } from '../interfaces/appointment.interface';
 import { CalendarEvent } from '../interfaces/calendar-event.interface';
 
 import { getAppointmentsAction } from '../actions/get-appointments.action';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const fromDate = ref<string | null>('2026-02-01');
 const toDate = ref<string | null>('2026-02-28');
@@ -90,6 +94,17 @@ const onEventClick = ({ event }: CalendarEvent) => {
   window.tailwind.Modal.getOrCreateInstance(
     document.getElementById('modal-appointment-calendar'),
   ).show();
+};
+
+const goToConsultation = (appointmentId) => {
+  window.tailwind.Modal.getOrCreateInstance(
+    document.getElementById('modal-appointment-calendar'),
+  ).hide();
+
+  router.push({
+    name: 'appointments.consultations.index',
+    params: { appointmentId: appointmentId },
+  });
 };
 </script>
 

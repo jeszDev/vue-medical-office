@@ -25,11 +25,11 @@
                 class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 me-4 ms-auto opacity-50"
               ></i> -->
 
-        <!-- <MoveRight
+        <ArrowRightIcon
           class="size-4 text-current me-4 ms-auto"
           :stroke-width="1.5"
           fill-opacity="0.25"
-        /> -->
+        />
       </div>
     </div>
     <div class="hidden group-hover/profile:block">
@@ -154,6 +154,7 @@
 import { MoveRight } from 'lucide-vue-next';
 import SimpleBar from 'simplebar-vue';
 import { useAuthStore } from '../../auth/stores/auth.store';
+import ArrowRightIcon from '@/icons/ArrowRightIcon.vue';
 
 const authStore = useAuthStore();
 </script>

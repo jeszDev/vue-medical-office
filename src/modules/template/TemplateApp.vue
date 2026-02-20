@@ -10,6 +10,7 @@ import { useMenuReactive } from './composables/useMenuReactive';
 import TemplateSideBar from './components/TemplateSideBar.vue';
 import { useAuthStore } from '../auth/stores/auth.store';
 import BurguerMenuIcon from '@/icons/BurguerMenuIcon.vue';
+import ArrowLeftIcon from '@/icons/ArrowLeftIcon.vue';
 
 const {
   initMenu,
@@ -87,7 +88,7 @@ onMounted(() => {
             href=""
             @click.prevent="toggleCompactMenu"
           >
-            <!-- <ChevronLeft class="size-4 text-current" :stroke-width="1.5" fill-opacity="0.25" /> -->
+            <ArrowLeftIcon class="size-4 text-current" :stroke-width="1.5" fill-opacity="0.25" />
           </a>
         </div>
 

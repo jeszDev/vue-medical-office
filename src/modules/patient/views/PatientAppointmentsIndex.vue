@@ -1,6 +1,6 @@
 <template>
   <FullScreenLoader v-if="isLoading" />
-  <TemplateView v-else :title="`CITAS DEL PACIENTE`">
+  <TemplateView v-else :title="`AGENDA`">
     <template #main>
       <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
@@ -190,9 +190,125 @@
                       colspan="7"
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
-                      <div><strong>Diagnóstico:</strong>wer</div>
-                      <div><strong>Tratamiento:</strong>asd</div>
-                      <div><strong>Notas:</strong>dfdf</div>
+                      <div class="grid grid-cols-12 mt-6 gap-x-10 gap-y-9">
+                        <div class="col-span-6 sm:col-span-6 md:col-span-4">
+                          <div class="text-xs opacity-70">MOTIVO DE LA CONSULTA</div>
+                          <div class="mt-1.5 flex items-center">
+                            <div class="text-base">4.501</div>
+                            <div
+                              class="text-(--color) flex cursor-pointer items-center rounded-full border px-2 py-px text-xs tooltip border-transparent bg-transparent [--color:var(--color-success)]"
+                              data-content="9% Higher than last month"
+                            >
+                              2%
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                data-lucide="chevron-down"
+                                class="lucide lucide-chevron-down size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 ml-0.5"
+                              >
+                                <path d="m6 9 6 6 6-6"></path>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-span-12 sm:col-span-6 md:col-span-4">
+                          <div class="text-xs opacity-70">PESO (kg)</div>
+                          <div class="mt-1.5 flex items-center">
+                            <div class="text-base">2</div>
+                          </div>
+                        </div>
+                        <div class="col-span-12 sm:col-span-6 md:col-span-4">
+                          <div class="text-xs opacity-70">ALTURA (cm)</div>
+                          <div class="mt-1.5 flex items-center">
+                            <div class="text-base">$72.000</div>
+                          </div>
+                        </div>
+                        <div class="col-span-12 sm:col-span-6 md:col-span-4">
+                          <div class="text-xs opacity-70">TEMPERATURA (ºC)</div>
+                          <div class="mt-1.5 flex items-center">
+                            <div class="text-base">$54.000</div>
+                          </div>
+                        </div>
+                        <div class="col-span-12 sm:col-span-6 md:col-span-4">
+                          <div class="text-xs opacity-70">PRESION ARTERIAL</div>
+                          <div class="mt-1.5 flex items-center">
+                            <div class="text-base">2.500</div>
+                            <div
+                              class="text-(--color) flex cursor-pointer items-center rounded-full border px-2 py-px text-xs tooltip border-transparent bg-transparent [--color:var(--color-danger)]"
+                              data-content="9% Higher than last month"
+                            >
+                              52%
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                data-lucide="chevron-down"
+                                class="lucide lucide-chevron-down size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 ml-0.5"
+                              >
+                                <path d="m6 9 6 6 6-6"></path>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-span-12 sm:col-span-6 md:col-span-4">
+                          <div class="text-xs opacity-70">FERECUANCIA CARDIACA</div>
+                          <div class="mt-1.5 flex items-center">
+                            <div class="text-base">$72.000</div>
+                          </div>
+                        </div>
+                        <div class="col-span-12 sm:col-span-12 md:col-span-12">
+                          <div class="text-xs opacity-70">DIAGNÓSTICO</div>
+                          <div class="mt-1.5 flex items-center">
+                            <div class="text-base">4.501</div>
+                          </div>
+                        </div>
+                        <div class="col-span-12 sm:col-span-12 md:col-span-12">
+                          <div class="text-xs opacity-70">TRATAMIENTO</div>
+                          <div class="mt-1.5 flex items-center">
+                            <div class="text-base">2</div>
+                          </div>
+                        </div>
+                        <div class="col-span-12 sm:col-span-12 md:col-span-12">
+                          <div class="text-xs opacity-70">NOTAS / OBSERVACIONES</div>
+                          <div class="mt-1.5 flex items-center">
+                            <div class="text-base">$72.000</div>
+                            <div
+                              class="text-(--color) flex cursor-pointer items-center rounded-full border px-2 py-px text-xs tooltip border-transparent bg-transparent [--color:var(--color-success)]"
+                              data-content="9% Higher than last month"
+                            >
+                              49%
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                data-lucide="chevron-down"
+                                class="lucide lucide-chevron-down size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 ml-0.5"
+                              >
+                                <path d="m6 9 6 6 6-6"></path>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 </template>

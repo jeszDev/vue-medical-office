@@ -78,10 +78,17 @@
         <div class="mt-10 flex flex-col justify-center gap-2 lg:flex-row">
           <!-- <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full"> -->
           <ButtonBase
-            text="Ver citas del paciente"
-            :icon="PreviewIcon"
+            text="Agenda del paciente"
+            :icon="CalendarIcon"
             color="primary"
             @click="goToAppointments"
+          />
+
+          <ButtonBase
+            text="Historial clínico del paciente"
+            :icon="ClipboardListIcon"
+            color="secondary"
+            @click="goToClinicalHistory"
           />
           <ButtonBase
             text="Editar datos del paciente"
@@ -107,10 +114,11 @@ import { useQuery } from '@tanstack/vue-query';
 import { getPatientByIdAction } from '../actions/get-patient-by-id.action';
 import CalendarBirthdayIcon from '@/icons/CalendarBirthdayIcon.vue';
 import CalendarDateRegisterIcon from '@/icons/CalendarDateRegisterIcon.vue';
+import ClipboardListIcon from '@/icons/ClipboardListIcon.vue';
 import EmailIcon from '@/icons/EmailIcon.vue';
 import UserEditIcon from '@/icons/UserEditIcon.vue';
 import UserDeleteIcon from '@/icons/UserDeleteIcon.vue';
-import PreviewIcon from '@/icons/PreviewIcon.vue';
+import CalendarIcon from '@/icons/CalendarIcon.vue';
 import PhoneIcon from '@/icons/PhoneIcon.vue';
 import ObservationsIcon from '@/icons/ObservationsIcon.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
@@ -139,6 +147,13 @@ const {
 const goToAppointments = () => {
   router.push({
     name: 'patients.appointments.index',
+    params: { patientId: props.patientId },
+  });
+};
+
+const goToClinicalHistory = () => {
+  router.push({
+    name: 'patients.consultations.index',
     params: { patientId: props.patientId },
   });
 };

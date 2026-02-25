@@ -102,7 +102,7 @@ const goToConsultation = (appointmentId) => {
   ).hide();
 
   router.push({
-    name: 'appointments.consultations.index',
+    name: 'appointments.consultations.create',
     params: { appointmentId: appointmentId },
   });
 };

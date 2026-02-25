@@ -70,9 +70,9 @@ const router = createRouter({
         },
         {
           path: 'appointments/:appointmentId/consultations',
-          name: 'appointments.consultations.index',
+          name: 'appointments.consultations.create',
           props: true,
-          component: () => import('@/modules/appointment/views/AppointmentConsultationIndex.vue'),
+          component: () => import('@/modules/appointment/views/AppointmentConsultationCreate.vue'),
         },
       ],
     },

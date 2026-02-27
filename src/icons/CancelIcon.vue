@@ -9,7 +9,7 @@
     stroke-width="2"
     stroke-linecap="round"
     stroke-linejoin="round"
-    class="lucide lucide-circle-x-icon lucide-circle-x"
+    class="lucide lucide-circle-x-icon lucide-circle-x stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 mr-2 size-4"
   >
     <circle cx="12" cy="12" r="10" />
     <path d="m15 9-6 6" />

@@ -182,6 +182,13 @@
                             @click="toggleRow(appointment.id)"
                           />
                         </div>
+                        <div>
+                          <CancelIcon
+                            class="cursor-pointer"
+                            data-tw-toggle="modal"
+                            data-tw-target="#modal-appointment-cancel"
+                          />
+                        </div>
                       </div>
                     </td>
                   </tr>
@@ -343,6 +350,7 @@ import { computed, ref } from 'vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
 import { getAppointmentStatusColor } from '@/modules/appointment/helpers/get-appointment-status-color.mapper';
+import CancelIcon from '@/icons/CancelIcon.vue';
 
 interface Props {
   patientId: string;

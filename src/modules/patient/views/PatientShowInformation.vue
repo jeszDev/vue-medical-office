@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="patient">
     <div class="flex flex-col p-5 lg:flex-row">
       <!-- Nombre -->
       <div class="flex items-center justify-center flex-[0.7] px-5 lg:justify-start">
@@ -83,24 +83,25 @@ import EmailIcon from '@/icons/EmailIcon.vue';
 import PhoneIcon from '@/icons/PhoneIcon.vue';
 import UserEditIcon from '@/icons/UserEditIcon.vue';
 import UserDeleteIcon from '@/icons/UserDeleteIcon.vue';
+import { Patient } from '../interfaces/patient.interface';
 
-import { useQuery } from '@tanstack/vue-query';
-import { getPatientByIdAction } from '../actions/get-patient-by-id.action';
+// import { useQuery } from '@tanstack/vue-query';
+// import { getPatientByIdAction } from '../actions/get-patient-by-id.action';
 
 interface Props {
-  patientId: string;
+  patient: Patient | undefined;
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
-const {
-  data: patient,
-  isLoading,
-  error,
-} = useQuery({
-  queryKey: ['patient', { patientId: props.patientId }],
-  queryFn: () => getPatientByIdAction(props.patientId),
-});
+// const {
+//   data: patient,
+//   isLoading,
+//   error,
+// } = useQuery({
+//   queryKey: ['patient', { patientId: props.patientId }],
+//   queryFn: () => getPatientByIdAction(props.patientId),
+// });
 </script>
 
 <style scoped></style>

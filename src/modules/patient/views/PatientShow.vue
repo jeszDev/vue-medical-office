@@ -50,7 +50,7 @@
               </li>
             </ul>
             <div class="tab-content mt-3.5 rounded-xl border p-5">
-              <div
+              <!-- <div
                 class="tab-pane hidden [&.active]:block"
                 :class="{ active: activeTab === 'information' }"
                 role="tabpanel"
@@ -79,7 +79,11 @@
                   v-else-if="activeTab === 'consultations'"
                   :patient-id="patientId"
                 />
-              </div>
+              </div> -->
+
+              <KeepAlive>
+                <component :is="currentTabComponent" :patient="patient" :patient-id="patientId" />
+              </KeepAlive>
             </div>
           </div>
         </div>
@@ -93,13 +97,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { getPatientByIdAction } from '../actions/get-patient-by-id.action';
+
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
+
 import PatientAppointmentsIndex from '@/modules/patient/views/PatientAppointmentsIndex.vue';
 import PatientShowInformation from '@/modules/patient/views/PatientShowInformation.vue';
 import PatientConsultationsIndex from '@/modules/patient/views/PatientConsultationsIndex.vue';
@@ -111,10 +117,22 @@ interface Props {
 type PatientTab = 'information' | 'appointments' | 'consultations';
 
 const props = defineProps<Props>();
+
 const activeTab = ref<PatientTab>('information');
 
-const { isLoading } = useQuery({
-  queryKey: ['patient', { patientId: props.patientId }],
+const currentTabComponent = computed(() => {
+  switch (activeTab.value) {
+    case 'appointments':
+      return PatientAppointmentsIndex;
+    case 'consultations':
+      return PatientConsultationsIndex;
+    default:
+      return PatientShowInformation;
+  }
+});
+
+const { data: patient, isLoading } = useQuery({
+  queryKey: ['patient', props.patientId],
   queryFn: () => getPatientByIdAction(props.patientId),
 });
 </script>

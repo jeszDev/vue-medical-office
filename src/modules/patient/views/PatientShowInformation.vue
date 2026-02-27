@@ -1,76 +1,91 @@
 <template>
-  <div v-if="patient">
-    <div class="flex flex-col p-5 lg:flex-row">
-      <!-- Nombre -->
-      <div class="flex items-center justify-center flex-[0.7] px-5 lg:justify-start">
-        <div class="mx-5">
-          <div class="opacity-70">NOMBRE</div>
+  <FullScreenLoader v-if="!patient" />
+  <TemplateView v-else title="INFORMACIÓN">
+    <template #main>
+      <div v-if="patient">
+        <div class="flex flex-col p-5 lg:flex-row">
+          <!-- Nombre -->
+          <div class="flex items-center justify-center flex-[0.7] px-5 lg:justify-start">
+            <div class="mx-5">
+              <div class="opacity-70">NOMBRE</div>
+              <div
+                class="max-w-[180px] text-base font-medium truncate sm:max-w-[220px] sm:whitespace-normal lg:text-sm"
+              >
+                {{ patient.nombre_completo }}
+              </div>
+            </div>
+          </div>
+          <!-- Datos del paciente -->
           <div
-            class="max-w-[180px] text-base font-medium truncate sm:max-w-[220px] sm:whitespace-normal lg:text-sm"
+            class="flex-1 px-5 pt-5 mt-6 border-t border-l border-r lg:mt-0 lg:border-t-0 lg:pt-0"
           >
-            {{ patient.nombre_completo }}
-          </div>
-        </div>
-      </div>
-      <!-- Datos del paciente -->
-      <div class="flex-1 px-5 pt-5 mt-6 border-t border-l border-r lg:mt-0 lg:border-t-0 lg:pt-0">
-        <div class="grid grid-cols-12 gap-x-10 gap-y-6">
-          <div class="col-span-12 sm:col-span-12 md:col-span-12">
-            <div class="text-xs opacity-70 flex"><CalendarBirthdayIcon /> FECHA DE NACIMIENTO</div>
-            <div class="mt-1.5 flex items-center">
-              <div class="text-base">
-                {{ patient.fecha_nacimiento ?? 'Fecha de nacimiento no registrado' }}
-                ~ <span v-if="patient.edad" class="">{{ patient.edad }} años</span>
+            <div class="grid grid-cols-12 gap-x-10 gap-y-6">
+              <div class="col-span-12 sm:col-span-12 md:col-span-12">
+                <div class="text-xs opacity-70 flex">
+                  <CalendarBirthdayIcon /> FECHA DE NACIMIENTO
+                </div>
+                <div class="mt-1.5 flex items-center">
+                  <div class="text-base">
+                    {{ patient.fecha_nacimiento ?? 'Fecha de nacimiento no registrado' }}
+                    ~ <span v-if="patient.edad" class="">{{ patient.edad }} años</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-span-12 sm:col-span-12 md:col-span-12">
+                <div class="text-xs opacity-70 flex"><PhoneIcon /> TÉLEFONO</div>
+                <div class="mt-1.5 flex items-center">
+                  <div class="text-base">{{ patient.telefono }}</div>
+                </div>
+              </div>
+              <div class="col-span-12 sm:col-span-12 md:col-span-12">
+                <div class="text-xs opacity-70 flex"><EmailIcon /> CORREO ELECTRÓNICO</div>
+                <div class="mt-1.5 flex items-center">
+                  {{ patient.correo_electronico ?? 'Correo electrónico no registrado' }}
+                </div>
+              </div>
+              <div class="col-span-12 sm:col-span-12 md:col-span-12">
+                <div class="text-xs opacity-70 flex">
+                  <CalendarDateRegisterIcon /> FECHA DE REGISTRO EN SISTEMA
+                </div>
+                <div class="mt-1.5 flex items-center">
+                  <div class="text-base">{{ patient.creado_el }}</div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="col-span-12 sm:col-span-12 md:col-span-12">
-            <div class="text-xs opacity-70 flex"><PhoneIcon /> TÉLEFONO</div>
-            <div class="mt-1.5 flex items-center">
-              <div class="text-base">{{ patient.telefono }}</div>
-            </div>
-          </div>
-          <div class="col-span-12 sm:col-span-12 md:col-span-12">
-            <div class="text-xs opacity-70 flex"><EmailIcon /> CORREO ELECTRÓNICO</div>
-            <div class="mt-1.5 flex items-center">
-              {{ patient.correo_electronico ?? 'Correo electrónico no registrado' }}
-            </div>
-          </div>
-          <div class="col-span-12 sm:col-span-12 md:col-span-12">
-            <div class="text-xs opacity-70 flex">
-              <CalendarDateRegisterIcon /> FECHA DE REGISTRO EN SISTEMA
-            </div>
-            <div class="mt-1.5 flex items-center">
-              <div class="text-base">{{ patient.creado_el }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- observaciones del paciente -->
-      <div class="flex justify-center flex-1 px-5 pt-5 mt-6 border-t lg:mt-0 lg:border-0 lg:pt-0">
-        <div class="grid grid-cols-12 gap-x-10 gap-y-6">
-          <div class="col-span-12 sm:col-span-12 md:col-span-12">
-            <div class="text-xs opacity-70 flex"><ObservationsIcon /> OBSERVACIONES</div>
-            <div class="mt-1.5 flex items-center">
-              <div class="text-base">
-                {{ patient.observaciones || 'SIN OBSERVACIONES' }}
+          <!-- observaciones del paciente -->
+          <div
+            class="flex justify-center flex-1 px-5 pt-5 mt-6 border-t lg:mt-0 lg:border-0 lg:pt-0"
+          >
+            <div class="grid grid-cols-12 gap-x-10 gap-y-6">
+              <div class="col-span-12 sm:col-span-12 md:col-span-12">
+                <div class="text-xs opacity-70 flex"><ObservationsIcon /> OBSERVACIONES</div>
+                <div class="mt-1.5 flex items-center">
+                  <div class="text-base">
+                    {{ patient.observaciones || 'SIN OBSERVACIONES' }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <div class="mt-10 flex flex-col justify-center gap-2 lg:flex-row">
+          <ButtonBase
+            text="Editar datos del paciente"
+            :icon="UserEditIcon"
+            color="secondary"
+            data-tw-toggle="modal"
+            data-tw-target="#modal-patient-create-or-edit"
+          />
+          <ButtonBase text="Eliminar paciente" :icon="UserDeleteIcon" color="danger" />
+        </div>
+
+        <DialogBasic id="modal-patient-create-or-edit" size="3xl">
+          <PatientCreate :patient-id="patient.id" />
+        </DialogBasic>
       </div>
-    </div>
-    <div class="mt-10 flex flex-col justify-center gap-2 lg:flex-row">
-      <ButtonBase
-        text="Editar datos del paciente"
-        :icon="UserEditIcon"
-        color="secondary"
-        data-tw-toggle="modal"
-        data-tw-target="#modal-patient-create-or-edit"
-      />
-      <ButtonBase text="Eliminar paciente" :icon="UserDeleteIcon" color="danger" />
-    </div>
-  </div>
+    </template>
+  </TemplateView>
 </template>
 
 <script setup lang="ts">
@@ -85,8 +100,13 @@ import UserEditIcon from '@/icons/UserEditIcon.vue';
 import UserDeleteIcon from '@/icons/UserDeleteIcon.vue';
 import { Patient } from '../interfaces/patient.interface';
 
+import DialogBasic from '@/modules/common/components/DialogBasic.vue';
+import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
+
 // import { useQuery } from '@tanstack/vue-query';
 // import { getPatientByIdAction } from '../actions/get-patient-by-id.action';
+import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
+import TemplateView from '@/modules/template/components/TemplateView.vue';
 
 interface Props {
   patient: Patient | undefined;

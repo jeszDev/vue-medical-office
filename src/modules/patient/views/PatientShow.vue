@@ -1,5 +1,5 @@
 <template>
-  <TemplateView title="INFORMACIÓN DEL PACIENTE">
+  <TemplateView :title="`INFORMACIÓN DEL PACIENTE - ${patient.nombre_completo}`">
     <template #main>
       <FullScreenLoader v-if="isLoading" />
 
@@ -87,10 +87,6 @@
             </div>
           </div>
         </div>
-
-        <DialogBasic id="modal-patient-create-or-edit" size="3xl">
-          <PatientCreate :patient-id="patientId" />
-        </DialogBasic>
       </template>
     </template>
   </TemplateView>
@@ -101,8 +97,6 @@ import { ref, computed } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { getPatientByIdAction } from '../actions/get-patient-by-id.action';
 
-import DialogBasic from '@/modules/common/components/DialogBasic.vue';
-import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 

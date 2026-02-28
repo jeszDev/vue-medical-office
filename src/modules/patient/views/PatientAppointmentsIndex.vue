@@ -125,7 +125,15 @@
                 </tr>
               </thead>
               <tbody class="[&_tr:last-child]:border-0">
-                <template v-for="(appointment, index) in appointments" :key="appointment.id">
+                <tr v-if="!appointments?.length">
+                  <td
+                    colspan="7"
+                    class="text-center shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                  >
+                    El paciente no tiene citas registradas.
+                  </td>
+                </tr>
+                <template v-else v-for="(appointment, index) in appointments" :key="appointment.id">
                   <tr
                     class="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted border-b-0"
                   >

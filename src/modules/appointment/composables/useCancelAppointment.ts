@@ -6,10 +6,15 @@ export const useCancelAppointment = () => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
-  const mutation = useMutation({
+  const {
+    mutateAsync: functionCancelAppointment,
+    // data: updatedAppointment,
+    isPending: isPendingCancelAppointment,
+    error: errorCancelAppointment,
+  } = useMutation({
     mutationFn: cancelAppointmentAction,
 
-    onSuccess: (updatedAppointment) => {
+    onSuccess: (/* updatedAppointment */) => {
       toast.success('Cita cancelada correctamente');
 
       queryClient.invalidateQueries({
@@ -26,5 +31,10 @@ export const useCancelAppointment = () => {
     },
   });
 
-  return mutation;
+  return {
+    functionCancelAppointment,
+    // updatedAppointment,
+    isPendingCancelAppointment,
+    errorCancelAppointment,
+  };
 };

@@ -96,63 +96,41 @@ import CancelIcon from '@/icons/CancelIcon.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
 
 import { Appointment } from '../interfaces/appointment.interface';
-import { useMutation } from '@tanstack/vue-query';
-import { cancelAppointmentAction } from '../actions/cancel-appointment.action';
-import { useToast } from 'vue-toastification';
-import { computed, watch } from 'vue';
-import { useQueryClient } from '@tanstack/vue-query';
+import { computed } from 'vue';
 import CalendarIcon from '@/icons/CalendarIcon.vue';
 import UserIcon from '@/icons/UserIcon.vue';
 import MessageIcon from '@/icons/MessageIcon.vue';
 import stethoscopeIcon from '@/icons/stethoscopeIcon.vue';
 import ObservationsIcon from '@/icons/ObservationsIcon.vue';
-import { useRouter } from 'vue-router';
+import { useCancelAppointment } from '../composables/useCancelAppointment';
 
 interface Props {
-  appointment: Appointment;
+  appointment: null | Appointment;
 }
 
 const props = defineProps<Props>();
 
-const queryClient = useQueryClient();
-const toast = useToast();
-
-const router = useRouter();
+console.log(props.appointment);
 
 const emit = defineEmits<{
   (e: 'updated', appointment: Appointment): void;
   (e: 'consultation', appointmentId: number): void;
 }>();
 
-const { mutateAsync, isPending } = useMutation({
-  mutationFn: cancelAppointmentAction,
+const { functionCancelAppointment /* , updatedAppointment */, isPendingCancelAppointment } =
+  useCancelAppointment();
 
-  onSuccess: (updatedAppointment) => {
-    toast.success('Cita cancelada correctamente');
+const onCancel = async () => {
+  if (isPendingCancelAppointment.value) return;
 
-    queryClient.invalidateQueries({
-      queryKey: ['appointments'],
-    });
+  try {
+    const updatedAppointment = await functionCancelAppointment(props.appointment.id.toString());
 
     emit('updated', updatedAppointment);
 
     window.tailwind.Modal.getOrCreateInstance(
       document.getElementById('modal-appointment-cancel'),
     )?.hide();
-  },
-
-  onError: (error: Error) => {
-    toast.error(error.message);
-  },
-});
-
-const onCancel = async () => {
-  if (isPending.value) return;
-
-  // mutate(props.appointment.id.toString());
-
-  try {
-    await mutateAsync(props.appointment.id.toString());
   } catch {}
 };
 

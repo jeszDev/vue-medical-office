@@ -50,7 +50,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const fromDate = ref<string | null>('2026-02-01');
-const toDate = ref<string | null>('2026-02-28');
+const toDate = ref<string | null>('2026-03-28');
 
 const selectedAppointment = ref<null | Appointment>(null);
 

@@ -52,14 +52,14 @@
           text="Atender cita"
           :icon="stethoscopeIcon"
           color="primary"
-          :disabled="appointment.estatus === 'Cancelada' || isPending"
+          :disabled="appointment.estatus === 'Cancelada' || isPendingCancelAppointment"
           @click="goToConsultation()"
         />
         <ButtonBase
           text="Editar cita"
           :icon="EditIcon"
           color="secondary"
-          :disabled="appointment.estatus === 'Cancelada' || isPending"
+          :disabled="appointment.estatus === 'Cancelada' || isPendingCancelAppointment"
           data-tw-toggle="modal"
           data-tw-target="#modal-patient-create-or-edit"
         />
@@ -67,7 +67,7 @@
           text="Cancelar cita"
           :icon="CancelIcon"
           color="danger"
-          :disabled="appointment.estatus === 'Cancelada' || isPending"
+          :disabled="appointment.estatus === 'Cancelada' || isPendingCancelAppointment"
           data-tw-toggle="modal"
           data-tw-target="#modal-appointment-cancel"
         />
@@ -79,7 +79,7 @@
         description="Está acción es irrevesible."
         confirmText="Sí, cancelar cita"
         cancelText="Cerrar"
-        :loading="isPending"
+        :loading="isPendingCancelAppointment"
         @confirm="onCancel"
       />
     </template>

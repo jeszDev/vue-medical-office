@@ -1,15 +1,16 @@
 <template>
   <div
+    :id="id"
     data-tw-backdrop=""
     class="modal group bg-black/60 transition-[visibility,opacity] w-screen h-screen fixed left-0 top-0 [&:not(.show)]:duration-[0s,0.2s] [&:not(.show)]:delay-[0.2s,0s] [&:not(.show)]:invisible [&:not(.show)]:opacity-0 [&.show]:visible [&.show]:opacity-100 [&.show]:duration-[0s,0.4s]"
-    :id="id"
+    :class="{ show: modelValue }"
   >
     <div
       class="box relative before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:z-[-1] after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-[0px_3px_5px_#0000000b] after:z-[-1] after:backdrop-blur-md before:bg-background/60 dark:before:shadow-background before:shadow-foreground/60 z-50 mx-auto -mt-16 p-6 transition-[margin-top,transform] duration-[0.4s,0.3s] before:rounded-3xl before:shadow-2xl after:rounded-3xl group-[.show]:mt-16 group-[.modal-static]:scale-[1.05] sm:max-w-lg"
     >
       <a
         class="bg-background/80 hover:bg-background absolute right-0 top-0 -mr-3 -mt-3 flex size-9 items-center justify-center rounded-full border shadow backdrop-blur"
-        data-tw-dismiss="modal"
+        @click="handleCancel"
         href="#"
       >
         <CloseIcon />
@@ -58,18 +59,21 @@
 </template>
 
 <script setup lang="ts">
+import { watch, onMounted, onUnmounted } from 'vue';
+
 import CloseIcon from '@/icons/CloseIcon.vue';
 
 interface Props {
-  id: string;
+  modelValue: boolean;
+  id?: string;
   title: string;
   description: string;
   confirmText?: string;
   cancelText?: string;
   isLoading?: boolean;
   loadingText?: string;
-  onCancel?: () => void;
-  onConfirm?: () => void;
+  // onCancel?: () => void;
+  // onConfirm?: () => void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -80,14 +84,15 @@ const props = withDefaults(defineProps<Props>(), {
   cancelText: 'Cancelar',
   isLoading: false,
   loadingText: 'Cargando...',
-  onConfirm: () => {},
-  onCancel: () => {},
+  // onConfirm: () => {},
+  // onCancel: () => {},
 });
 
 /**
  * Emits
  */
 const emit = defineEmits<{
+  (e: 'update:modelValue', value: boolean): void;
   (e: 'confirm'): void;
   (e: 'cancel'): void;
 }>();
@@ -96,14 +101,36 @@ const emit = defineEmits<{
  * Métodos internos
  */
 const handleConfirm = () => {
-  props.onConfirm?.();
+  // props.onConfirm?.();
   emit('confirm');
 };
 
 const handleCancel = () => {
-  props.onCancel?.();
+  // props.onCancel?.();
+  emit('update:modelValue', false);
   emit('cancel');
 };
+
+const handleEscape = (e: KeyboardEvent) => {
+  if (e.key === 'Escape' && props.modelValue) {
+    emit('update:modelValue', false);
+  }
+};
+
+watch(
+  () => props.modelValue,
+  (value) => {
+    document.body.style.overflow = value ? 'hidden' : '';
+  },
+);
+
+onMounted(() => {
+  window.addEventListener('keydown', handleEscape);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleEscape);
+});
 </script>
 
 <style scoped></style>

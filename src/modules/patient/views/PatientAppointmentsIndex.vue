@@ -193,8 +193,7 @@
                         <div>
                           <CancelIcon
                             class="cursor-pointer"
-                            data-tw-toggle="modal"
-                            data-tw-target="#modal-appointment-cancel"
+                            @click="openCancelModal(appointment.id)"
                           />
                         </div>
                       </div>
@@ -336,6 +335,22 @@
       <DialogBasic id="modal-appointment-create-or-edit" size="3xl">
         <AppointmentCreateUpdate :patientId appointmentId="create" :is-inside-modal="true" />
       </DialogBasic>
+
+      <!-- <ModalQuestion
+        id="modal-appointment-cancel"
+        title="¿Quieres cancelar la cita?"
+        description="Está acción es irrevesible."
+        confirmText="Sí, cancelar cita"
+        cancelText="Cerrar"
+        :loading="isPendingCancelAppointment"
+        @confirm="onCancel"
+      /> -->
+
+      <AppointmentCancelModalQuestion
+        v-model="showCancelModalQuestion"
+        :appointmentId="selectedAppointmentId"
+        @cancelled="handleCancelled"
+      />
     </template>
   </TemplateView>
 </template>
@@ -344,21 +359,20 @@
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import PlusIcon from '@/icons/PlusIcon.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
-import TimeLine from '@/modules/common/components/TimeLine.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
 import { useQuery } from '@tanstack/vue-query';
-import { getPatientByIdAction } from '../actions/get-patient-by-id.action';
 import PreviewIcon from '@/icons/PreviewIcon.vue';
 import PreviewHideIcon from '@/icons/PreviewHideIcon.vue';
-import DeleteIcon from '@/icons/DeleteIcon.vue';
-import EditIcon from '@/icons/EditIcon.vue';
 import { getAppointmentsByPatientAction } from '../../appointment/actions/get-appointments-by-patient.action';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
 import { getAppointmentStatusColor } from '@/modules/appointment/helpers/get-appointment-status-color.mapper';
 import CancelIcon from '@/icons/CancelIcon.vue';
+import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
+import { useCancelAppointment } from '../../appointment/composables/useCancelAppointment';
+import AppointmentCancelModalQuestion from '@/modules/appointment/components/AppointmentCancelModalQuestion.vue';
 
 interface Props {
   patientId: string;
@@ -368,7 +382,10 @@ interface Props {
 const props = defineProps<Props>();
 const expandedRow = ref<null | number>(null);
 
-console.log(props.patientId);
+const showCancelModalQuestion = ref(false);
+const selectedAppointmentId = ref<null | number>(null);
+
+const { functionCancelAppointment, isPendingCancelAppointment } = useCancelAppointment();
 
 const {
   data: appointments,
@@ -384,6 +401,33 @@ console.log(appointments.value);
 
 const toggleRow = (id: number) => {
   expandedRow.value = expandedRow.value === id ? null : id;
+};
+
+const onCancel = async () => {
+  if (isPendingCancelAppointment.value) return;
+  if (!selectedAppointmentId.value) return;
+
+  try {
+    await functionCancelAppointment(selectedAppointmentId.value.toString());
+
+    selectedAppointmentId.value = null;
+
+    window.tailwind.Modal.getOrCreateInstance(
+      document.getElementById('modal-appointment-cancel'),
+    )?.hide();
+  } catch {}
+};
+
+const openCancelModal = (id: number) => {
+  console.log('simon');
+
+  selectedAppointmentId.value = id;
+
+  showCancelModalQuestion.value = true;
+};
+
+const handleCancelled = (updated) => {
+  console.log('Cita actualizada:', updated);
 };
 </script>
 

@@ -21,9 +21,9 @@ export const useCancelAppointment = () => {
         queryKey: ['appointments'],
       });
 
-      queryClient.invalidateQueries({
-        queryKey: ['patient-appointments'],
-      });
+      // queryClient.invalidateQueries({
+      //   queryKey: ['patient-appointments'],
+      // });
     },
 
     onError: (error: Error) => {

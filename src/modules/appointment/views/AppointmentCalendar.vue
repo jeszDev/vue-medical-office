@@ -52,14 +52,14 @@
           text="Atender cita"
           :icon="stethoscopeIcon"
           color="primary"
-          :disabled="appointment.estatus === 'Cancelada' || isPendingCancelAppointment"
+          :disabled="appointment.estatus === 'Cancelada'"
           @click="goToConsultation()"
         />
         <ButtonBase
           text="Editar cita"
           :icon="EditIcon"
           color="secondary"
-          :disabled="appointment.estatus === 'Cancelada' || isPendingCancelAppointment"
+          :disabled="appointment.estatus === 'Cancelada'"
           data-tw-toggle="modal"
           data-tw-target="#modal-patient-create-or-edit"
         />
@@ -67,20 +67,15 @@
           text="Cancelar cita"
           :icon="CancelIcon"
           color="danger"
-          :disabled="appointment.estatus === 'Cancelada' || isPendingCancelAppointment"
-          data-tw-toggle="modal"
-          data-tw-target="#modal-appointment-cancel"
+          :disabled="appointment.estatus === 'Cancelada'"
+          @click="showCancelModalQuestion = true"
         />
       </div>
 
-      <ModalQuestion
-        id="modal-appointment-cancel"
-        title="¿Quieres cancelar la cita?"
-        description="Está acción es irrevesible."
-        confirmText="Sí, cancelar cita"
-        cancelText="Cerrar"
-        :loading="isPendingCancelAppointment"
-        @confirm="onCancel"
+      <AppointmentCancelModalQuestion
+        v-model="showCancelModalQuestion"
+        :appointmentId="appointment.id"
+        @cancelled="handleCancelled"
       />
     </template>
   </TemplateView>
@@ -90,19 +85,18 @@
 <script setup lang="ts">
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
-import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
 import EditIcon from '@/icons/EditIcon.vue';
 import CancelIcon from '@/icons/CancelIcon.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
 
 import { Appointment } from '../interfaces/appointment.interface';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import CalendarIcon from '@/icons/CalendarIcon.vue';
 import UserIcon from '@/icons/UserIcon.vue';
 import MessageIcon from '@/icons/MessageIcon.vue';
 import stethoscopeIcon from '@/icons/stethoscopeIcon.vue';
 import ObservationsIcon from '@/icons/ObservationsIcon.vue';
-import { useCancelAppointment } from '../composables/useCancelAppointment';
+import AppointmentCancelModalQuestion from '@/modules/appointment/components/AppointmentCancelModalQuestion.vue';
 
 interface Props {
   appointment: null | Appointment;
@@ -110,29 +104,12 @@ interface Props {
 
 const props = defineProps<Props>();
 
-console.log(props.appointment);
+const showCancelModalQuestion = ref(false);
 
 const emit = defineEmits<{
   (e: 'updated', appointment: Appointment): void;
   (e: 'consultation', appointmentId: number): void;
 }>();
-
-const { functionCancelAppointment /* , updatedAppointment */, isPendingCancelAppointment } =
-  useCancelAppointment();
-
-const onCancel = async () => {
-  if (isPendingCancelAppointment.value) return;
-
-  try {
-    const updatedAppointment = await functionCancelAppointment(props.appointment.id.toString());
-
-    emit('updated', updatedAppointment);
-
-    window.tailwind.Modal.getOrCreateInstance(
-      document.getElementById('modal-appointment-cancel'),
-    )?.hide();
-  } catch {}
-};
 
 const badgeColor = computed(() => {
   const status = props.appointment.estatus.toLowerCase();
@@ -148,6 +125,10 @@ const badgeColor = computed(() => {
 
 const goToConsultation = () => {
   emit('consultation', props.appointment.id);
+};
+
+const handleCancelled = (updatedAppointment) => {
+  emit('updated', updatedAppointment);
 };
 </script>
 

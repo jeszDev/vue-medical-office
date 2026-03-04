@@ -5,7 +5,7 @@
     description="Esta acción es irreversible."
     confirmText="Sí, cancelar cita"
     cancelText="Cerrar"
-    :loading="isPending"
+    :loading="isPendingCancelAppointment"
     @confirm="onConfirm"
     @cancel="onClose"
   />
@@ -31,7 +31,7 @@ const emit = defineEmits<{
   (e: 'cancelled', appointment: Appointment): void;
 }>();
 
-const { mutateAsync, isPending } = useCancelAppointment();
+const { functionCancelAppointment, isPendingCancelAppointment } = useCancelAppointment();
 
 const isOpen = computed({
   get: () => props.modelValue,
@@ -39,10 +39,10 @@ const isOpen = computed({
 });
 
 const onConfirm = async () => {
-  if (!props.appointmentId || isPending.value) return;
+  if (!props.appointmentId || isPendingCancelAppointment.value) return;
 
   try {
-    const updated = await mutateAsync(props.appointmentId.toString());
+    const updated = await functionCancelAppointment(props.appointmentId.toString());
 
     emit('cancelled', updated);
 

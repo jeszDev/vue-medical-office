@@ -336,16 +336,6 @@
         <AppointmentCreateUpdate :patientId appointmentId="create" :is-inside-modal="true" />
       </DialogBasic>
 
-      <!-- <ModalQuestion
-        id="modal-appointment-cancel"
-        title="¿Quieres cancelar la cita?"
-        description="Está acción es irrevesible."
-        confirmText="Sí, cancelar cita"
-        cancelText="Cerrar"
-        :loading="isPendingCancelAppointment"
-        @confirm="onCancel"
-      /> -->
-
       <AppointmentCancelModalQuestion
         v-model="showCancelModalQuestion"
         :appointmentId="selectedAppointmentId"
@@ -370,8 +360,6 @@ import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
 import { getAppointmentStatusColor } from '@/modules/appointment/helpers/get-appointment-status-color.mapper';
 import CancelIcon from '@/icons/CancelIcon.vue';
-import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
-import { useCancelAppointment } from '../../appointment/composables/useCancelAppointment';
 import AppointmentCancelModalQuestion from '@/modules/appointment/components/AppointmentCancelModalQuestion.vue';
 
 interface Props {
@@ -384,8 +372,6 @@ const expandedRow = ref<null | number>(null);
 
 const showCancelModalQuestion = ref(false);
 const selectedAppointmentId = ref<null | number>(null);
-
-const { functionCancelAppointment, isPendingCancelAppointment } = useCancelAppointment();
 
 const {
   data: appointments,
@@ -403,21 +389,6 @@ const toggleRow = (id: number) => {
   expandedRow.value = expandedRow.value === id ? null : id;
 };
 
-const onCancel = async () => {
-  if (isPendingCancelAppointment.value) return;
-  if (!selectedAppointmentId.value) return;
-
-  try {
-    await functionCancelAppointment(selectedAppointmentId.value.toString());
-
-    selectedAppointmentId.value = null;
-
-    window.tailwind.Modal.getOrCreateInstance(
-      document.getElementById('modal-appointment-cancel'),
-    )?.hide();
-  } catch {}
-};
-
 const openCancelModal = (id: number) => {
   console.log('simon');
 
@@ -426,9 +397,7 @@ const openCancelModal = (id: number) => {
   showCancelModalQuestion.value = true;
 };
 
-const handleCancelled = (updated) => {
-  console.log('Cita actualizada:', updated);
-};
+const handleCancelled = (updatedAppointment) => {};
 </script>
 
 <style scoped></style>

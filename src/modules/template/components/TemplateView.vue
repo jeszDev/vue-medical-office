@@ -6,7 +6,8 @@
       </slot>
     </div>
 
-    <div class="mt-10 border-t pt-10 px-5 sm:px-20">
+    <!-- <div class="mt-10 border-t pt-10 px-5 sm:px-20"> -->
+    <div class="mt-5 border-t pt-6">
       <slot name="main"></slot>
     </div>
   </div>

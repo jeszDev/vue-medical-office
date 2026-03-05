@@ -5,7 +5,7 @@
     description="Esta acción es irreversible."
     confirmText="Sí, cancelar cita"
     cancelText="Cerrar"
-    :loading="isPendingCancelAppointment"
+    :isLoading="isPendingCancelAppointment"
     @confirm="onConfirm"
     @cancel="onClose"
   />
@@ -39,7 +39,8 @@ const isOpen = computed({
 });
 
 const onConfirm = async () => {
-  if (!props.appointmentId || isPendingCancelAppointment.value) return;
+  if (!props.appointmentId) return;
+  if (isPendingCancelAppointment.value) return;
 
   try {
     const updated = await functionCancelAppointment(props.appointmentId.toString());

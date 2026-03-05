@@ -17,7 +17,7 @@ const props = defineProps<{
 }>();
 
 const baseClasses =
-  'flex items-center rounded-full border text-xs bg-(--color)/20 border-(--color)/60 text-(--color)';
+  'flex items-center rounded-full border text-xs font-semibold bg-(--color)/20 border-(--color)/60 text-(--color)';
 
 const sizeClasses = computed(() => {
   switch (props.size) {

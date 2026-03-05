@@ -166,11 +166,13 @@
                     <td
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
-                      <PillBadge
-                        size="sm"
-                        :color="getAppointmentStatusColor(appointment.estatus)"
-                        :label="appointment.estatus"
-                      />
+                      <div class="flex flex-wrap">
+                        <PillBadge
+                          size="sm"
+                          :color="getAppointmentStatusColor(appointment.estatus)"
+                          :label="appointment.estatus"
+                        />
+                      </div>
                     </td>
                     <td
                       width="20%"

@@ -12,6 +12,7 @@ import { useToast } from 'vue-toastification';
 
 import { createUpdateAppointmentAction, getAppointmentByIdAction } from '../actions';
 import formatDateToInput from '@/helpers/format-date-to-input.helper';
+import TemplateView from '@/modules/template/components/TemplateView.vue';
 
 import { watch } from 'vue';
 
@@ -51,6 +52,7 @@ const schema = yup.object({
 
 export default defineComponent({
   components: {
+    TemplateView,
     ButtonPrimary,
     InputLabel,
     InputBase,

@@ -9,6 +9,7 @@ import { useMutation, useQuery } from '@tanstack/vue-query';
 import { useForm, useFieldArray } from 'vee-validate';
 import * as yup from 'yup';
 import { useToast } from 'vue-toastification';
+import TemplateView from '@/modules/template/components/TemplateView.vue';
 
 import { createUpdatePatientAction, getPatientByIdAction } from '../actions';
 import formatDateToInput from '@/helpers/format-date-to-input.helper';
@@ -27,6 +28,7 @@ const schema = yup.object({
 
 export default defineComponent({
   components: {
+    TemplateView,
     ButtonPrimary,
     InputLabel,
     InputBase,
@@ -39,10 +41,10 @@ export default defineComponent({
       required: true,
       default: 'create',
     },
-    isInsideModal: {
-      type: Boolean,
-      default: false,
-    },
+    // isInsideModal: {
+    //   type: Boolean,
+    //   default: false,
+    // },
   },
   setup(props) {
     const router = useRouter();

@@ -17,7 +17,8 @@
       >
         <CloseIcon />
       </a>
-      <div class="flex flex-col items-center gap-3 overflow-y-auto max-h-[70vh] w-full px-2">
+      <!-- <div class="flex flex-col items-center gap-3 overflow-y-auto max-h-[70vh] w-full px-2"> -->
+      <div class="flex flex-col gap-3 overflow-y-auto max-h-[70vh] w-full px-4">
         <slot>Contenido de modal</slot>
       </div>
     </div>

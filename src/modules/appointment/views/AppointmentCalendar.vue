@@ -9,7 +9,7 @@
         />
       </div>
 
-      <div class="grid grid-cols-12 gap-x-10 gap-y-6">
+      <div class="grid grid-cols-12 gap-x-10 gap-y-6 ms-32">
         <div class="col-span-12 sm:col-span-12 md:col-span-12">
           <div class="text-xs opacity-70 flex"><CalendarIcon /> FECHA Y HORA DE LA CITA</div>
           <div class="mt-1.5 flex items-center">

@@ -161,7 +161,11 @@
                     <td
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
-                      {{ appointment.motivo }}
+                      {{
+                        appointment.motivo?.length > 25
+                          ? appointment.motivo.slice(0, 25) + '...'
+                          : appointment.motivo
+                      }}
                     </td>
                     <td
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"

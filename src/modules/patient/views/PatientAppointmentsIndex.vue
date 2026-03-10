@@ -367,6 +367,7 @@ import PillBadge from '@/modules/common/components/PillBadge.vue';
 import { getAppointmentStatusColor } from '@/modules/appointment/helpers/get-appointment-status-color.mapper';
 import CancelIcon from '@/icons/CancelIcon.vue';
 import AppointmentCancelModalQuestion from '@/modules/appointment/components/AppointmentCancelModalQuestion.vue';
+import { Appointment } from '../../appointment/interfaces/appointment.interface';
 
 interface Props {
   patientId: string;
@@ -403,7 +404,9 @@ const openCancelModal = (id: number) => {
   showCancelModalQuestion.value = true;
 };
 
-const handleCancelled = (updatedAppointment) => {};
+const handleCancelled = (updatedAppointment: Appointment) => {
+  showCancelModalQuestion.value = false;
+};
 </script>
 
 <style scoped></style>

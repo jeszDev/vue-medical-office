@@ -102,11 +102,6 @@
                     >
                       FECHA DE REGISTRO DEL PACIENTE
                     </th>
-                    <!-- <th
-                    class="h-12 px-4 font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-left"
-                  >
-                    DESCRICIÓN DE INDICIOS O ELEMENTOS PROBATORIOS
-                  </th> -->
                     <th
                       class="h-12 px-4 font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-center"
                     >
@@ -130,17 +125,12 @@
                       width="15%"
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
-                      <!-- <a class="whitespace-nowrap font-medium" href=""> Apple MacBook Pro 13 </a>
-                    <div class="mt-0.5 whitespace-nowrap text-xs opacity-70">PC & Laptop</div> -->
-                      {{ patient.nombre }} {{ patient.primer_apellido }}
-                      {{ patient.segundo_apellido }}
+                      {{ patient.nombre_completo }}
                     </td>
                     <td
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
-                      <!-- <a class="whitespace-nowrap font-medium" href=""> Apple MacBook Pro 13 </a>
-                    <div class="mt-0.5 whitespace-nowrap text-xs opacity-70">PC & Laptop</div> -->
-                      {{ patient.created_at }}
+                      {{ patient.creado_el }}
                     </td>
                     <!-- <td
                     class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r text-center"
@@ -234,13 +224,14 @@ import { useAuthStore } from '../../auth/stores/auth.store';
 import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
+import { Patient } from '../interfaces/patient.interface';
 
 const authStore = useAuthStore();
 
 // const page = ref(Number(route.query.page) || 1);
 const route = useRoute();
 const router = useRouter();
-const page = ref<number>(1);
+const page = ref<number>(Number(route.query.page) || 1);
 const perPage = ref<number>(10);
 const search = ref<string>('');
 const queryClient = useQueryClient();
@@ -248,27 +239,27 @@ const queryClient = useQueryClient();
 const selectedPatientId = ref<'create' | number>('create');
 
 const {
-  data: response,
+  data: responsePatients,
   isLoading,
   refetch,
 } = useQuery({
-  queryKey: ['patients', { page: page }],
+  queryKey: ['patients', { page: page, search }],
   queryFn: () => getPatientsAction(page.value, perPage.value, search.value),
 });
 
-const patients = computed(() => response.value?.data || []);
+const patients = computed<Patient>(() => responsePatients.value?.data || []);
 const pagination = computed<Pagination>(() => ({
-  currentPage: response.value?.current_page || 1,
-  firstPageUrl: response.value?.first_page_url || '',
-  lastPage: response.value?.last_page || 1,
-  lastPageUrl: response.value?.last_page_url || '',
-  links: response.value?.links || [],
-  nextPageUrl: response.value?.next_page_url || '',
-  perPage: response.value?.per_page || perPage.value,
-  prevPageUrl: response.value?.prev_page_url || '',
-  total: response.value?.total || 0,
-  to: response.value?.to || 0,
-  from: response.value?.from || 0,
+  currentPage: responsePatients.value?.meta.current_page || 1,
+  firstPageUrl: responsePatients.value?.meta.first_page_url || '',
+  lastPage: responsePatients.value?.meta.last_page || 1,
+  lastPageUrl: responsePatients.value?.meta.last_page_url || '',
+  links: responsePatients.value?.meta.links || [],
+  nextPageUrl: responsePatients.value?.meta.next_page_url || '',
+  perPage: responsePatients.value?.meta.per_page || perPage.value,
+  prevPageUrl: responsePatients.value?.meta.prev_page_url || '',
+  total: responsePatients.value?.meta.total || 0,
+  to: responsePatients.value?.meta.to || 0,
+  from: responsePatients.value?.meta.from || 0,
 }));
 
 function pageChange(pageNumber: number) {
@@ -280,7 +271,7 @@ function pageChange(pageNumber: number) {
 }
 
 function doSearch() {
-  page.value = 1; // opcional: reiniciar a la primera página
+  page.value = 1;
   refetch();
 }
 

@@ -4,6 +4,7 @@
       <ul class="mr-0 flex w-full gap-1 sm:mr-auto sm:w-auto">
         <li class="flex-1 sm:flex-initial">
           <button
+            :disabled="pagination.currentPage == 1"
             class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 h-10 px-4 py-2 border-transparent bg-transparent"
             @click="$emit('page-change', 1)"
           >
@@ -16,12 +17,10 @@
 
         <li class="flex-1 sm:flex-initial">
           <button
+            :disabled="pagination.currentPage <= 1"
             class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 h-10 px-4 py-2 border-transparent bg-transparent"
             @click="$emit('page-change', pagination.currentPage - 1)"
           >
-            <!-- <ChevronLeft
-              class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
-            /> -->
             <PaginatePreviousIcon />
           </button>
         </li>
@@ -46,81 +45,23 @@
 
         <li class="flex-1 sm:flex-initial">
           <button
+            :disabled="pagination.currentPage >= pagination.lastPage"
             class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 h-10 px-4 py-2 border-transparent bg-transparent"
             @click="$emit('page-change', pagination.currentPage + 1)"
           >
-            <!-- <ChevronRight
-              class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
-            /> -->
             <PaginateNextIcon />
           </button>
         </li>
 
         <li class="flex-1 sm:flex-initial">
           <button
+            :disabled="pagination.currentPage == pagination.lastPage"
             class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 h-10 px-4 py-2 border-transparent bg-transparent"
             @click="$emit('page-change', pagination.lastPage)"
           >
-            <!-- <ChevronsRight
-              class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
-            /> -->
             <PaginateLastPageIcon />
           </button>
         </li>
-
-        <!-- <li class="flex-1 sm:flex-initial">
-          <a
-            class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 h-10 px-4 py-2 border-transparent bg-transparent"
-          >
-            ...
-          </a>
-        </li>
-        <li class="flex-1 sm:flex-initial">
-          <a
-            class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 h-10 px-4 py-2 border-transparent bg-transparent"
-          >
-            1
-          </a>
-        </li>
-        <li class="flex-1 sm:flex-initial">
-          <a
-            class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 bg-background h-10 px-4 py-2 box rounded-xl border-inherit"
-          >
-            2
-          </a>
-        </li>
-        <li class="flex-1 sm:flex-initial">
-          <a
-            class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 h-10 px-4 py-2 border-transparent bg-transparent"
-          >
-            3
-          </a>
-        </li>
-        <li class="flex-1 sm:flex-initial">
-          <a
-            class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 h-10 px-4 py-2 border-transparent bg-transparent"
-          >
-            ...
-          </a>
-        </li>
-        <li class="flex-1 sm:flex-initial">
-          <a
-            class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 h-10 px-4 py-2 border-transparent bg-transparent"
-          >
-            <ChevronRight
-              class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
-            />
-          </a>
-        </li>
-        <li class="flex-1 sm:flex-initial">
-          <a
-            class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 h-10 px-4 py-2 border-transparent bg-transparent"
-          >
-            <ChevronsRight
-              class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
-            />
-          </a>
-        </li> -->
       </ul>
     </nav>
     <select
@@ -135,7 +76,6 @@
 </template>
 
 <script setup lang="ts">
-// import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight } from 'lucide-vue-next';
 import PaginateFirstPageIcon from '@/icons/PaginateFirstPageIcon.vue';
 import PaginateLastPageIcon from '@/icons/PaginateLastPageIcon.vue';
 import PaginatePreviousIcon from '@/icons/PaginatePreviousIcon.vue';

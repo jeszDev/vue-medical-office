@@ -13,16 +13,14 @@
           ref="emailInputRef"
           class="h-10 w-full rounded-md border bg-background ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-foreground placeholder:text-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/5 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 box block min-w-full px-5 py-6 xl:min-w-[28rem]"
           type="text"
-          value="midone@leftcode.com"
-          placeholder="Correo electronico"
+          placeholder="Correo electrónico"
           v-model="email"
         />
         <input
           ref="passwordInputRef"
           class="h-10 w-full rounded-md border bg-background ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-foreground placeholder:text-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/5 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 box block min-w-full px-5 py-6 xl:min-w-[28rem]"
           type="password"
-          value="123456"
-          placeholder="Contaseña"
+          placeholder="Contraseña"
           v-model="password"
         />
         <div class="flex text-xs sm:text-sm">

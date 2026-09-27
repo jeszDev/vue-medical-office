@@ -75,12 +75,12 @@ onMounted(() => {
             class="flex items-center transition-[margin] duration-200 xl:ml-1 group-[.side-menu--collapsed.side-menu--on-hover]:xl:ml-1 group-[.side-menu--collapsed]:xl:ml-7"
             href=""
           >
-            <img class="size-5" src="@/assets/images/logo.svg" />
+            <img class="size-5" src="@/assets/images/logo-heart.svg" />
             <div
               class="ml-3.5 text-nowrap transition-opacity group-[.side-menu--collapsed.side-menu--on-hover]:xl:opacity-100 group-[.side-menu--collapsed]:xl:opacity-0"
             >
-              <span class="text-base font-medium">Midone</span>
-              <span class="text-base font-light">Icewall</span>
+              <span class="text-xl font-latidos text-white/80">Latidos</span>
+              <!-- <span class="text-base font-light opacity-80">Pro</span> -->
             </div>
           </a>
           <a
@@ -180,7 +180,7 @@ onMounted(() => {
                           </span>
                           <div class="flex flex-col gap-1">
                             <div class="flex place-content-between items-center">
-                              <div class="font-medium">{{ authStore.user.name }}</div>
+                              <div class="font-medium">{{ authStore.user?.name || 'Usuario' }}</div>
                               <div class="text-xs opacity-70">05:09 AM</div>
                             </div>
                             <div class="line-clamp-2 text-xs opacity-70">
@@ -314,8 +314,10 @@ onMounted(() => {
                       class="box p-5 before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:bg-background/30 before:z-[-1] after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-[0px_3px_5px_#0000000b] after:z-[-1] after:backdrop-blur-md before:shadow-foreground/5 absolute right-0 top-0 z-50 -mr-0.5 -mt-0.5 flex w-64 flex-col gap-2.5 px-6 py-5 before:rounded-2xl before:shadow-xl before:backdrop-blur after:rounded-2xl"
                     >
                       <div class="flex flex-col gap-0.5">
-                        <div class="font-medium">{{ authStore.user.name }}</div>
-                        <div class="mt-0.5 text-xs opacity-70">Frontend Engineer</div>
+                        <div class="font-medium">{{ authStore.user?.name || 'Usuario' }}</div>
+                        <div class="mt-0.5 text-xs opacity-70 capitalize">
+                          {{ authStore.user?.roles?.[0] || 'Personal' }}
+                        </div>
                       </div>
                       <div class="bg-foreground/5 h-px"></div>
                       <div class="flex flex-col gap-0.5">

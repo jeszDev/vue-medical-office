@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <!-- Gradiente para el corazón (Tonos Azules Tech) -->
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="oklch(57.7% 0.245 27.325)" /> <!-- red 600 -->
+      <stop offset="100%" stop-color="oklch(70.4% 0.191 22.216)" /> <!-- red 400 -->
+    </linearGradient>
+
+    <!-- Gradiente para el latido (Tonos Teal/Verdes Médicos) -->
+    <linearGradient id="secondaryGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0D9488" /> <!-- Teal 600 -->
+      <stop offset="100%" stop-color="#2DD4BF" /> <!-- Teal 400 -->
+    </linearGradient>
+  </defs>
+
+  <!-- Contorno de Corazón Geométrico Interconectado -->
+  <path d="M100,165
+           C100,165 30,115 30,70
+           C30,45 50,25 75,25
+           C90,25 103,32 110,43
+           C117,32 130,25 145,25
+           C170,25 190,45 190,70
+           C190,115 100,165 100,165 Z"
+        fill="none"
+        stroke="url(#primaryGrad)"
+        stroke-width="18"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+  <!-- Línea de Electrocardiograma (Latido) -->
+  <path d="M 55 90 L 75 90 L 88 55 L 112 135 L 125 90 L 145 90"
+        fill="none"
+        stroke="url(#secondaryGrad)"
+        stroke-width="12"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+</svg>

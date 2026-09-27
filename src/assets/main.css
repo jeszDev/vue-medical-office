@@ -9,3 +9,18 @@
 .Vue-Toastification__container {
   z-index: 99999 !important;
 }
+
+/* Estilo del Nombre de la Marca */
+.font-latidos {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Estilo del Subtítulo (GESTOR MÉDICO INTELIGENTE) */
+.font-latidos-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.22em; /* Espaciado amplio entre letras */
+  text-transform: uppercase;
+}

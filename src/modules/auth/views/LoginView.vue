@@ -1,13 +1,13 @@
 <template>
-  <div class="my-10 flex h-screen py-5 xl:my-0 xl:h-auto xl:py-0">
+  <div class="my-10 flex py-5 xl:my-0 xl:h-auto xl:py-0">
     <div
       class="box relative p-5 before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:bg-background/30 before:shadow-[0px_3px_5px_#0000000b] before:z-[-1] before:rounded-xl after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-[0px_3px_5px_#0000000b] after:rounded-xl after:z-[-1] after:backdrop-blur-md mx-auto my-auto w-full px-5 py-8 sm:w-3/4 sm:px-8 lg:w-2/4 xl:ml-24 xl:w-auto xl:p-0 xl:before:hidden xl:after:hidden"
     >
       <h2 class="text-center text-2xl font-semibold xl:text-left xl:text-3xl">Iniciar sesión</h2>
-      <div class="mt-2 text-center opacity-70 xl:hidden">
+      <!-- <div class="mt-2 text-center opacity-70 xl:hidden">
         A few more clicks to sign in to your account. Manage all your e-commerce accounts in one
         place
-      </div>
+      </div> -->
       <div class="mt-8 flex flex-col gap-5">
         <input
           ref="emailInputRef"
@@ -76,7 +76,7 @@
 import { useAuthStore } from '../stores/auth.store';
 import { ref } from 'vue';
 
-import { useToast } from "vue-toastification";
+import { useToast } from 'vue-toastification';
 
 const authStore = useAuthStore();
 // const toast = useToast();
@@ -90,12 +90,12 @@ const toast = useToast();
 
 const handleLogin = async () => {
   if (email.value === '') {
-    toast.error("Ingrese su correo electrónico");
+    toast.error('Ingrese su correo electrónico');
     return emailInputRef.value?.focus();
   }
 
   if (password.value.length < 8) {
-    toast.error("Ingrese su contraseña");
+    toast.error('Ingrese su contraseña');
     return passwordInputRef.value?.focus();
   }
 

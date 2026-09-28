@@ -11,8 +11,6 @@ export const getPatientsAction = async (
       `/patients?page=${page}&per_page=${perPage}&search=${search}`,
     );
 
-    // console.log(data);
-
     return data;
   } catch (error) {
     console.log(error);

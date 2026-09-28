@@ -56,11 +56,11 @@
         >
           Iniciar
         </button>
-        <button
+        <!-- <button
           class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 bg-background border-(--color)/20 h-10 box mt-4 w-full px-4 py-5"
         >
           Registrarse
-        </button>
+        </button> -->
       </div>
       <!-- <div class="mt-10 text-center opacity-70 xl:mt-24 xl:text-left">
         By signin up, you agree to our

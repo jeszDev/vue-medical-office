@@ -75,6 +75,7 @@
 
       <ModalQuestion
         id="modal-appointment-cancel"
+        :model-value="false"
         title="¿Quieres cancelar la cita?"
         description="Está acción es irrevesible."
         confirmText="Sí, cancelar cita"
@@ -84,10 +85,15 @@
       />
     </template>
   </TemplateView>
-  <div v-else>cargando...</div>
+  <div v-else class="flex flex-col items-center justify-center p-12 gap-3 min-h-[300px]">
+    <FullScreenLoader />
+    <span class="text-sm font-medium opacity-70">Cargando detalles de la cita...</span>
+  </div>
 </template>
 
 <script setup lang="ts">
+import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
+
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';

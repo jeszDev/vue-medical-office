@@ -21,6 +21,7 @@
                   :aria-selected="activeTab === 'information'"
                   @click="activeTab = 'information'"
                 >
+                  <UserIcon />
                   Información
                 </button>
               </li>
@@ -33,6 +34,7 @@
                   :aria-selected="activeTab === 'appointments'"
                   @click="activeTab = 'appointments'"
                 >
+                  <CalendarIcon />
                   Agenda
                 </button>
               </li>
@@ -45,6 +47,7 @@
                   :aria-selected="activeTab === 'consultations'"
                   @click="activeTab = 'consultations'"
                 >
+                  <FileTextIcon />
                   Historial clínico
                 </button>
               </li>
@@ -96,6 +99,10 @@
 import { ref, computed } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { getPatientByIdAction } from '../actions/get-patient-by-id.action';
+
+import CalendarIcon from '@/icons/CalendarIcon.vue';
+import FileTextIcon from '@/icons/FileTextIcon.vue';
+import UserIcon from '@/icons/UserIcon.vue';
 
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';

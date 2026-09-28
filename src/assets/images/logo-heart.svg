@@ -2,8 +2,8 @@
   <defs>
     <!-- Gradiente para el corazón (Tonos Azules Tech) -->
     <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="oklch(57.7% 0.245 27.325)" /> <!-- red 600 -->
-      <stop offset="100%" stop-color="oklch(70.4% 0.191 22.216)" /> <!-- red 400 -->
+      <stop offset="0%" stop-color="#e7000b" /> <!-- red 600 -->
+      <stop offset="100%" stop-color="#ff6467" /> <!-- red 400 -->
     </linearGradient>
 
     <!-- Gradiente para el latido (Tonos Teal/Verdes Médicos) -->

@@ -19,7 +19,7 @@
                   type="button"
                   role="tab"
                   :aria-selected="activeTab === 'information'"
-                  @click="activeTab = 'information'"
+                  @click="changeTab('information')"
                 >
                   <UserIcon />
                   Información
@@ -32,7 +32,7 @@
                   type="button"
                   role="tab"
                   :aria-selected="activeTab === 'appointments'"
-                  @click="activeTab = 'appointments'"
+                  @click="changeTab('appointments')"
                 >
                   <CalendarIcon />
                   Agenda
@@ -45,7 +45,7 @@
                   type="button"
                   role="tab"
                   :aria-selected="activeTab === 'consultations'"
-                  @click="activeTab = 'consultations'"
+                  @click="changeTab('consultations')"
                 >
                   <FileTextIcon />
                   Historial clínico
@@ -98,6 +98,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
+import { useRoute, useRouter } from 'vue-router';
 import { getPatientByIdAction } from '../actions/get-patient-by-id.action';
 
 import CalendarIcon from '@/icons/CalendarIcon.vue';
@@ -119,7 +120,17 @@ type PatientTab = 'information' | 'appointments' | 'consultations';
 
 const props = defineProps<Props>();
 
-const activeTab = ref<PatientTab>('information');
+// const activeTab = ref<PatientTab>('information');
+
+const route = useRoute();
+const router = useRouter();
+const activeTab = ref<PatientTab>((route.query.tab as PatientTab) || 'information');
+
+// Al cambiar de tab actualizas la query sin recargar:
+const changeTab = (tab: PatientTab) => {
+  activeTab.value = tab;
+  router.replace({ query: { ...route.query, tab } });
+};
 
 const currentTabComponent = computed(() => {
   switch (activeTab.value) {

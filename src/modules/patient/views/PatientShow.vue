@@ -1,5 +1,5 @@
 <template>
-  <TemplateView :title="`INFORMACIÓN DEL PACIENTE - ${patient.nombre_completo}`">
+  <TemplateView title="INFORMACIÓN DEL PACIENTE">
     <template #main>
       <FullScreenLoader v-if="isLoading" />
 

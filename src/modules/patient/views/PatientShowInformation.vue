@@ -3,11 +3,11 @@
   <TemplateView v-else title="INFORMACIÓN">
     <template #main>
       <div v-if="patient">
-        <div class="flex flex-col p-5 lg:flex-row">
+        <div class="flex flex-col lg:flex-row">
           <!-- Nombre -->
           <!-- Columna izquierda: Avatar e Identificación del Paciente -->
           <div
-            class="flex flex-col items-center justify-center flex-[0.7] px-5 text-center lg:items-start lg:text-left"
+            class="flex flex-col items-center justify-center flex-[0.7] text-center lg:items-start lg:text-left"
           >
             <div class="flex items-center gap-4">
               <!-- Circle Avatar con la inicial del paciente -->
@@ -57,39 +57,11 @@
 
           <!-- Datos del paciente -->
           <div
-            class="flex-1 px-5 pt-5 mt-6 border-t border-l border-r lg:mt-0 lg:border-t-0 lg:pt-0"
+            class="flex-1 px-5 pt-5 mt-6 border-t lg:border-l lg:border-r lg:mt-0 lg:border-t-0 lg:pt-0"
           >
-            <div class="grid grid-cols-12 gap-x-10 gap-y-6">
-              <div class="col-span-12 sm:col-span-12 md:col-span-12">
-                <div class="text-xs opacity-70 flex">
-                  <CalendarBirthdayIcon /> FECHA DE NACIMIENTO
-                </div>
-                <div class="mt-1.5 flex items-center">
-                  <div class="text-base">
-                    {{ patient.fecha_nacimiento ?? 'Fecha de nacimiento no registrado' }}
-                    ~ <span v-if="patient.edad" class="">{{ patient.edad }} años</span>
-                  </div>
-                </div>
-              </div>
-              <!-- Teléfono interactivo -->
-              <div class="col-span-12 sm:col-span-12 md:col-span-12">
-                <div class="text-xs opacity-70 flex items-center gap-1.5 font-medium">
-                  <PhoneIcon class="w-3.5 h-3.5" /> TÉLEFONO
-                </div>
-                <div class="mt-1.5 flex items-center">
-                  <a
-                    v-if="patient.telefono"
-                    :href="`tel:${patient.telefono}`"
-                    class="text-base text-primary hover:underline font-medium flex items-center gap-1"
-                  >
-                    {{ patient.telefono }}
-                  </a>
-                  <span v-else class="text-base opacity-50">Sin teléfono registrado</span>
-                </div>
-              </div>
-
+            <div class="grid grid-cols-12 gap-x-10 gap-y-6 lg:grid-cols-6">
               <!-- Correo interactivo -->
-              <div class="col-span-12 sm:col-span-12 md:col-span-12">
+              <div class="col-span-12 lg:col-span-6">
                 <div class="text-xs opacity-70 flex items-center gap-1.5 font-medium">
                   <EmailIcon class="w-3.5 h-3.5" /> CORREO ELECTRÓNICO
                 </div>
@@ -104,8 +76,34 @@
                   <span v-else class="text-base opacity-50">Correo no registrado</span>
                 </div>
               </div>
-
-              <div class="col-span-12 sm:col-span-12 md:col-span-12">
+              <!-- Teléfono interactivo -->
+              <div class="col-span-12 lg:col-span-6">
+                <div class="text-xs opacity-70 flex items-center gap-1.5 font-medium">
+                  <PhoneIcon class="w-3.5 h-3.5" /> TÉLEFONO
+                </div>
+                <div class="mt-1.5 flex items-center">
+                  <a
+                    v-if="patient.telefono"
+                    :href="`tel:${patient.telefono}`"
+                    class="text-base text-primary hover:underline font-medium flex items-center gap-1"
+                  >
+                    {{ patient.telefono }}
+                  </a>
+                  <span v-else class="text-base opacity-50">Sin teléfono registrado</span>
+                </div>
+              </div>
+              <div class="col-span-12 lg:col-span-6">
+                <div class="text-xs opacity-70 flex">
+                  <CalendarBirthdayIcon /> FECHA DE NACIMIENTO
+                </div>
+                <div class="mt-1.5 flex items-center">
+                  <div class="text-base">
+                    {{ patient.fecha_nacimiento ?? 'Fecha de nacimiento no registrado' }}
+                    ~ <span v-if="patient.edad" class="">{{ patient.edad }} años</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-span-12 lg:col-span-6">
                 <div class="text-xs opacity-70 flex">
                   <CalendarDateRegisterIcon /> FECHA DE REGISTRO EN SISTEMA
                 </div>
@@ -116,7 +114,7 @@
             </div>
           </div>
           <!-- observaciones del paciente -->
-          <div class="flex-1 px-5 pt-5 mt-6 lg:mt-0">
+          <div class="flex-1 px-5 pt-5 mt-6 border-t lg:mt-0 lg:border-t-0">
             <div class="text-xs opacity-70 flex items-center gap-1.5 font-medium mb-2">
               <ObservationsIcon class="w-3.5 h-3.5" /> OBSERVACIONES Y NOTAS MÉDICAS
             </div>

@@ -29,4 +29,7 @@ coverage
 
 *.tsbuildinfo
 
+.midone_source/
+.opencode/
+
 .env

@@ -3,16 +3,15 @@ import InputLabel from '@/modules/common/components/InputLabel.vue';
 import InputBase from '@/modules/common/components/InputBase.vue';
 import InputBaseDate from '@/modules/common/components/InputBaseDate.vue';
 import TextArea from '@/modules/common/components/TextArea.vue';
-import { computed, defineComponent, ref, watchEffect } from 'vue';
+import { computed, defineComponent, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMutation, useQuery } from '@tanstack/vue-query';
-import { useForm, useFieldArray } from 'vee-validate';
+import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { useToast } from 'vue-toastification';
 
 import { createUpdateAppointmentAction, getAppointmentByIdAction } from '../actions';
-import formatDateToInput from '@/helpers/format-date-to-input.helper';
-import { getPatientsAction } from '@/modules/patient/actions';
+import { getAllPatientsAction } from '@/modules/patient/actions';
 
 import { watch } from 'vue';
 
@@ -83,7 +82,6 @@ export default defineComponent({
       data: appointment,
       isError,
       isLoading,
-      refetch,
     } = useQuery({
       queryKey: ['appointment', props.appointmentId],
       queryFn: () => getAppointmentByIdAction(props.appointmentId),
@@ -92,29 +90,21 @@ export default defineComponent({
     });
 
     const { data: patientsResponse } = useQuery({
-      queryKey: ['patients-list'],
-      queryFn: () => getPatientsAction(0),
+      queryKey: ['patients', 'all'],
+      queryFn: getAllPatientsAction,
     });
 
-    const patients = computed(() => {
-      if (!patientsResponse.value) return [];
-
-      return (
-        patientsResponse.value.data ||
-        (Array.isArray(patientsResponse.value) ? patientsResponse.value : [])
-      );
-    });
+    const patients = computed(() => patientsResponse.value ?? []);
 
     const {
       mutate,
-      isPending,
       isSuccess: isUpdateSuccess,
       data: updatedAppointment,
     } = useMutation({
       mutationFn: createUpdateAppointmentAction,
     });
 
-    const { values, defineField, validateField, errors, handleSubmit, resetForm, meta } = useForm({
+    const { values, defineField, errors, handleSubmit, resetForm, meta } = useForm({
       validationSchema: schema,
     });
     const [patient_id, patient_idAttrs] = defineField('patient_id');
@@ -144,9 +134,11 @@ export default defineComponent({
         ).hide();
       }
 
-      props.appointmentId === 'create'
-        ? toast.success('Cita agendada correctamente')
-        : toast.success('Cita editada correctamente');
+      if (props.appointmentId === 'create') {
+        toast.success('Cita agendada correctamente');
+      } else {
+        toast.success('Cita editada correctamente');
+      }
 
       resetForm({
         values: updatedAppointment.value,

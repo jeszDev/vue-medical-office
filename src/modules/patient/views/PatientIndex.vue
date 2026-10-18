@@ -1,7 +1,7 @@
 <template>
   <TemplateView title="LISTADO DE PACIENTES">
     <template #main>
-      <FullScreenLoader v-if="isLoading" />
+      <FullScreenLoader v-if="isLoading && !responsePatients" />
 
       <template v-else>
         <div class="grid grid-cols-12 gap-6">
@@ -12,77 +12,39 @@
             >
               Registrar nuevo paciente
             </button>
-            <!-- <div data-tw-placement="bottom-end" class="dropdown">
-            <button
-              class="[--color:var(--color-foreground)] border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 bg-background border-(--color)/20 h-10 py-2 dropdown-toggle inline-flex cursor-pointer relative z-[51] box px-2"
-              data-tw-toggle="dropdown"
-            >
-              <span class="flex h-5 w-5 items-center justify-center">
-                <i
-                  data-lucide="plus"
-                  class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
-                ></i>
-              </span>
-            </button>
-            <div
-              class="box before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:bg-background/30 before:shadow-[0px_3px_5px_#0000000b] before:z-[-1] before:rounded-xl after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-[0px_3px_5px_#0000000b] after:rounded-xl after:z-[-1] after:backdrop-blur-md dropdown-menu invisible absolute z-50 p-1 opacity-0 before:backdrop-blur-xl [&.show]:visible [&.show]:opacity-100"
-            >
-              <div class="dropdown-content w-40">
-                <a
-                  class="relative flex cursor-default select-none hover:bg-foreground/5 items-center rounded-lg px-2 py-1.5 outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                >
-                  <i
-                    data-lucide="printer"
-                    class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 mr-2 size-4"
-                  ></i>
-                  Print
-                </a>
-                <a
-                  class="relative flex cursor-default select-none hover:bg-foreground/5 items-center rounded-lg px-2 py-1.5 outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                >
-                  <i
-                    data-lucide="file-text"
-                    class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 mr-2 size-4"
-                  ></i>
-                  Export to Excel
-                </a>
-                <a
-                  class="relative flex cursor-default select-none hover:bg-foreground/5 items-center rounded-lg px-2 py-1.5 outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                >
-                  <i
-                    data-lucide="file-text"
-                    class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 mr-2 size-4"
-                  ></i>
-                  Export to PDF
-                </a>
-              </div>
-            </div>
-          </div> -->
             <div class="mx-auto hidden opacity-70 md:block">
               Mostrando los registros del {{ pagination.from }} al {{ pagination.to }} de
               {{ pagination.total }} registros
             </div>
             <div class="mt-3 w-full sm:ml-auto sm:mt-0 sm:w-auto md:ml-0">
-              <div class="relative w-56">
+              <div class="relative w-64">
                 <input
-                  class="h-10 rounded-md border bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-foreground placeholder:text-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/5 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 box w-56 pr-10"
+                  class="h-10 rounded-md border bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-foreground placeholder:text-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/5 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 box w-full pr-16"
                   type="text"
-                  placeholder="Buscar..."
-                  v-model="search"
+                  placeholder="Buscar paciente..."
+                  v-model="searchInput"
                   @keyup.enter="doSearch"
                 />
-                <!-- <i
-                data-lucide="search"
-                class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 absolute inset-y-0 right-0 my-auto mr-3 size-4 opacity-70"
-              ></i> -->
-                <SearchIcon class="cursor-pointer" @click="doSearch" />
+                <span
+                  v-if="searchInput"
+                  class="absolute inset-y-0 right-7 my-auto flex items-center cursor-pointer text-foreground/40 hover:text-foreground"
+                  title="Limpiar búsqueda"
+                  @click="clearSearch"
+                >
+                  <CloseIcon class="size-4" />
+                </span>
+                <SearchIcon class="cursor-pointer hover:text-primary transition-colors" @click="doSearch" />
               </div>
             </div>
           </div>
           <!-- BEGIN: Data List -->
-          <div class="col-span-12 overflow-auto lg:overflow-visible">
+          <div
+            class="col-span-12 overflow-auto lg:overflow-visible transition-opacity"
+            :class="{ 'opacity-60 pointer-events-none': isFetching }"
+          >
             <div class="relative w-full overflow-auto">
               <table class="w-full caption-bottom border-separate border-spacing-y-[10px] -mt-2">
+
                 <thead class="[&_tr]:border-b-0 [&_tr_th]:h-10">
                   <tr
                     class="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted border-b-0"
@@ -239,7 +201,7 @@
 </template>
 
 <script setup lang="ts">
-import { useQuery, useQueryClient } from '@tanstack/vue-query';
+import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { computed, ref, watch } from 'vue';
 import { getPatientsAction } from '../actions/get-patients.action';
 import TablePagination from '@/modules/common/components/TablePagination.vue';
@@ -248,6 +210,7 @@ import { useRoute, useRouter, RouterLink } from 'vue-router';
 import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import SearchIcon from '@/icons/SearchIcon.vue';
+import CloseIcon from '@/icons/CloseIcon.vue';
 import PreviewIcon from '@/icons/PreviewIcon.vue';
 import { useAuthStore } from '../../auth/stores/auth.store';
 import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
@@ -257,12 +220,12 @@ import type { Patient } from '../interfaces/patient.interface';
 
 const authStore = useAuthStore();
 
-// const page = ref(Number(route.query.page) || 1);
 const route = useRoute();
 const router = useRouter();
 const page = ref<number>(Number(route.query.page) || 1);
 const perPage = ref<number>(10);
-const search = ref<string>('');
+const searchInput = ref<string>(route.query.search?.toString() || '');
+const searchQuery = ref<string>(route.query.search?.toString() || '');
 const queryClient = useQueryClient();
 
 const selectedPatientId = ref<'create' | number>('create');
@@ -270,43 +233,51 @@ const selectedPatientId = ref<'create' | number>('create');
 const {
   data: responsePatients,
   isLoading,
-  refetch,
+  isFetching,
 } = useQuery({
-  queryKey: ['patients', { page: page, search }],
-  queryFn: () => getPatientsAction(page.value, perPage.value, search.value),
+  queryKey: ['patients', { page, search: searchQuery }],
+  queryFn: () => getPatientsAction(page.value, perPage.value, searchQuery.value),
+  placeholderData: keepPreviousData,
 });
 
 const patients = computed<Patient[]>(() => responsePatients.value?.data || []);
 const pagination = computed<Pagination>(() => ({
-  currentPage: responsePatients.value?.meta.current_page || 1,
-  firstPageUrl: responsePatients.value?.links.first || '',
-  lastPage: responsePatients.value?.meta.last_page || 1,
-  lastPageUrl: responsePatients.value?.links.last || '',
-  links: responsePatients.value?.meta.links || [],
-  nextPageUrl: responsePatients.value?.links.next || '',
-  perPage: responsePatients.value?.meta.per_page || perPage.value,
-  prevPageUrl: responsePatients.value?.links.prev || '',
-  total: responsePatients.value?.meta.total || 0,
-  to: responsePatients.value?.meta.to || 0,
-  from: responsePatients.value?.meta.from || 0,
+  currentPage: responsePatients.value?.meta?.current_page || 1,
+  firstPageUrl: responsePatients.value?.links?.first || '',
+  lastPage: responsePatients.value?.meta?.last_page || 1,
+  lastPageUrl: responsePatients.value?.links?.last || '',
+  links: responsePatients.value?.meta?.links || [],
+  nextPageUrl: responsePatients.value?.links?.next || '',
+  perPage: responsePatients.value?.meta?.per_page || perPage.value,
+  prevPageUrl: responsePatients.value?.links?.prev || '',
+  total: responsePatients.value?.meta?.total || 0,
+  to: responsePatients.value?.meta?.to || 0,
+  from: responsePatients.value?.meta?.from || 0,
 }));
 
 function pageChange(pageNumber: number) {
   page.value = pageNumber;
 
   router.push({
-    query: { ...route.query, page: pageNumber, search: search.value || undefined },
+    query: { ...route.query, page: pageNumber, search: searchQuery.value || undefined },
   });
 }
 
 function doSearch() {
   page.value = 1;
-  refetch();
+  searchQuery.value = searchInput.value.trim();
+
+  router.push({
+    query: { ...route.query, page: 1, search: searchQuery.value || undefined },
+  });
+}
+
+function clearSearch() {
+  searchInput.value = '';
+  doSearch();
 }
 
 const handleModalCreateUpdate = (patientId: 'create' | number) => {
-  console.log(patientId);
-
   selectedPatientId.value = patientId;
   window.tailwind.Modal.getOrCreateInstance(
     document.getElementById('modal-patient-create-or-edit'),
@@ -314,11 +285,8 @@ const handleModalCreateUpdate = (patientId: 'create' | number) => {
 };
 
 const handleLogout = async () => {
-  console.log('cerrar sesion');
-
   const modalElement = document.querySelector('.modal.show');
   if (modalElement) {
-    console.log('entrtas');
     window.tailwind.Modal.getOrCreateInstance(modalElement).hide();
   }
   setTimeout(() => {
@@ -327,15 +295,18 @@ const handleLogout = async () => {
 };
 
 watch(
-  [page, perPage, search],
+  [page, perPage, searchQuery],
   () => {
-    queryClient.prefetchQuery({
-      queryKey: ['patients', { page: page.value + 1, search: search.value }],
-      queryFn: () => getPatientsAction(page.value + 1, perPage.value, search.value),
-    });
+    if (page.value < (responsePatients.value?.meta?.last_page || 1)) {
+      queryClient.prefetchQuery({
+        queryKey: ['patients', { page: page.value + 1, search: searchQuery.value }],
+        queryFn: () => getPatientsAction(page.value + 1, perPage.value, searchQuery.value),
+      });
+    }
   },
   { immediate: true },
 );
 </script>
 
 <style scoped></style>
+

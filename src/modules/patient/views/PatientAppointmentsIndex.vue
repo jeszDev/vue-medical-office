@@ -1,5 +1,5 @@
 <template>
-  <FullScreenLoader v-if="isLoading" />
+  <FullScreenLoader v-if="isLoading && !responseAppointments" />
   <TemplateView v-else :title="`AGENDA DE CITAS`">
     <template #main>
       <div class="grid grid-cols-12 gap-6">
@@ -18,22 +18,34 @@
           </div>
 
           <div class="mt-3 w-full sm:ml-auto sm:mt-0 sm:w-auto md:ml-0">
-            <div class="relative w-56">
+            <div class="relative w-64">
               <input
-                class="h-10 rounded-md border bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-foreground placeholder:text-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/5 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 box w-56 pr-10"
+                class="h-10 rounded-md border bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-foreground placeholder:text-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/5 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 box w-full pr-16"
                 type="text"
-                placeholder="Buscar..."
-                v-model="search"
+                placeholder="Buscar cita..."
+                v-model="searchInput"
                 @keyup.enter="doSearch"
               />
-              <SearchIcon class="cursor-pointer" @click="doSearch" />
+              <span
+                v-if="searchInput"
+                class="absolute inset-y-0 right-7 my-auto flex items-center cursor-pointer text-foreground/40 hover:text-foreground"
+                title="Limpiar búsqueda"
+                @click="clearSearch"
+              >
+                <CloseIcon class="size-4" />
+              </span>
+              <SearchIcon class="cursor-pointer hover:text-primary transition-colors" @click="doSearch" />
             </div>
           </div>
         </div>
 
-        <div class="col-span-12 overflow-auto lg:overflow-visible">
+        <div
+          class="col-span-12 overflow-auto lg:overflow-visible transition-opacity"
+          :class="{ 'opacity-60 pointer-events-none': isFetching }"
+        >
           <div class="relative w-full overflow-auto">
             <table class="w-full caption-bottom border-separate border-spacing-y-[10px] -mt-2">
+
               <thead class="[&_tr]:border-b-0 [&_tr_th]:h-10">
                 <tr
                   class="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted border-b-0"
@@ -338,7 +350,7 @@ import SearchIcon from '@/icons/SearchIcon.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
-import { useQuery } from '@tanstack/vue-query';
+import { keepPreviousData, useQuery } from '@tanstack/vue-query';
 import PreviewIcon from '@/icons/PreviewIcon.vue';
 import PreviewHideIcon from '@/icons/PreviewHideIcon.vue';
 import { getAppointmentsByPatientAction } from '@/modules/appointment/actions/get-appointments-by-patient.action';
@@ -351,6 +363,7 @@ import {
   getAppointmentStatusName,
 } from '@/modules/appointment/helpers/get-appointment-status-color.mapper';
 import CancelIcon from '@/icons/CancelIcon.vue';
+import CloseIcon from '@/icons/CloseIcon.vue';
 import AppointmentCancelModalQuestion from '@/modules/appointment/components/AppointmentCancelModalQuestion.vue';
 import TablePagination from '@/modules/common/components/TablePagination.vue';
 import type { Pagination } from '@/modules/common/interfaces/pagination.interface';
@@ -369,7 +382,8 @@ const route = useRoute();
 
 const page = ref<number>(Number(route.query.page) || 1);
 const perPage = ref<number>(10);
-const search = ref<string>('');
+const searchInput = ref<string>(route.query.search?.toString() || '');
+const searchQuery = ref<string>(route.query.search?.toString() || '');
 
 const expandedRow = ref<null | number>(null);
 
@@ -379,11 +393,13 @@ const selectedAppointmentId = ref<null | number>(null);
 const {
   data: responseAppointments,
   isLoading,
+  isFetching,
   refetch,
 } = useQuery({
-  queryKey: ['appointments', { patientId: props.patientId, page, search }],
+  queryKey: ['appointments', { patientId: props.patientId, page, search: searchQuery }],
   queryFn: () =>
-    getAppointmentsByPatientAction(props.patientId, page.value, perPage.value, search.value),
+    getAppointmentsByPatientAction(props.patientId, page.value, perPage.value, searchQuery.value),
+  placeholderData: keepPreviousData,
 });
 
 const appointments = computed<Appointment[]>(() => responseAppointments.value?.data || []);
@@ -405,14 +421,23 @@ const pagination = computed<Pagination>(() => ({
 function pageChange(pageNumber: number) {
   page.value = pageNumber;
   router.push({
-    query: { ...route.query, page: pageNumber, search: search.value || undefined },
+    query: { ...route.query, page: pageNumber, search: searchQuery.value || undefined },
   });
 }
 
 function doSearch() {
   page.value = 1;
-  refetch();
+  searchQuery.value = searchInput.value.trim();
+  router.push({
+    query: { ...route.query, page: 1, search: searchQuery.value || undefined },
+  });
 }
+
+function clearSearch() {
+  searchInput.value = '';
+  doSearch();
+}
+
 
 const toggleRow = (id: number) => {
   expandedRow.value = expandedRow.value === id ? null : id;

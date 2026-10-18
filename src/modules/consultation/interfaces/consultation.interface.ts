@@ -1,3 +1,9 @@
+import type {
+  Appointment,
+  AppointmentDoctor,
+  VitalSigns,
+} from '@/modules/appointment/interfaces/appointment.interface';
+
 export interface ConsultationDoctor {
   id?: number;
   nombre?: string;
@@ -9,20 +15,26 @@ export interface ConsultationDoctor {
 export interface Consultation {
   id: number;
   motivo: string;
+  exploracion_fisica?: string | null;
   diagnostico: string;
   tratamiento: string;
-  notas?: string;
+  observaciones?: string | null;
+  notas?: string | null;
 
-  peso?: number;
-  altura?: number;
-  temperatura?: number;
-  presion_arterial?: string;
-  frecuencia_cardiaca?: number;
-  frecuencia_respiratoria?: number;
+  signos_vitales?: VitalSigns | null;
+  doctor?: AppointmentDoctor | null;
+  cita?: Appointment | null;
+
+  peso?: number | string | null;
+  altura?: number | string | null;
+  temperatura?: number | string | null;
+  presion_arterial?: string | null;
+  frecuencia_cardiaca?: number | null;
+  frecuencia_respiratoria?: number | null;
 
   cita_id?: number;
   paciente_id: number;
-  medico_id: number;
+  medico_id?: number;
 
   medico?: ConsultationDoctor | string;
   created_at?: string;
@@ -30,3 +42,6 @@ export interface Consultation {
   fecha?: string;
 }
 
+export interface ConsultationListResponse {
+  data: Consultation[];
+}

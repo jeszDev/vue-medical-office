@@ -4,7 +4,9 @@
     <div
       class="box p-5 rounded-2xl border border-foreground/10 bg-background shadow-[0px_3px_5px_#0000000b] relative overflow-hidden"
     >
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-foreground/10">
+      <div
+        class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-foreground/10"
+      >
         <div class="flex items-center gap-3">
           <div
             class="size-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary"
@@ -43,8 +45,18 @@
         <div class="p-3.5 rounded-xl border border-foreground/10 bg-foreground/[0.02]">
           <div class="text-xs text-foreground/60 font-medium">Última Presión Arterial</div>
           <div class="text-base font-bold text-foreground mt-1">
-            {{ latestConsultation?.presion_arterial || '—' }}
-            <span v-if="latestConsultation?.presion_arterial" class="text-xs font-normal text-foreground/60">
+            {{
+              latestConsultation?.signos_vitales?.presion_arterial ||
+              latestConsultation?.presion_arterial ||
+              '—'
+            }}
+            <span
+              v-if="
+                latestConsultation?.signos_vitales?.presion_arterial ||
+                latestConsultation?.presion_arterial
+              "
+              class="text-xs font-normal text-foreground/60"
+            >
               mmHg
             </span>
           </div>
@@ -54,7 +66,11 @@
         <div class="p-3.5 rounded-xl border border-foreground/10 bg-foreground/[0.02]">
           <div class="text-xs text-foreground/60 font-medium">Último Peso</div>
           <div class="text-base font-bold text-foreground mt-1">
-            {{ latestConsultation?.peso ? `${latestConsultation.peso} kg` : '—' }}
+            {{
+              latestConsultation?.signos_vitales?.peso || latestConsultation?.peso
+                ? `${latestConsultation?.signos_vitales?.peso ?? latestConsultation?.peso} kg`
+                : '—'
+            }}
           </div>
         </div>
 
@@ -62,12 +78,19 @@
         <div class="p-3.5 rounded-xl border border-foreground/10 bg-foreground/[0.02]">
           <div class="text-xs text-foreground/60 font-medium">Frecuencia Cardíaca</div>
           <div class="text-base font-bold text-foreground mt-1">
-            {{ latestConsultation?.frecuencia_cardiaca ? `${latestConsultation.frecuencia_cardiaca} bpm` : '—' }}
+            {{
+              latestConsultation?.signos_vitales?.frecuencia_cardiaca ||
+              latestConsultation?.frecuencia_cardiaca
+                ? `${latestConsultation?.signos_vitales?.frecuencia_cardiaca ?? latestConsultation?.frecuencia_cardiaca} bpm`
+                : '—'
+            }}
           </div>
         </div>
 
         <!-- Último IMC Calculado -->
-        <div class="p-3.5 rounded-xl border border-foreground/10 bg-foreground/[0.02] flex flex-col justify-between">
+        <div
+          class="p-3.5 rounded-xl border border-foreground/10 bg-foreground/[0.02] flex flex-col justify-between"
+        >
           <div class="text-xs text-foreground/60 font-medium">Último IMC</div>
           <div class="flex items-center gap-2 mt-1">
             <span class="text-base font-bold text-foreground">
@@ -84,13 +107,18 @@
       </div>
 
       <!-- Antecedentes y Observaciones Base -->
-      <div class="mt-4 pt-4 border-t border-foreground/10 flex flex-col sm:flex-row items-start sm:items-center gap-2 text-xs">
+      <div
+        class="mt-4 pt-4 border-t border-foreground/10 flex flex-col sm:flex-row items-start sm:items-center gap-2 text-xs"
+      >
         <span class="font-semibold text-foreground/70 flex items-center gap-1.5 shrink-0">
           <ObservationsIcon class="size-3.5 text-primary" />
           Antecedentes / Observaciones generales:
         </span>
         <span class="text-foreground/80 italic">
-          {{ patient?.observaciones || 'Sin antecedentes ni notas clínicas iniciales registradas en su ficha.' }}
+          {{
+            patient?.observaciones ||
+            'Sin antecedentes ni notas clínicas iniciales registradas en su ficha.'
+          }}
         </span>
       </div>
     </div>
@@ -113,7 +141,9 @@
 
       <!-- Loading State -->
       <div v-if="isLoading" class="py-12 flex flex-col items-center justify-center gap-3">
-        <div class="size-8 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+        <div
+          class="size-8 rounded-full border-2 border-primary border-t-transparent animate-spin"
+        ></div>
         <p class="text-sm text-foreground/60">Cargando historial clínico...</p>
       </div>
 
@@ -129,12 +159,16 @@
         </div>
         <h4 class="text-base font-semibold text-foreground">Sin consultas registradas</h4>
         <p class="text-xs text-foreground/60 mt-1 leading-relaxed">
-          Este paciente aún no tiene consultas médicas registradas en el expediente. Al completar una cita médica o registrar una atención, aparecerá aquí su evolución.
+          Este paciente aún no tiene consultas médicas registradas en el expediente. Al completar
+          una cita médica o registrar una atención, aparecerá aquí su evolución.
         </p>
       </div>
 
       <!-- Timeline Entries -->
-      <div v-else class="mt-6 relative pl-6 sm:pl-8 before:absolute before:left-2.5 sm:before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-foreground/10">
+      <div
+        v-else
+        class="mt-6 relative pl-6 sm:pl-8 before:absolute before:left-2.5 sm:before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-foreground/10"
+      >
         <div
           v-for="(consultation, index) in sortedConsultations"
           :key="consultation.id || index"
@@ -151,10 +185,20 @@
           <div
             class="box p-4 sm:p-5 rounded-xl border border-foreground/10 bg-background hover:border-primary/40 transition-all shadow-xs"
           >
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-foreground/5">
-              <div class="flex items-center gap-2">
-                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-primary/10 text-primary">
+            <div
+              class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-foreground/5"
+            >
+              <div class="flex flex-wrap items-center gap-2">
+                <span
+                  class="text-xs font-semibold px-2.5 py-1 rounded-md bg-primary/10 text-primary"
+                >
                   Consulta #{{ consultation.id }}
+                </span>
+                <span
+                  v-if="consultation.cita?.folio"
+                  class="text-xs font-medium px-2 py-0.5 rounded-md bg-foreground/5 text-foreground/70 border border-foreground/10"
+                >
+                  Cita: {{ consultation.cita.folio }}
                 </span>
                 <span class="text-xs text-foreground/60 flex items-center gap-1">
                   <CalendarIcon class="size-3.5 text-foreground/40" />
@@ -165,22 +209,40 @@
               <!-- Quick Vitals Badges -->
               <div class="flex flex-wrap items-center gap-2 text-xs">
                 <span
-                  v-if="consultation.presion_arterial"
+                  v-if="
+                    consultation.signos_vitales?.presion_arterial || consultation.presion_arterial
+                  "
                   class="px-2 py-0.5 rounded-full border border-foreground/10 bg-foreground/5 text-foreground/70"
                 >
-                  TA: {{ consultation.presion_arterial }}
+                  TA:
+                  {{
+                    consultation.signos_vitales?.presion_arterial || consultation.presion_arterial
+                  }}
                 </span>
                 <span
-                  v-if="consultation.peso"
+                  v-if="consultation.signos_vitales?.peso || consultation.peso"
                   class="px-2 py-0.5 rounded-full border border-foreground/10 bg-foreground/5 text-foreground/70"
                 >
-                  {{ consultation.peso }} kg
+                  {{ consultation.signos_vitales?.peso || consultation.peso }} kg
                 </span>
                 <span
-                  v-if="consultation.temperatura"
+                  v-if="consultation.signos_vitales?.temperatura || consultation.temperatura"
                   class="px-2 py-0.5 rounded-full border border-foreground/10 bg-foreground/5 text-foreground/70"
                 >
-                  {{ consultation.temperatura }} °C
+                  {{ consultation.signos_vitales?.temperatura || consultation.temperatura }} °C
+                </span>
+                <span
+                  v-if="
+                    consultation.signos_vitales?.frecuencia_cardiaca ||
+                    consultation.frecuencia_cardiaca
+                  "
+                  class="px-2 py-0.5 rounded-full border border-foreground/10 bg-foreground/5 text-foreground/70"
+                >
+                  {{
+                    consultation.signos_vitales?.frecuencia_cardiaca ||
+                    consultation.frecuencia_cardiaca
+                  }}
+                  bpm
                 </span>
               </div>
             </div>
@@ -200,12 +262,21 @@
                 <span class="font-medium text-foreground/90">Motivo:</span>
                 {{ consultation.motivo || 'No especificado' }}
               </div>
+
+              <div
+                v-if="consultation.exploracion_fisica"
+                class="text-xs text-foreground/70 line-clamp-2"
+              >
+                <span class="font-medium text-foreground/90">Exploración física:</span>
+                {{ consultation.exploracion_fisica }}
+              </div>
             </div>
 
             <!-- Card Actions -->
             <div class="mt-4 pt-3 border-t border-foreground/5 flex items-center justify-between">
               <span class="text-xs text-foreground/50">
-                Atendido por: <strong class="text-foreground/70">{{ getDoctorDisplayName(consultation) }}</strong>
+                Atendido por:
+                <strong class="text-foreground/70">{{ getDoctorDisplayName(consultation) }}</strong>
               </span>
 
               <ButtonBase
@@ -235,7 +306,7 @@ import { ref, computed } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import type { Patient } from '../interfaces/patient.interface';
 import type { Consultation } from '@/modules/consultation/interfaces/consultation.interface';
-import { getConsultationsByPatientAction } from '@/modules/consultation/actions';
+import { getAllConsultationsByPatientAction } from '@/modules/consultation/actions';
 
 import StethoscopeIcon from '@/icons/StethoscopeIcon.vue';
 import FileTextIcon from '@/icons/FileTextIcon.vue';
@@ -265,15 +336,14 @@ const openConsultationDetail = (consultation: Consultation) => {
 
 // Fetch consultations for this patient
 const { data: consultations, isLoading } = useQuery({
-  queryKey: ['patient-consultations', props.patientId],
-  queryFn: () => getConsultationsByPatientAction(props.patientId),
+  queryKey: ['patient-consultations', { patientId: props.patientId, all: true }],
+  queryFn: () => getAllConsultationsByPatientAction(props.patientId),
 });
 
 // Ordenar las consultas cronológicamente (las más recientes primero)
 const sortedConsultations = computed<Consultation[]>(() => {
   if (!consultations.value) return [];
   return [...consultations.value].sort((a, b) => {
-    // Si tienen id, ordenar desc
     return (b.id || 0) - (a.id || 0);
   });
 });
@@ -288,10 +358,7 @@ const latestConsultationDate = computed(() => {
 });
 
 const formatDate = (consultation: Consultation) => {
-  const raw =
-    consultation.fecha ||
-    consultation.creado_el ||
-    consultation.created_at;
+  const raw = consultation.fecha || consultation.creado_el || consultation.created_at;
 
   if (!raw) return 'Fecha no registrada';
 
@@ -309,16 +376,27 @@ const formatDate = (consultation: Consultation) => {
 };
 
 const getDoctorDisplayName = (consultation: Consultation) => {
+  if (consultation.doctor?.nombre_completo) {
+    return consultation.doctor.nombre_completo;
+  }
   const doc = consultation.medico;
   if (!doc) return 'Médico Asignado';
   if (typeof doc === 'string') return doc;
-  return doc.nombre_completo || `${doc.nombre || ''} ${doc.primer_apellido || ''}`.trim() || 'Médico Asignado';
+  return (
+    doc.nombre_completo ||
+    `${doc.nombre || ''} ${doc.primer_apellido || ''}`.trim() ||
+    'Médico Asignado'
+  );
 };
 
 const latestImc = computed(() => {
-  if (!latestConsultation.value?.peso || !latestConsultation.value?.altura) return null;
-  const peso = Number(latestConsultation.value.peso);
-  let altura = Number(latestConsultation.value.altura);
+  const vitals = latestConsultation.value?.signos_vitales;
+  const rawPeso = vitals?.peso ?? latestConsultation.value?.peso;
+  const rawAltura = vitals?.altura ?? latestConsultation.value?.altura;
+
+  if (!rawPeso || !rawAltura) return null;
+  const peso = Number(rawPeso);
+  let altura = Number(rawAltura);
 
   if (altura > 3) {
     altura = altura / 100;

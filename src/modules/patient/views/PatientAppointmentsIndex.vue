@@ -1,15 +1,9 @@
 <template>
   <FullScreenLoader v-if="isLoading" />
-  <TemplateView v-else :title="`AGENDA`">
+  <TemplateView v-else :title="`AGENDA DE CITAS`">
     <template #main>
       <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
-          <!-- <button
-            class="cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-(--color)/20 border-(--color)/60 text-(--color) hover:bg-(--color)/5 [--color:var(--color-primary)] h-10 px-4 py-2 box mr-2"
-            @click="handleModalCreateUpdate('create')"
-          >
-            Registrar nuevo paciente
-          </button> -->
           <ButtonBase
             text="Nueva cita"
             :icon="PlusIcon"
@@ -17,57 +11,13 @@
             data-tw-toggle="modal"
             data-tw-target="#modal-appointment-create-or-edit"
           />
-          <!-- <div data-tw-placement="bottom-end" class="dropdown">
-            <button
-              class="[--color:var(--color-foreground)] border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 bg-background border-(--color)/20 h-10 py-2 dropdown-toggle inline-flex cursor-pointer relative z-[51] box px-2"
-              data-tw-toggle="dropdown"
-            >
-              <span class="flex h-5 w-5 items-center justify-center">
-                <i
-                  data-lucide="plus"
-                  class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
-                ></i>
-              </span>
-            </button>
-            <div
-              class="box before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:bg-background/30 before:shadow-[0px_3px_5px_#0000000b] before:z-[-1] before:rounded-xl after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-[0px_3px_5px_#0000000b] after:rounded-xl after:z-[-1] after:backdrop-blur-md dropdown-menu invisible absolute z-50 p-1 opacity-0 before:backdrop-blur-xl [&.show]:visible [&.show]:opacity-100"
-            >
-              <div class="dropdown-content w-40">
-                <a
-                  class="relative flex cursor-default select-none hover:bg-foreground/5 items-center rounded-lg px-2 py-1.5 outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                >
-                  <i
-                    data-lucide="printer"
-                    class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 mr-2 size-4"
-                  ></i>
-                  Print
-                </a>
-                <a
-                  class="relative flex cursor-default select-none hover:bg-foreground/5 items-center rounded-lg px-2 py-1.5 outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                >
-                  <i
-                    data-lucide="file-text"
-                    class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 mr-2 size-4"
-                  ></i>
-                  Export to Excel
-                </a>
-                <a
-                  class="relative flex cursor-default select-none hover:bg-foreground/5 items-center rounded-lg px-2 py-1.5 outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                >
-                  <i
-                    data-lucide="file-text"
-                    class="stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 mr-2 size-4"
-                  ></i>
-                  Export to PDF
-                </a>
-              </div>
-            </div>
-          </div> -->
-          <!-- <div class="mx-auto hidden opacity-70 md:block">
+
+          <div class="mx-auto hidden opacity-70 md:block">
             Mostrando los registros del {{ pagination.from }} al {{ pagination.to }} de
             {{ pagination.total }} registros
-          </div> -->
-          <!-- <div class="mt-3 w-full sm:ml-auto sm:mt-0 sm:w-auto md:ml-0">
+          </div>
+
+          <div class="mt-3 w-full sm:ml-auto sm:mt-0 sm:w-auto md:ml-0">
             <div class="relative w-56">
               <input
                 class="h-10 rounded-md border bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-foreground placeholder:text-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/5 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 box w-56 pr-10"
@@ -78,8 +28,9 @@
               />
               <SearchIcon class="cursor-pointer" @click="doSearch" />
             </div>
-          </div> -->
+          </div>
         </div>
+
         <div class="col-span-12 overflow-auto lg:overflow-visible">
           <div class="relative w-full overflow-auto">
             <table class="w-full caption-bottom border-separate border-spacing-y-[10px] -mt-2">
@@ -91,6 +42,11 @@
                     class="h-12 px-4 text-center font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
                   >
                     #
+                  </th>
+                  <th
+                    class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
+                  >
+                    FOLIO
                   </th>
                   <th
                     class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
@@ -127,7 +83,7 @@
               <tbody class="[&_tr:last-child]:border-0">
                 <tr v-if="!appointments?.length">
                   <td
-                    colspan="7"
+                    colspan="8"
                     class="text-center shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                   >
                     El paciente no tiene citas registradas.
@@ -141,7 +97,12 @@
                       width="5%"
                       class="text-center shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
-                      {{ index + 1 }}
+                      {{ (pagination.currentPage - 1) * pagination.perPage + index + 1 }}
+                    </td>
+                    <td
+                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r font-medium text-primary"
+                    >
+                      {{ appointment.folio || 'S/F' }}
                     </td>
                     <td
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
@@ -149,14 +110,14 @@
                       {{ appointment.fecha_inicio }}
                     </td>
                     <td
-                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r whitespace-nowrap"
                     >
                       {{ appointment.hora_inicio }} - {{ appointment.hora_termino }}
                     </td>
                     <td
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
-                      {{ appointment.medico }}
+                      {{ getAppointmentDoctorName(appointment) }}
                     </td>
                     <td
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
@@ -169,7 +130,7 @@
                       <PillBadge
                         size="sm"
                         :color="getAppointmentStatusColor(appointment.estatus)"
-                        :label="appointment.estatus"
+                        :label="getAppointmentStatusName(appointment.estatus)"
                       />
                     </td>
                     <td
@@ -177,10 +138,6 @@
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
                       <div class="flex items-center justify-center gap-3">
-                        <!-- <span @click="toggleRow(appointment.id)">
-                          {{ expandedRow === appointment.id ? 'Ocultar' : 'Ver' }}
-                        </span> -->
-
                         <div v-if="expandedRow != appointment.id">
                           <PreviewIcon class="cursor-pointer" @click="toggleRow(appointment.id)" />
                         </div>
@@ -190,7 +147,12 @@
                             @click="toggleRow(appointment.id)"
                           />
                         </div>
-                        <div>
+                        <div
+                          v-if="
+                            getAppointmentStatusName(appointment.estatus) !== 'Cancelada' &&
+                            getAppointmentStatusName(appointment.estatus) !== 'Atendida'
+                          "
+                        >
                           <CancelIcon
                             class="cursor-pointer"
                             @click="openCancelModal(appointment.id)"
@@ -201,56 +163,29 @@
                   </tr>
                   <tr v-if="expandedRow === appointment.id" class="">
                     <td
-                      colspan="7"
+                      colspan="8"
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
-                      <div class="grid grid-cols-12 mt-6 gap-x-10 gap-y-9">
-                        <!-- <div class="col-span-6 sm:col-span-6 md:col-span-4">
-                          <div class="text-xs opacity-70">MOTIVO DE LA CONSULTA</div>
-                          <div class="mt-1.5 flex items-center">
-                            <div class="text-base">4.501</div>
-                            <div
-                              class="text-(--color) flex cursor-pointer items-center rounded-full border px-2 py-px text-xs tooltip border-transparent bg-transparent [--color:var(--color-success)]"
-                              data-content="9% Higher than last month"
-                            >
-                              2%
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                data-lucide="chevron-down"
-                                class="lucide lucide-chevron-down size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 ml-0.5"
-                              >
-                                <path d="m6 9 6 6 6-6"></path>
-                              </svg>
-                            </div>
-                          </div>
-                        </div> -->
+                      <div class="grid grid-cols-12 mt-4 gap-x-10 gap-y-6">
                         <div class="col-span-12 sm:col-span-6 md:col-span-4">
                           <div class="text-xs opacity-70">PESO (kg)</div>
                           <div class="mt-1.5 flex items-center">
                             <div class="text-base">
                               {{
-                                appointment.consulta?.peso
-                                  ? `${appointment.consulta.peso} kg`
+                                appointment.consulta?.signos_vitales?.peso
+                                  ? `${appointment.consulta.signos_vitales.peso} kg`
                                   : 'N/E'
                               }}
                             </div>
                           </div>
                         </div>
                         <div class="col-span-12 sm:col-span-6 md:col-span-4">
-                          <div class="text-xs opacity-70">ALTURA (cm)</div>
+                          <div class="text-xs opacity-70">ALTURA (m)</div>
                           <div class="mt-1.5 flex items-center">
                             <div class="text-base">
                               {{
-                                appointment.consulta?.altura
-                                  ? `${appointment.consulta.altura} kg`
+                                appointment.consulta?.signos_vitales?.altura
+                                  ? `${appointment.consulta.signos_vitales.altura} m`
                                   : 'N/E'
                               }}
                             </div>
@@ -261,38 +196,61 @@
                           <div class="mt-1.5 flex items-center">
                             <div class="text-base">
                               {{
-                                appointment.consulta?.temperatura
-                                  ? `${appointment.consulta.temperatura} ºC`
+                                appointment.consulta?.signos_vitales?.temperatura
+                                  ? `${appointment.consulta.signos_vitales.temperatura} ºC`
                                   : 'N/E'
                               }}
                             </div>
                           </div>
                         </div>
                         <div class="col-span-12 sm:col-span-6 md:col-span-4">
-                          <div class="text-xs opacity-70">PRESION ARTERIAL</div>
+                          <div class="text-xs opacity-70">PRESIÓN ARTERIAL</div>
                           <div class="mt-1.5 flex items-center">
                             <div class="text-base">
                               {{
-                                appointment.consulta?.temperatura
-                                  ? `${appointment.consulta.presion_arterial} ºC`
+                                appointment.consulta?.signos_vitales?.presion_arterial
+                                  ? `${appointment.consulta.signos_vitales.presion_arterial} mmHg`
                                   : 'N/E'
                               }}
                             </div>
                           </div>
                         </div>
                         <div class="col-span-12 sm:col-span-6 md:col-span-4">
-                          <div class="text-xs opacity-70">FERECUANCIA CARDIACA</div>
+                          <div class="text-xs opacity-70">FRECUENCIA CARDÍACA</div>
                           <div class="mt-1.5 flex items-center">
                             <div class="text-base">
                               {{
-                                appointment.consulta?.frecuencia_cardiaca
-                                  ? `${appointment.consulta.frecuencia_cardiaca} bpm`
+                                appointment.consulta?.signos_vitales?.frecuencia_cardiaca
+                                  ? `${appointment.consulta.signos_vitales.frecuencia_cardiaca} bpm`
                                   : 'N/E'
                               }}
                             </div>
                           </div>
                         </div>
-                        <div class="col-span-12 sm:col-span-12 md:col-span-12">
+                        <div class="col-span-12 sm:col-span-6 md:col-span-4">
+                          <div class="text-xs opacity-70">FRECUENCIA RESPIRATORIA</div>
+                          <div class="mt-1.5 flex items-center">
+                            <div class="text-base">
+                              {{
+                                appointment.consulta?.signos_vitales?.frecuencia_respiratoria
+                                  ? `${appointment.consulta.signos_vitales.frecuencia_respiratoria} rpm`
+                                  : 'N/E'
+                              }}
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          v-if="appointment.consulta?.exploracion_fisica"
+                          class="col-span-12"
+                        >
+                          <div class="text-xs opacity-70">EXPLORACIÓN FÍSICA</div>
+                          <div class="mt-1.5 flex items-center">
+                            <div class="text-base">
+                              {{ appointment.consulta.exploracion_fisica }}
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-span-12">
                           <div class="text-xs opacity-70">DIAGNÓSTICO</div>
                           <div class="mt-1.5 flex items-center">
                             <div class="text-base">
@@ -302,7 +260,7 @@
                             </div>
                           </div>
                         </div>
-                        <div class="col-span-12 sm:col-span-12 md:col-span-12">
+                        <div class="col-span-12">
                           <div class="text-xs opacity-70">TRATAMIENTO Y PRESCRIPCIÓN</div>
                           <div class="mt-1.5 flex items-center">
                             <div class="text-base">
@@ -312,13 +270,28 @@
                             </div>
                           </div>
                         </div>
-                        <div class="col-span-12 sm:col-span-12 md:col-span-12">
+                        <div class="col-span-12">
                           <div class="text-xs opacity-70">NOTAS / OBSERVACIONES</div>
                           <div class="mt-1.5 flex items-center">
                             <div class="text-base">
                               {{
-                                appointment.consulta?.observaciones || 'Sin tratamiento registrado.'
+                                appointment.consulta?.observaciones ||
+                                appointment.consulta?.notas ||
+                                appointment.observaciones ||
+                                appointment.observaciones_cita ||
+                                'Sin observaciones registradas.'
                               }}
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          v-if="appointment.consulta?.doctor?.nombre_completo"
+                          class="col-span-12"
+                        >
+                          <div class="text-xs opacity-70">MÉDICO QUE ATENDIÓ LA CONSULTA</div>
+                          <div class="mt-1.5 flex items-center">
+                            <div class="text-base font-medium">
+                              {{ appointment.consulta.doctor.nombre_completo }}
                             </div>
                           </div>
                         </div>
@@ -339,21 +312,15 @@
             </table>
           </div>
         </div>
+
+        <!-- BEGIN: Pagination -->
+        <TablePagination :pagination="pagination" @page-change="pageChange" />
+        <!-- END: Pagination -->
       </div>
 
       <DialogBasic id="modal-appointment-create-or-edit" size="3xl">
         <AppointmentCreateUpdate :patientId appointmentId="create" :is-inside-modal="true" />
       </DialogBasic>
-
-      <!-- <ModalQuestion
-        id="modal-appointment-cancel"
-        title="¿Quieres cancelar la cita?"
-        description="Está acción es irrevesible."
-        confirmText="Sí, cancelar cita"
-        cancelText="Cerrar"
-        :loading="isPendingCancelAppointment"
-        @confirm="onCancel"
-      /> -->
 
       <AppointmentCancelModalQuestion
         v-model="showCancelModalQuestion"
@@ -367,83 +334,97 @@
 <script setup lang="ts">
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import PlusIcon from '@/icons/PlusIcon.vue';
+import SearchIcon from '@/icons/SearchIcon.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
 import { useQuery } from '@tanstack/vue-query';
 import PreviewIcon from '@/icons/PreviewIcon.vue';
 import PreviewHideIcon from '@/icons/PreviewHideIcon.vue';
-import { getAppointmentsByPatientAction } from '../../appointment/actions/get-appointments-by-patient.action';
-import { ref } from 'vue';
+import { getAppointmentsByPatientAction } from '@/modules/appointment/actions/get-appointments-by-patient.action';
+import { computed, ref } from 'vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
-import { getAppointmentStatusColor } from '@/modules/appointment/helpers/get-appointment-status-color.mapper';
+import {
+  getAppointmentDoctorName,
+  getAppointmentStatusColor,
+  getAppointmentStatusName,
+} from '@/modules/appointment/helpers/get-appointment-status-color.mapper';
 import CancelIcon from '@/icons/CancelIcon.vue';
-import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
-import { useCancelAppointment } from '../../appointment/composables/useCancelAppointment';
 import AppointmentCancelModalQuestion from '@/modules/appointment/components/AppointmentCancelModalQuestion.vue';
-
-import type { appointment } from '@/modules/appointment/interfaces/appointment.interface';
-import { useRouter } from 'vue-router';
+import TablePagination from '@/modules/common/components/TablePagination.vue';
+import type { Pagination } from '@/modules/common/interfaces/pagination.interface';
+import type { Appointment } from '@/modules/appointment/interfaces/appointment.interface';
+import { useRoute, useRouter } from 'vue-router';
 import StethoscopeIcon from '@/icons/StethoscopeIcon.vue';
 
 interface Props {
   patientId: string;
-  // isInsideModal: boolean;
 }
 
 const props = defineProps<Props>();
 
 const router = useRouter();
+const route = useRoute();
+
+const page = ref<number>(Number(route.query.page) || 1);
+const perPage = ref<number>(10);
+const search = ref<string>('');
 
 const expandedRow = ref<null | number>(null);
 
 const showCancelModalQuestion = ref(false);
 const selectedAppointmentId = ref<null | number>(null);
 
-const { functionCancelAppointment, isPendingCancelAppointment } = useCancelAppointment();
-
 const {
-  data: appointments,
+  data: responseAppointments,
   isLoading,
-  error,
+  refetch,
 } = useQuery({
-  queryKey: ['appointments', { patientId: props.patientId }],
-  queryFn: () => getAppointmentsByPatientAction(props.patientId),
-  select: (data) => data ?? [],
+  queryKey: ['appointments', { patientId: props.patientId, page, search }],
+  queryFn: () =>
+    getAppointmentsByPatientAction(props.patientId, page.value, perPage.value, search.value),
 });
 
-console.log(appointments.value);
+const appointments = computed<Appointment[]>(() => responseAppointments.value?.data || []);
+
+const pagination = computed<Pagination>(() => ({
+  currentPage: responseAppointments.value?.meta?.current_page || 1,
+  firstPageUrl: responseAppointments.value?.links?.first || '',
+  lastPage: responseAppointments.value?.meta?.last_page || 1,
+  lastPageUrl: responseAppointments.value?.links?.last || '',
+  links: responseAppointments.value?.meta?.links || [],
+  nextPageUrl: responseAppointments.value?.links?.next || '',
+  perPage: responseAppointments.value?.meta?.per_page || perPage.value,
+  prevPageUrl: responseAppointments.value?.links?.prev || '',
+  total: responseAppointments.value?.meta?.total || 0,
+  to: responseAppointments.value?.meta?.to || 0,
+  from: responseAppointments.value?.meta?.from || 0,
+}));
+
+function pageChange(pageNumber: number) {
+  page.value = pageNumber;
+  router.push({
+    query: { ...route.query, page: pageNumber, search: search.value || undefined },
+  });
+}
+
+function doSearch() {
+  page.value = 1;
+  refetch();
+}
 
 const toggleRow = (id: number) => {
   expandedRow.value = expandedRow.value === id ? null : id;
 };
 
-const onCancel = async () => {
-  if (isPendingCancelAppointment.value) return;
-  if (!selectedAppointmentId.value) return;
-
-  try {
-    await functionCancelAppointment(selectedAppointmentId.value.toString());
-
-    selectedAppointmentId.value = null;
-
-    window.tailwind.Modal.getOrCreateInstance(
-      document.getElementById('modal-appointment-cancel'),
-    )?.hide();
-  } catch {}
-};
-
 const openCancelModal = (id: number) => {
-  console.log('simon');
-
   selectedAppointmentId.value = id;
-
   showCancelModalQuestion.value = true;
 };
 
-const handleCancelled = (updated) => {
-  console.log('Cita actualizada:', updated);
+const handleCancelled = () => {
+  refetch();
 };
 
 const goToConsultation = (appointmentId: number) => {
@@ -453,19 +434,15 @@ const goToConsultation = (appointmentId: number) => {
   });
 };
 
-const canAttendAppointment = (appointment: appointment) => {
-  // Si ya está atendida o cancelada, no se puede "atender de nuevo"
-  if (appointment.estatus === 'Cancelada' || appointment.estatus === 'Atendida') {
+const canAttendAppointment = (appointment: Appointment) => {
+  const statusName = getAppointmentStatusName(appointment.estatus);
+  if (statusName === 'Cancelada' || statusName === 'Atendida') {
     return false;
   }
-  // 2. Convertimos fecha_hora_inicio a objeto Date de JS y reseteamos la hora a medianoche (00:00:00)
   const appointmentDate = new Date(appointment.fecha_hora_inicio);
   appointmentDate.setHours(0, 0, 0, 0);
-  // 3. Obtenemos el final del día de hoy (23:59:59)
   const endOfToday = new Date();
   endOfToday.setHours(23, 59, 59, 999);
-  // 4. Si la cita es de hoy o de una fecha pasada, devuelve true (Habilitado)
-  // Si la cita es futura (ej. mañana), devuelve false (Deshabilitado)
   return appointmentDate <= endOfToday;
 };
 </script>

@@ -15,7 +15,7 @@
 import { computed } from 'vue';
 import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
 import { useCancelAppointment } from '@/modules/appointment/composables/useCancelAppointment';
-import type { Appointment } from '@/types/Appointment';
+import type { Appointment } from '@/modules/appointment/interfaces/appointment.interface';
 
 interface Props {
   modelValue: boolean;
@@ -47,7 +47,7 @@ const onConfirm = async () => {
     emit('cancelled', updated);
 
     isOpen.value = false;
-  } catch (error) {
+  } catch {
     // El composable debe manejar el toast
   }
 };

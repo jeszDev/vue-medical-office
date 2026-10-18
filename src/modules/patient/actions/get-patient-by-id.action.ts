@@ -1,14 +1,16 @@
 import { medicalOfficeApi } from '@/api/medicalOfficeApi';
-import type { Patient } from '../interfaces/patient.interface';
+import type { Patient, PatientSingleResponse } from '../interfaces/patient.interface';
 
 export const getPatientByIdAction = async (patientId: string): Promise<Patient> => {
   if (patientId === 'create') {
     return {
       id: 0,
+      curp: '',
       nombre: '',
       primer_apellido: '',
       segundo_apellido: '',
       fecha_nacimiento: '',
+      edad: null,
       telefono: '',
       correo_electronico: '',
       observaciones: '',
@@ -18,10 +20,10 @@ export const getPatientByIdAction = async (patientId: string): Promise<Patient> 
   }
 
   try {
-    const { data } = await medicalOfficeApi.get<Patient>(`/patients/${patientId}`);
+    const { data } = await medicalOfficeApi.get<PatientSingleResponse>(`/patients/${patientId}`);
     return data.data;
   } catch (error) {
-    console.log(error);
-    throw new Error(`Error getting chain by id ${patientId}`);
+    console.error(error);
+    throw new Error(`Error al obtener el paciente con ID ${patientId}`);
   }
 };

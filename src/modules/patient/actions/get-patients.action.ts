@@ -13,7 +13,7 @@ export const getPatientsAction = async (
 
     return data;
   } catch (error) {
-    console.log(error);
-    throw new Error('Error getting chains of custody');
+    console.error(error);
+    throw new Error('Error al obtener la lista de pacientes');
   }
 };

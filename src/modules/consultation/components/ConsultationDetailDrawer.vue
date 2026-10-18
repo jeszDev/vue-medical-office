@@ -67,9 +67,52 @@
               </div>
             </div>
 
+            <!-- Cita Médica Vinculada (si existe) -->
+            <div
+              v-if="consultation?.cita"
+              class="box p-4 rounded-xl border border-primary/20 bg-primary/[0.02] shadow-xs"
+            >
+              <div
+                class="text-xs font-bold uppercase tracking-wider text-primary mb-2 flex items-center gap-1.5"
+              >
+                <CalendarIcon class="size-4" />
+                Cita Médica de Origen
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs mt-2">
+                <div>
+                  <span class="text-foreground/60 block">Folio:</span>
+                  <span class="font-bold text-foreground">
+                    {{ consultation.cita.folio || 'S/F' }}
+                  </span>
+                </div>
+                <div>
+                  <span class="text-foreground/60 block">Fecha y Hora:</span>
+                  <span class="font-medium text-foreground">
+                    {{ consultation.cita.fecha_inicio }} {{ consultation.cita.hora_inicio }}
+                  </span>
+                </div>
+                <div>
+                  <span class="text-foreground/60 block">Estatus de Cita:</span>
+                  <PillBadge
+                    size="sm"
+                    :color="getAppointmentStatusColor(consultation.cita.estatus)"
+                    :label="getAppointmentStatusName(consultation.cita.estatus)"
+                  />
+                </div>
+                <div>
+                  <span class="text-foreground/60 block">Motivo:</span>
+                  <span class="font-medium text-foreground truncate block">
+                    {{ consultation.cita.motivo }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
             <!-- Signos Vitales Dashboard -->
             <div>
-              <div class="text-xs font-bold uppercase tracking-wider text-foreground/70 mb-3 flex items-center gap-2">
+              <div
+                class="text-xs font-bold uppercase tracking-wider text-foreground/70 mb-3 flex items-center gap-2"
+              >
                 <ClipboardListIcon class="size-4 text-primary" />
                 Signos Vitales y Somatometría
               </div>
@@ -79,8 +122,8 @@
                 <div class="p-3.5 rounded-xl border border-foreground/10 bg-background shadow-xs">
                   <div class="text-xs text-foreground/60 font-medium">Presión Arterial</div>
                   <div class="text-base font-bold text-foreground mt-1">
-                    {{ consultation?.presion_arterial || '—' }}
-                    <span v-if="consultation?.presion_arterial" class="text-xs font-normal text-foreground/60">
+                    {{ presionArterial }}
+                    <span v-if="presionArterial !== '—'" class="text-xs font-normal text-foreground/60">
                       mmHg
                     </span>
                   </div>
@@ -90,8 +133,8 @@
                 <div class="p-3.5 rounded-xl border border-foreground/10 bg-background shadow-xs">
                   <div class="text-xs text-foreground/60 font-medium">Frecuencia Cardíaca</div>
                   <div class="text-base font-bold text-foreground mt-1">
-                    {{ consultation?.frecuencia_cardiaca || '—' }}
-                    <span v-if="consultation?.frecuencia_cardiaca" class="text-xs font-normal text-foreground/60">
+                    {{ frecuenciaCardiaca }}
+                    <span v-if="frecuenciaCardiaca !== '—'" class="text-xs font-normal text-foreground/60">
                       bpm
                     </span>
                   </div>
@@ -101,8 +144,8 @@
                 <div class="p-3.5 rounded-xl border border-foreground/10 bg-background shadow-xs">
                   <div class="text-xs text-foreground/60 font-medium">Temperatura</div>
                   <div class="text-base font-bold text-foreground mt-1">
-                    {{ consultation?.temperatura || '—' }}
-                    <span v-if="consultation?.temperatura" class="text-xs font-normal text-foreground/60">
+                    {{ temperatura }}
+                    <span v-if="temperatura !== '—'" class="text-xs font-normal text-foreground/60">
                       °C
                     </span>
                   </div>
@@ -112,8 +155,8 @@
                 <div class="p-3.5 rounded-xl border border-foreground/10 bg-background shadow-xs">
                   <div class="text-xs text-foreground/60 font-medium">Frec. Respiratoria</div>
                   <div class="text-base font-bold text-foreground mt-1">
-                    {{ consultation?.frecuencia_respiratoria || '—' }}
-                    <span v-if="consultation?.frecuencia_respiratoria" class="text-xs font-normal text-foreground/60">
+                    {{ frecuenciaRespiratoria }}
+                    <span v-if="frecuenciaRespiratoria !== '—'" class="text-xs font-normal text-foreground/60">
                       rpm
                     </span>
                   </div>
@@ -123,15 +166,17 @@
                 <div class="p-3.5 rounded-xl border border-foreground/10 bg-background shadow-xs">
                   <div class="text-xs text-foreground/60 font-medium">Peso / Talla</div>
                   <div class="text-base font-bold text-foreground mt-1">
-                    {{ consultation?.peso ? `${consultation.peso} kg` : '—' }}
-                    <span v-if="consultation?.altura" class="text-xs font-normal text-foreground/60">
-                      / {{ consultation.altura }} cm
+                    {{ peso ? `${peso} kg` : '—' }}
+                    <span v-if="altura" class="text-xs font-normal text-foreground/60">
+                      / {{ alturaDisplay }}
                     </span>
                   </div>
                 </div>
 
                 <!-- IMC -->
-                <div class="p-3.5 rounded-xl border border-foreground/10 bg-background shadow-xs flex flex-col justify-between">
+                <div
+                  class="p-3.5 rounded-xl border border-foreground/10 bg-background shadow-xs flex flex-col justify-between"
+                >
                   <div class="text-xs text-foreground/60 font-medium">Índice Masa Corporal</div>
                   <div class="flex items-center gap-2 mt-1">
                     <span class="text-base font-bold text-foreground">
@@ -150,7 +195,9 @@
 
             <!-- Motivo de consulta -->
             <div class="box p-5 rounded-xl border border-foreground/10 bg-background shadow-xs">
-              <div class="text-xs font-bold uppercase tracking-wider text-foreground/70 mb-2 flex items-center gap-1.5">
+              <div
+                class="text-xs font-bold uppercase tracking-wider text-foreground/70 mb-2 flex items-center gap-1.5"
+              >
                 <FileTextIcon class="size-4 text-primary" />
                 Motivo de la Consulta
               </div>
@@ -159,44 +206,72 @@
               </p>
             </div>
 
+            <!-- Exploración Física -->
+            <div
+              v-if="consultation?.exploracion_fisica"
+              class="box p-5 rounded-xl border border-foreground/10 bg-background shadow-xs"
+            >
+              <div
+                class="text-xs font-bold uppercase tracking-wider text-foreground/70 mb-2 flex items-center gap-1.5"
+              >
+                <StethoscopeIcon class="size-4 text-primary" />
+                Exploración Física
+              </div>
+              <p class="text-sm text-foreground/90 whitespace-pre-line leading-relaxed">
+                {{ consultation.exploracion_fisica }}
+              </p>
+            </div>
+
             <!-- Diagnóstico -->
             <div class="box p-5 rounded-xl border border-primary/20 bg-primary/[0.03] shadow-xs">
-              <div class="text-xs font-bold uppercase tracking-wider text-primary mb-2 flex items-center gap-1.5">
+              <div
+                class="text-xs font-bold uppercase tracking-wider text-primary mb-2 flex items-center gap-1.5"
+              >
                 <StethoscopeIcon class="size-4" />
                 Diagnóstico Médico
               </div>
-              <div class="text-base font-semibold text-foreground whitespace-pre-line leading-relaxed">
+              <div
+                class="text-base font-semibold text-foreground whitespace-pre-line leading-relaxed"
+              >
                 {{ consultation?.diagnostico || 'Sin diagnóstico registrado.' }}
               </div>
             </div>
 
             <!-- Tratamiento y Receta -->
-            <div class="box p-5 rounded-xl border border-foreground/10 bg-background shadow-xs relative overflow-hidden">
+            <div
+              class="box p-5 rounded-xl border border-foreground/10 bg-background shadow-xs relative overflow-hidden"
+            >
               <div
                 class="absolute top-0 right-0 size-24 bg-primary/5 rounded-bl-full pointer-events-none flex items-start justify-end p-3 text-primary/30 font-bold text-xl"
               >
                 Rx
               </div>
-              <div class="text-xs font-bold uppercase tracking-wider text-foreground/70 mb-2 flex items-center gap-1.5">
+              <div
+                class="text-xs font-bold uppercase tracking-wider text-foreground/70 mb-2 flex items-center gap-1.5"
+              >
                 <ClipboardListIcon class="size-4 text-primary" />
                 Tratamiento y Receta Médica
               </div>
-              <div class="text-sm text-foreground/90 whitespace-pre-line leading-relaxed bg-foreground/[0.02] p-4 rounded-lg border border-foreground/5 font-mono">
+              <div
+                class="text-sm text-foreground/90 whitespace-pre-line leading-relaxed bg-foreground/[0.02] p-4 rounded-lg border border-foreground/5 font-mono"
+              >
                 {{ consultation?.tratamiento || 'Sin tratamiento registrado.' }}
               </div>
             </div>
 
-            <!-- Notas Adicionales -->
+            <!-- Notas Adicionales / Observaciones -->
             <div
-              v-if="consultation?.notas"
+              v-if="consultation?.observaciones || consultation?.notas"
               class="box p-5 rounded-xl border border-foreground/10 bg-background shadow-xs"
             >
-              <div class="text-xs font-bold uppercase tracking-wider text-foreground/70 mb-2 flex items-center gap-1.5">
+              <div
+                class="text-xs font-bold uppercase tracking-wider text-foreground/70 mb-2 flex items-center gap-1.5"
+              >
                 <ObservationsIcon class="size-4 text-primary" />
                 Notas y Observaciones
               </div>
               <p class="text-sm text-foreground/80 whitespace-pre-line leading-relaxed">
-                {{ consultation.notas }}
+                {{ consultation.observaciones || consultation.notas }}
               </p>
             </div>
           </div>
@@ -212,11 +287,7 @@
               @click="printConsultation"
             />
 
-            <ButtonBase
-              text="Cerrar"
-              color="primary"
-              @click="close"
-            />
+            <ButtonBase text="Cerrar" color="primary" @click="close" />
           </div>
         </div>
       </div>
@@ -227,6 +298,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { Consultation } from '../interfaces/consultation.interface';
+import {
+  getAppointmentStatusColor,
+  getAppointmentStatusName,
+} from '@/modules/appointment/helpers/get-appointment-status-color.mapper';
 import CloseIcon from '@/icons/CloseIcon.vue';
 import StethoscopeIcon from '@/icons/StethoscopeIcon.vue';
 import FileTextIcon from '@/icons/FileTextIcon.vue';
@@ -256,9 +331,7 @@ const close = () => {
 const formattedDate = computed(() => {
   if (!props.consultation) return '—';
   const raw =
-    props.consultation.fecha ||
-    props.consultation.creado_el ||
-    props.consultation.created_at;
+    props.consultation.fecha || props.consultation.creado_el || props.consultation.created_at;
 
   if (!raw) return 'No registrada';
 
@@ -277,25 +350,66 @@ const formattedDate = computed(() => {
 
 const doctorName = computed(() => {
   if (!props.consultation) return 'No especificado';
+  if (props.consultation.doctor?.nombre_completo) {
+    return props.consultation.doctor.nombre_completo;
+  }
   const doc = props.consultation.medico;
   if (!doc) return 'Médico Asignado';
   if (typeof doc === 'string') return doc;
-  return doc.nombre_completo || `${doc.nombre || ''} ${doc.primer_apellido || ''}`.trim() || 'Médico Asignado';
+  return (
+    doc.nombre_completo ||
+    `${doc.nombre || ''} ${doc.primer_apellido || ''}`.trim() ||
+    'Médico Asignado'
+  );
+});
+
+const vitals = computed(() => props.consultation?.signos_vitales);
+
+const presionArterial = computed(() => {
+  return vitals.value?.presion_arterial || props.consultation?.presion_arterial || '—';
+});
+
+const frecuenciaCardiaca = computed(() => {
+  return vitals.value?.frecuencia_cardiaca || props.consultation?.frecuencia_cardiaca || '—';
+});
+
+const temperatura = computed(() => {
+  return vitals.value?.temperatura || props.consultation?.temperatura || '—';
+});
+
+const frecuenciaRespiratoria = computed(() => {
+  return vitals.value?.frecuencia_respiratoria || props.consultation?.frecuencia_respiratoria || '—';
+});
+
+const peso = computed(() => {
+  return vitals.value?.peso || props.consultation?.peso;
+});
+
+const altura = computed(() => {
+  return vitals.value?.altura || props.consultation?.altura;
+});
+
+const alturaDisplay = computed(() => {
+  if (!altura.value) return '';
+  const num = Number(altura.value);
+  if (num > 3) {
+    return `${num} cm`;
+  }
+  return `${num} m`;
 });
 
 const imcInfo = computed(() => {
-  if (!props.consultation?.peso || !props.consultation?.altura) return null;
-  const peso = Number(props.consultation.peso);
-  let altura = Number(props.consultation.altura);
+  if (!peso.value || !altura.value) return null;
+  const numPeso = Number(peso.value);
+  let numAltura = Number(altura.value);
 
-  // Si la altura viene en cm (ej. 170), convertir a metros (1.70)
-  if (altura > 3) {
-    altura = altura / 100;
+  if (numAltura > 3) {
+    numAltura = numAltura / 100;
   }
 
-  if (altura <= 0) return null;
+  if (numAltura <= 0) return null;
 
-  const imc = +(peso / (altura * altura)).toFixed(1);
+  const imc = +(numPeso / (numAltura * numAltura)).toFixed(1);
 
   if (imc < 18.5) {
     return { value: imc, label: 'Bajo peso', color: 'warning' as const };

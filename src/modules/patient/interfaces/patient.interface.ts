@@ -18,4 +18,8 @@ export interface PatientSingleResponse {
   data: Patient;
 }
 
+export interface PatientListResponse {
+  data: Patient[];
+}
+
 export type PatientResponse = PatientSingleResponse;

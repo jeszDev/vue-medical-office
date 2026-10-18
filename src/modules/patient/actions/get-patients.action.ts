@@ -7,9 +7,12 @@ export const getPatientsAction = async (
   search: string = '',
 ) => {
   try {
-    const { data } = await medicalOfficeApi.get<PatientPaginate>(
-      `/patients?page=${page}&per_page=${perPage}&search=${search}`,
-    );
+    const url =
+      page === 0
+        ? '/patients?all=true'
+        : `/patients?page=${page}&per_page=${perPage}&search=${search}`;
+
+    const { data } = await medicalOfficeApi.get<PatientPaginate>(url);
 
     return data;
   } catch (error) {

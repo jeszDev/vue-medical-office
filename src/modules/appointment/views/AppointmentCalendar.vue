@@ -5,7 +5,7 @@
         <PillBadge
           size="lg"
           :color="badgeColor"
-          :label="`CITA ${appointment.estatus.toUpperCase()}`"
+          :label="`CITA ${statusName.toUpperCase()}`"
         />
       </div>
 
@@ -30,7 +30,9 @@
         <div class="col-span-12 sm:col-span-12 md:col-span-12">
           <div class="text-xs opacity-70 flex"><UserIcon /> MÉDICO</div>
           <div class="mt-1.5 flex items-center">
-            <div class="text-base">{{ appointment.medico }}</div>
+            <div class="text-base">
+              {{ getAppointmentDoctorName(appointment) || 'No asignado' }}
+            </div>
           </div>
         </div>
         <div class="col-span-12 sm:col-span-12 md:col-span-12">
@@ -42,7 +44,13 @@
         <div class="col-span-12 sm:col-span-12 md:col-span-12">
           <div class="text-xs opacity-70 flex"><ObservationsIcon /> OBSERVACIONES</div>
           <div class="mt-1.5 flex items-center">
-            <div class="text-base">{{ appointment.observaciones_cita || 'SIN OBSERVACIONES' }}</div>
+            <div class="text-base">
+              {{
+                appointment.observaciones ||
+                appointment.observaciones_cita ||
+                'SIN OBSERVACIONES'
+              }}
+            </div>
           </div>
         </div>
       </div>
@@ -52,14 +60,14 @@
           text="Atender cita"
           :icon="stethoscopeIcon"
           color="primary"
-          :disabled="appointment.estatus === 'Cancelada' || isPendingCancelAppointment"
+          :disabled="statusName === 'Cancelada' || isPendingCancelAppointment"
           @click="goToConsultation()"
         />
         <ButtonBase
           text="Editar cita"
           :icon="EditIcon"
           color="secondary"
-          :disabled="appointment.estatus === 'Cancelada' || isPendingCancelAppointment"
+          :disabled="statusName === 'Cancelada' || isPendingCancelAppointment"
           data-tw-toggle="modal"
           data-tw-target="#modal-patient-create-or-edit"
         />
@@ -67,7 +75,7 @@
           text="Cancelar cita"
           :icon="CancelIcon"
           color="danger"
-          :disabled="appointment.estatus === 'Cancelada' || isPendingCancelAppointment"
+          :disabled="statusName === 'Cancelada' || isPendingCancelAppointment"
           data-tw-toggle="modal"
           data-tw-target="#modal-appointment-cancel"
         />
@@ -93,15 +101,13 @@
 
 <script setup lang="ts">
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
-
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
 import EditIcon from '@/icons/EditIcon.vue';
 import CancelIcon from '@/icons/CancelIcon.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
-
-import { Appointment } from '../interfaces/appointment.interface';
+import type { Appointment } from '../interfaces/appointment.interface';
 import { computed } from 'vue';
 import CalendarIcon from '@/icons/CalendarIcon.vue';
 import UserIcon from '@/icons/UserIcon.vue';
@@ -109,6 +115,11 @@ import MessageIcon from '@/icons/MessageIcon.vue';
 import stethoscopeIcon from '@/icons/stethoscopeIcon.vue';
 import ObservationsIcon from '@/icons/ObservationsIcon.vue';
 import { useCancelAppointment } from '../composables/useCancelAppointment';
+import {
+  getAppointmentDoctorName,
+  getAppointmentStatusColor,
+  getAppointmentStatusName,
+} from '../helpers/get-appointment-status-color.mapper';
 
 interface Props {
   appointment: null | Appointment;
@@ -116,18 +127,23 @@ interface Props {
 
 const props = defineProps<Props>();
 
-console.log(props.appointment);
-
 const emit = defineEmits<{
   (e: 'updated', appointment: Appointment): void;
   (e: 'consultation', appointmentId: number): void;
 }>();
 
-const { functionCancelAppointment /* , updatedAppointment */, isPendingCancelAppointment } =
-  useCancelAppointment();
+const { functionCancelAppointment, isPendingCancelAppointment } = useCancelAppointment();
+
+const statusName = computed(() => {
+  return getAppointmentStatusName(props.appointment?.estatus);
+});
+
+const badgeColor = computed(() => {
+  return getAppointmentStatusColor(props.appointment?.estatus);
+});
 
 const onCancel = async () => {
-  if (isPendingCancelAppointment.value) return;
+  if (isPendingCancelAppointment.value || !props.appointment?.id) return;
 
   try {
     const updatedAppointment = await functionCancelAppointment(props.appointment.id.toString());
@@ -140,19 +156,8 @@ const onCancel = async () => {
   } catch {}
 };
 
-const badgeColor = computed(() => {
-  const status = props.appointment.estatus.toLowerCase();
-
-  const map: Record<string, 'primary' | 'warning' | 'success' | 'danger' | 'pending'> = {
-    confirmada: 'success',
-    cancelada: 'danger',
-    pendiente: 'pending',
-  };
-
-  return map[status] ?? 'primary';
-});
-
 const goToConsultation = () => {
+  if (!props.appointment?.id) return;
   emit('consultation', props.appointment.id);
 };
 </script>

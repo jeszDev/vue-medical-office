@@ -33,18 +33,19 @@
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import AppointmentCalendar from '@/modules/appointment/views/AppointmentCalendar.vue';
-import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 
 import { ref, computed } from 'vue';
 import { VueCal } from 'vue-cal';
 import 'vue-cal/style';
 import { useQuery } from '@tanstack/vue-query';
 
-import type { Appointment } from '../interfaces/appointment.interface';
+import type { Appointment, AppointmentStatusObject } from '../interfaces/appointment.interface';
 import type { CalendarEvent } from '../interfaces/calendar-event.interface';
+import { getAppointmentStatusName } from '../helpers/get-appointment-status-color.mapper';
 
 import { getAppointmentsAction } from '../actions/get-appointments.action';
 import { useRouter } from 'vue-router';
+
 
 const router = useRouter();
 
@@ -91,11 +92,13 @@ const onViewChange = (event: any) => {
   }
 };
 
-const getStatusClass = (status: string) => {
-  switch (status) {
+const getStatusClass = (status: AppointmentStatusObject | string | undefined | null) => {
+  const name = getAppointmentStatusName(status);
+  switch (name) {
     case 'Pendiente':
       return 'event-pendiente';
     case 'Confirmada':
+    case 'Atendida':
       return 'event-confirmada';
     case 'Cancelada':
       return 'event-cancelada';
@@ -103,6 +106,7 @@ const getStatusClass = (status: string) => {
       return 'event-default';
   }
 };
+
 
 const {
   data: events,

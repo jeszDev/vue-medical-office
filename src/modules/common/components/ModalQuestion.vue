@@ -64,7 +64,7 @@ import { watch, onMounted, onUnmounted } from 'vue';
 import CloseIcon from '@/icons/CloseIcon.vue';
 
 interface Props {
-  modelValue: boolean;
+  modelValue?: boolean;
   id?: string;
   title: string;
   description: string;
@@ -77,6 +77,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  modelValue: false,
   id: 'default-modal',
   title: 'Confirmación',
   description: '¿Estás seguro de continuar?',

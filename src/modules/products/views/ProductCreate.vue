@@ -102,7 +102,7 @@
 
 <script setup lang="ts">
 import InputLabel from '@/modules/common/components/InputLabel.vue';
-import InputText from '@/modules/common/components/InputText.vue';
+import InputText from '@/modules/common/components/InputBase.vue';
 </script>
 
 <style scoped></style>

@@ -216,15 +216,13 @@ import { Pagination } from '../../common/interfaces/pagination.interface';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
 import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
-import EditIcon from '@/icons/EditIcon.vue';
-import DeleteIcon from '@/icons/DeleteIcon.vue';
 import SearchIcon from '@/icons/SearchIcon.vue';
 import PreviewIcon from '@/icons/PreviewIcon.vue';
 import { useAuthStore } from '../../auth/stores/auth.store';
 import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
-import { Patient } from '../interfaces/patient.interface';
+import type { Patient } from '../interfaces/patient.interface';
 
 const authStore = useAuthStore();
 
@@ -247,7 +245,7 @@ const {
   queryFn: () => getPatientsAction(page.value, perPage.value, search.value),
 });
 
-const patients = computed<Patient>(() => responsePatients.value?.data || []);
+const patients = computed<Patient[]>(() => responsePatients.value?.data || []);
 const pagination = computed<Pagination>(() => ({
   currentPage: responsePatients.value?.meta.current_page || 1,
   firstPageUrl: responsePatients.value?.meta.first_page_url || '',

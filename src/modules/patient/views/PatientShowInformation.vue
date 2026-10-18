@@ -60,6 +60,18 @@
             class="flex-1 px-5 pt-5 mt-6 border-t lg:border-l lg:border-r lg:mt-0 lg:border-t-0 lg:pt-0"
           >
             <div class="grid grid-cols-12 gap-x-10 gap-y-6 lg:grid-cols-6">
+              <!-- CURP -->
+              <div class="col-span-12 lg:col-span-6">
+                <div class="text-xs opacity-70 flex items-center gap-1.5 font-medium">
+                  <FileTextIcon class="w-3.5 h-3.5" /> CURP
+                </div>
+                <div class="mt-1.5 flex items-center">
+                  <span v-if="patient.curp" class="text-base font-semibold tracking-wider font-mono">
+                    {{ patient.curp }}
+                  </span>
+                  <span v-else class="text-base opacity-50">No registrada</span>
+                </div>
+              </div>
               <!-- Correo interactivo -->
               <div class="col-span-12 lg:col-span-6">
                 <div class="text-xs opacity-70 flex items-center gap-1.5 font-medium">
@@ -149,10 +161,11 @@
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 
 import CalendarBirthdayIcon from '@/icons/CalendarBirthdayIcon.vue';
-import CalendarDateRegisterIcon from '@/icons/CalendarBirthdayIcon.vue';
+import CalendarDateRegisterIcon from '@/icons/CalendarDateRegisterIcon.vue';
 import ObservationsIcon from '@/icons/ObservationsIcon.vue';
 import EmailIcon from '@/icons/EmailIcon.vue';
 import PhoneIcon from '@/icons/PhoneIcon.vue';
+import FileTextIcon from '@/icons/FileTextIcon.vue';
 import UserEditIcon from '@/icons/UserEditIcon.vue';
 import UserDeleteIcon from '@/icons/UserDeleteIcon.vue';
 import type { Patient } from '../interfaces/patient.interface';

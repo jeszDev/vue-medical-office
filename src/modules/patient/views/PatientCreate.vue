@@ -48,6 +48,17 @@
             />
           </div>
           <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-4">
+            <InputLabel label="CURP" :isRequired="false" />
+            <InputBase
+              type="text"
+              v-model="curp"
+              v-bind="curpAttrs"
+              :error="errors.curp"
+              name="curp"
+              placeholder="Ejemplo: GOHC820512HDFR0001"
+            />
+          </div>
+          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-4">
             <InputLabel label="Fecha de nacimiento" :isRequired="false" />
             <InputBaseDate
               type="date"
@@ -68,7 +79,7 @@
               placeholder="Ejemplo: 44 31 86 37 55"
             />
           </div>
-          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-4">
+          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-6">
             <InputLabel label="Correo eléctronico" :isRequired="false" />
             <InputBase
               type="email"
@@ -86,7 +97,7 @@
               v-model="observaciones"
               name="observaciones"
               placeholder="Ejemplo: tipo de alergias"
-              :error="observaciones"
+              :error="errors.observaciones"
             />
           </div>
         </div>

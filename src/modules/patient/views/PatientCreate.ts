@@ -3,10 +3,10 @@ import InputLabel from '@/modules/common/components/InputLabel.vue';
 import InputBase from '@/modules/common/components/InputBase.vue';
 import InputBaseDate from '@/modules/common/components/InputBaseDate.vue';
 import TextArea from '@/modules/common/components/TextArea.vue';
-import { computed, defineComponent, ref, watchEffect } from 'vue';
+import { defineComponent, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMutation, useQuery } from '@tanstack/vue-query';
-import { useForm, useFieldArray } from 'vee-validate';
+import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { useToast } from 'vue-toastification';
 
@@ -16,6 +16,7 @@ import formatDateToInput from '@/helpers/format-date-to-input.helper';
 import { watch } from 'vue';
 
 const schema = yup.object({
+  curp: yup.string().nullable().notRequired(),
   nombre: yup.string().required('Este campo es obligatorio'),
   primer_apellido: yup.string().required('Este campo es obligatorio'),
   segundo_apellido: yup.string().nullable(),
@@ -54,7 +55,6 @@ export default defineComponent({
       data: patient,
       isError,
       isLoading,
-      refetch,
     } = useQuery({
       queryKey: ['patient', props.patientId],
       queryFn: () => getPatientByIdAction(props.patientId),
@@ -64,16 +64,16 @@ export default defineComponent({
 
     const {
       mutate,
-      isPending,
       isSuccess: isUpdateSuccess,
       data: updatedPatient,
     } = useMutation({
       mutationFn: createUpdatePatientAction,
     });
 
-    const { values, defineField, validateField, errors, handleSubmit, resetForm, meta } = useForm({
+    const { values, defineField, errors, handleSubmit, resetForm, meta } = useForm({
       validationSchema: schema,
     });
+    const [curp, curpAttrs] = defineField('curp');
     const [nombre, nombreAttrs] = defineField('nombre');
     const [primer_apellido, primer_apellidoAttrs] = defineField('primer_apellido');
     const [segundo_apellido, segundo_apellidoAttrs] = defineField('segundo_apellido');
@@ -101,9 +101,11 @@ export default defineComponent({
     watch(isUpdateSuccess, (value) => {
       if (!value) return;
 
-      props.patientId === 'create'
-        ? toast.success('Paciente creado correctamente')
-        : toast.success('Paciente editado correctamente');
+      if (props.patientId === 'create') {
+        toast.success('Paciente creado correctamente');
+      } else {
+        toast.success('Paciente editado correctamente');
+      }
 
       resetForm({
         values: updatedPatient.value,
@@ -136,6 +138,7 @@ export default defineComponent({
           resetForm({
             values: {
               id: '',
+              curp: '',
               nombre: '',
               primer_apellido: '',
               segundo_apellido: '',
@@ -162,6 +165,7 @@ export default defineComponent({
       errors,
       meta,
 
+      curp,
       nombre,
       primer_apellido,
       segundo_apellido,
@@ -170,6 +174,7 @@ export default defineComponent({
       correo_electronico,
       observaciones,
 
+      curpAttrs,
       nombreAttrs,
       primer_apellidoAttrs,
       segundo_apellidoAttrs,

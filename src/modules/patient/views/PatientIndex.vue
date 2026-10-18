@@ -95,12 +95,22 @@
                     <th
                       class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
                     >
-                      NOMBRE
+                      PACIENTE
                     </th>
                     <th
                       class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
                     >
-                      FECHA DE REGISTRO DEL PACIENTE
+                      CURP
+                    </th>
+                    <th
+                      class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
+                    >
+                      CONTACTO
+                    </th>
+                    <th
+                      class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
+                    >
+                      FECHA DE REGISTRO
                     </th>
                     <th
                       class="h-12 px-4 font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-center"
@@ -122,13 +132,34 @@
                       {{ index + 1 + pagination.perPage * (pagination.currentPage - 1) }}
                     </td>
                     <td
-                      width="15%"
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
-                      {{ patient.nombre_completo }}
+                      <div class="font-medium text-foreground">{{ patient.nombre_completo }}</div>
+                      <div v-if="patient.edad" class="text-xs text-muted-foreground mt-0.5">
+                        {{ patient.edad }} años
+                      </div>
                     </td>
                     <td
-                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r font-mono text-xs"
+                    >
+                      <span v-if="patient.curp" class="tracking-wide">{{ patient.curp }}</span>
+                      <span v-else class="text-muted-foreground/60">Sin CURP</span>
+                    </td>
+                    <td
+                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r text-xs"
+                    >
+                      <div v-if="patient.telefono" class="font-medium text-foreground">
+                        {{ patient.telefono }}
+                      </div>
+                      <div v-if="patient.correo_electronico" class="text-muted-foreground truncate max-w-[180px]">
+                        {{ patient.correo_electronico }}
+                      </div>
+                      <span v-if="!patient.telefono && !patient.correo_electronico" class="text-muted-foreground/60">
+                        Sin contacto
+                      </span>
+                    </td>
+                    <td
+                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r text-sm"
                     >
                       {{ patient.creado_el }}
                     </td>
@@ -248,13 +279,13 @@ const {
 const patients = computed<Patient[]>(() => responsePatients.value?.data || []);
 const pagination = computed<Pagination>(() => ({
   currentPage: responsePatients.value?.meta.current_page || 1,
-  firstPageUrl: responsePatients.value?.meta.first_page_url || '',
+  firstPageUrl: responsePatients.value?.links.first || '',
   lastPage: responsePatients.value?.meta.last_page || 1,
-  lastPageUrl: responsePatients.value?.meta.last_page_url || '',
+  lastPageUrl: responsePatients.value?.links.last || '',
   links: responsePatients.value?.meta.links || [],
-  nextPageUrl: responsePatients.value?.meta.next_page_url || '',
+  nextPageUrl: responsePatients.value?.links.next || '',
   perPage: responsePatients.value?.meta.per_page || perPage.value,
-  prevPageUrl: responsePatients.value?.meta.prev_page_url || '',
+  prevPageUrl: responsePatients.value?.links.prev || '',
   total: responsePatients.value?.meta.total || 0,
   to: responsePatients.value?.meta.to || 0,
   from: responsePatients.value?.meta.from || 0,
@@ -296,11 +327,11 @@ const handleLogout = async () => {
 };
 
 watch(
-  [page, perPage],
+  [page, perPage, search],
   () => {
     queryClient.prefetchQuery({
-      queryKey: ['patients', { page: page.value + 1 }],
-      queryFn: () => getPatientsAction(page.value + 1, perPage.value),
+      queryKey: ['patients', { page: page.value + 1, search: search.value }],
+      queryFn: () => getPatientsAction(page.value + 1, perPage.value, search.value),
     });
   },
   { immediate: true },

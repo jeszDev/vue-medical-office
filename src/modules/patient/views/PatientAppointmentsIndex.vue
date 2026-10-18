@@ -205,7 +205,7 @@
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
                       <div class="grid grid-cols-12 mt-6 gap-x-10 gap-y-9">
-                        <div class="col-span-6 sm:col-span-6 md:col-span-4">
+                        <!-- <div class="col-span-6 sm:col-span-6 md:col-span-4">
                           <div class="text-xs opacity-70">MOTIVO DE LA CONSULTA</div>
                           <div class="mt-1.5 flex items-center">
                             <div class="text-base">4.501</div>
@@ -231,96 +231,105 @@
                               </svg>
                             </div>
                           </div>
-                        </div>
+                        </div> -->
                         <div class="col-span-12 sm:col-span-6 md:col-span-4">
                           <div class="text-xs opacity-70">PESO (kg)</div>
                           <div class="mt-1.5 flex items-center">
-                            <div class="text-base">2</div>
+                            <div class="text-base">
+                              {{
+                                appointment.consulta?.peso
+                                  ? `${appointment.consulta.peso} kg`
+                                  : 'N/E'
+                              }}
+                            </div>
                           </div>
                         </div>
                         <div class="col-span-12 sm:col-span-6 md:col-span-4">
                           <div class="text-xs opacity-70">ALTURA (cm)</div>
                           <div class="mt-1.5 flex items-center">
-                            <div class="text-base">$72.000</div>
+                            <div class="text-base">
+                              {{
+                                appointment.consulta?.altura
+                                  ? `${appointment.consulta.altura} kg`
+                                  : 'N/E'
+                              }}
+                            </div>
                           </div>
                         </div>
                         <div class="col-span-12 sm:col-span-6 md:col-span-4">
                           <div class="text-xs opacity-70">TEMPERATURA (ºC)</div>
                           <div class="mt-1.5 flex items-center">
-                            <div class="text-base">$54.000</div>
+                            <div class="text-base">
+                              {{
+                                appointment.consulta?.temperatura
+                                  ? `${appointment.consulta.temperatura} ºC`
+                                  : 'N/E'
+                              }}
+                            </div>
                           </div>
                         </div>
                         <div class="col-span-12 sm:col-span-6 md:col-span-4">
                           <div class="text-xs opacity-70">PRESION ARTERIAL</div>
                           <div class="mt-1.5 flex items-center">
-                            <div class="text-base">2.500</div>
-                            <div
-                              class="text-(--color) flex cursor-pointer items-center rounded-full border px-2 py-px text-xs tooltip border-transparent bg-transparent [--color:var(--color-danger)]"
-                              data-content="9% Higher than last month"
-                            >
-                              52%
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                data-lucide="chevron-down"
-                                class="lucide lucide-chevron-down size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 ml-0.5"
-                              >
-                                <path d="m6 9 6 6 6-6"></path>
-                              </svg>
+                            <div class="text-base">
+                              {{
+                                appointment.consulta?.temperatura
+                                  ? `${appointment.consulta.presion_arterial} ºC`
+                                  : 'N/E'
+                              }}
                             </div>
                           </div>
                         </div>
                         <div class="col-span-12 sm:col-span-6 md:col-span-4">
                           <div class="text-xs opacity-70">FERECUANCIA CARDIACA</div>
                           <div class="mt-1.5 flex items-center">
-                            <div class="text-base">$72.000</div>
+                            <div class="text-base">
+                              {{
+                                appointment.consulta?.frecuencia_cardiaca
+                                  ? `${appointment.consulta.frecuencia_cardiaca} bpm`
+                                  : 'N/E'
+                              }}
+                            </div>
                           </div>
                         </div>
                         <div class="col-span-12 sm:col-span-12 md:col-span-12">
                           <div class="text-xs opacity-70">DIAGNÓSTICO</div>
                           <div class="mt-1.5 flex items-center">
-                            <div class="text-base">4.501</div>
+                            <div class="text-base">
+                              {{
+                                appointment.consulta?.diagnostico || 'Sin diagnóstico registrado.'
+                              }}
+                            </div>
                           </div>
                         </div>
                         <div class="col-span-12 sm:col-span-12 md:col-span-12">
-                          <div class="text-xs opacity-70">TRATAMIENTO</div>
+                          <div class="text-xs opacity-70">TRATAMIENTO Y PRESCRIPCIÓN</div>
                           <div class="mt-1.5 flex items-center">
-                            <div class="text-base">2</div>
+                            <div class="text-base">
+                              {{
+                                appointment.consulta?.tratamiento || 'Sin tratamiento registrado.'
+                              }}
+                            </div>
                           </div>
                         </div>
                         <div class="col-span-12 sm:col-span-12 md:col-span-12">
                           <div class="text-xs opacity-70">NOTAS / OBSERVACIONES</div>
                           <div class="mt-1.5 flex items-center">
-                            <div class="text-base">$72.000</div>
-                            <div
-                              class="text-(--color) flex cursor-pointer items-center rounded-full border px-2 py-px text-xs tooltip border-transparent bg-transparent [--color:var(--color-success)]"
-                              data-content="9% Higher than last month"
-                            >
-                              49%
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                data-lucide="chevron-down"
-                                class="lucide lucide-chevron-down size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 ml-0.5"
-                              >
-                                <path d="m6 9 6 6 6-6"></path>
-                              </svg>
+                            <div class="text-base">
+                              {{
+                                appointment.consulta?.observaciones || 'Sin tratamiento registrado.'
+                              }}
                             </div>
                           </div>
+                        </div>
+                        <div class="col-span-12 flex justify-end gap-3 mt-4 pt-4 border-t">
+                          <ButtonBase
+                            v-if="canAttendAppointment(appointment)"
+                            text="Atender esta consulta"
+                            :icon="StethoscopeIcon"
+                            color="primary"
+                            @click="goToConsultation(appointment.id)"
+                          />
                         </div>
                       </div>
                     </td>
@@ -374,12 +383,19 @@ import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
 import { useCancelAppointment } from '../../appointment/composables/useCancelAppointment';
 import AppointmentCancelModalQuestion from '@/modules/appointment/components/AppointmentCancelModalQuestion.vue';
 
+import type { appointment } from '@/modules/appointment/interfaces/appointment.interface';
+import { useRouter } from 'vue-router';
+import StethoscopeIcon from '@/icons/StethoscopeIcon.vue';
+
 interface Props {
   patientId: string;
   // isInsideModal: boolean;
 }
 
 const props = defineProps<Props>();
+
+const router = useRouter();
+
 const expandedRow = ref<null | number>(null);
 
 const showCancelModalQuestion = ref(false);
@@ -428,6 +444,29 @@ const openCancelModal = (id: number) => {
 
 const handleCancelled = (updated) => {
   console.log('Cita actualizada:', updated);
+};
+
+const goToConsultation = (appointmentId: number) => {
+  router.push({
+    name: 'appointments.consultations.create',
+    params: { appointmentId: appointmentId },
+  });
+};
+
+const canAttendAppointment = (appointment: appointment) => {
+  // Si ya está atendida o cancelada, no se puede "atender de nuevo"
+  if (appointment.estatus === 'Cancelada' || appointment.estatus === 'Atendida') {
+    return false;
+  }
+  // 2. Convertimos fecha_hora_inicio a objeto Date de JS y reseteamos la hora a medianoche (00:00:00)
+  const appointmentDate = new Date(appointment.fecha_hora_inicio);
+  appointmentDate.setHours(0, 0, 0, 0);
+  // 3. Obtenemos el final del día de hoy (23:59:59)
+  const endOfToday = new Date();
+  endOfToday.setHours(23, 59, 59, 999);
+  // 4. Si la cita es de hoy o de una fecha pasada, devuelve true (Habilitado)
+  // Si la cita es futura (ej. mañana), devuelve false (Deshabilitado)
+  return appointmentDate <= endOfToday;
 };
 </script>
 

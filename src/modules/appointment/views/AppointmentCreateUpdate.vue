@@ -10,6 +10,22 @@
 
     <div :class="['mt-10 border-t pt-10', !isInsideModal ? 'px-5 sm:px-20' : '']">
       <form @submit="onSubmit">
+        <div v-if="patientId === '0'" class="flex flex-col gap-2.5 col-span-12 sm:col-span-12">
+          <InputLabel label="La cita es para el paciente" :isRequired="true" />
+          <select
+            v-model="patient_id"
+            v-bind="patient_idAttrs"
+            class="h-10 w-full rounded-md border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          >
+            <option value="" disabled selected>-- Seleccione un paciente</option>
+            <option v-for="(patient, index) in patients" :key="patient.id" :value="patient.id">
+              {{ index + 1 }}. {{ patient.nombre_completo }} - ({{ patient.curp || 'Sin CURP' }})
+            </option>
+          </select>
+          <span v-if="errors.patient_id" class="text-xs text-red-500 font-medium">
+            {{ errors.patient_id }}
+          </span>
+        </div>
         <div class="mt-5 grid grid-cols-12 gap-4 gap-y-5">
           <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-12">
             <InputLabel label="Motivo de la cita" :isRequired="true" />

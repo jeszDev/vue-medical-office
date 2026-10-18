@@ -12,10 +12,12 @@ import { useToast } from 'vue-toastification';
 
 import { createUpdateAppointmentAction, getAppointmentByIdAction } from '../actions';
 import formatDateToInput from '@/helpers/format-date-to-input.helper';
+import { getPatientsAction } from '@/modules/patient/actions';
 
 import { watch } from 'vue';
 
 const schema = yup.object({
+  patient_id: yup.string().required('Debe seleccionar un paciente'),
   motivo: yup.string().required('Este campo es obligatorio'),
   fecha_hora_inicio: yup
     .string()
@@ -89,6 +91,20 @@ export default defineComponent({
       // retry: false,
     });
 
+    const { data: patientsResponse } = useQuery({
+      queryKey: ['patients-list'],
+      queryFn: () => getPatientsAction(0),
+    });
+
+    const patients = computed(() => {
+      if (!patientsResponse.value) return [];
+
+      return (
+        patientsResponse.value.data ||
+        (Array.isArray(patientsResponse.value) ? patientsResponse.value : [])
+      );
+    });
+
     const {
       mutate,
       isPending,
@@ -101,13 +117,16 @@ export default defineComponent({
     const { values, defineField, validateField, errors, handleSubmit, resetForm, meta } = useForm({
       validationSchema: schema,
     });
+    const [patient_id, patient_idAttrs] = defineField('patient_id');
     const [motivo, motivoAttrs] = defineField('motivo');
     const [fecha_hora_inicio, fecha_hora_inicioAttrs] = defineField('fecha_hora_inicio');
     const [fecha_hora_termino, fecha_hora_terminoAttrs] = defineField('fecha_hora_termino');
     const [observaciones_cita, observaciones_citaAttrs] = defineField('observaciones_cita');
 
     const onSubmit = handleSubmit(async (values) => {
-      mutate({ ...values, patient_id: props.patientId });
+      const targetPatientId = props.patientId !== '0' ? props.patientId : values.patient_id;
+
+      mutate({ ...values, patient_id: targetPatientId });
     });
 
     watchEffect(() => {
@@ -180,6 +199,8 @@ export default defineComponent({
     });
 
     return {
+      patients,
+
       //props
       values,
       errors,
@@ -189,11 +210,13 @@ export default defineComponent({
       fecha_hora_inicio,
       fecha_hora_termino,
       observaciones_cita,
+      patient_id,
 
       motivoAttrs,
       fecha_hora_inicioAttrs,
       fecha_hora_terminoAttrs,
       observaciones_citaAttrs,
+      patient_idAttrs,
 
       // getters
       action: props.appointmentId === 'create' ? 'create' : 'edit',

@@ -9,6 +9,8 @@ export const getAppointmentsAction = async (fromDate: null | string, toDate: nul
       `/appointments?from_date=${fromDate}&to_date=${toDate}`,
     );
 
-    return data.data || (Array.isArray(data) ? data : []);
-  } catch (error) {}
+  } catch {
+    return [];
+  }
+
 };

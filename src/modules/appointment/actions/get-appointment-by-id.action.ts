@@ -1,6 +1,5 @@
 import { medicalOfficeApi } from '@/api/medicalOfficeApi';
 import type { Appointment } from '../interfaces/appointment.interface';
-import type { Patient } from '@/modules/patient/interfaces/patient.interface';
 
 export const getAppointmentByIdAction = async (appointmentId: string): Promise<Appointment> => {
   if (appointmentId === 'create') {
@@ -10,9 +9,12 @@ export const getAppointmentByIdAction = async (appointmentId: string): Promise<A
       fecha_hora_termino: '',
       motivo: '',
       observaciones_cita: '',
-      // medico_id: 0,
-      // cita_estatus_id: 0,
-      // pacientes: Patient[],
+      observaciones: '',
+      estatus: 'Pendiente',
+      fecha_inicio: '',
+      fecha_termino: '',
+      hora_inicio: '',
+      hora_termino: '',
     };
   }
 
@@ -20,7 +22,8 @@ export const getAppointmentByIdAction = async (appointmentId: string): Promise<A
     const { data } = await medicalOfficeApi.get<Appointment>(`/appointments/${appointmentId}`);
     return data.data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw new Error(`Error getting chain by id ${appointmentId}`);
   }
 };
+

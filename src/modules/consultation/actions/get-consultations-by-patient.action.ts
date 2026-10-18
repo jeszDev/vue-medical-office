@@ -1,25 +1,18 @@
 import { medicalOfficeApi } from '@/api/medicalOfficeApi';
-import type { Consultation } from '../interfaces/consultation.interface';
+import type { ConsultationPaginate } from '../interfaces/consultation-paginate.interface';
 
 export const getConsultationsByPatientAction = async (
   patientId: number | string,
-): Promise<Consultation[]> => {
+  page: number = 1,
+  perPage: number = 10,
+  search: string = '',
+): Promise<ConsultationPaginate> => {
   try {
-    const { data } = await medicalOfficeApi.get<Consultation[] | { data: Consultation[] }>(
-      `/patients/${patientId}/consultations`,
-    );
-
-    if (Array.isArray(data)) {
-      return data;
-    }
-
-    if (data && Array.isArray((data as { data: Consultation[] }).data)) {
-      return (data as { data: Consultation[] }).data;
-    }
-
-    return [];
+    const url = `/patients/${patientId}/consultations?page=${page}&per_page=${perPage}&search=${encodeURIComponent(search)}`;
+    const { data } = await medicalOfficeApi.get<ConsultationPaginate>(url);
+    return data;
   } catch (error) {
     console.error(`Error al obtener las consultas del paciente ${patientId}:`, error);
-    return [];
+    throw new Error(`Error al obtener las consultas del paciente ${patientId}`);
   }
 };

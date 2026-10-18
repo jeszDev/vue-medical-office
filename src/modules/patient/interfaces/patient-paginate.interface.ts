@@ -1,24 +1,32 @@
 import type { Patient } from './patient.interface';
+
+export interface PaginateLinks {
+  first: string | null;
+  last: string | null;
+  prev: string | null;
+  next: string | null;
+}
+
+export interface PaginateMetaLink {
+  url: string | null;
+  label: string;
+  page: number | null;
+  active: boolean;
+}
+
+export interface PaginateMeta {
+  current_page: number;
+  from: number | null;
+  last_page: number;
+  links: PaginateMetaLink[];
+  path: string;
+  per_page: number;
+  to: number | null;
+  total: number;
+}
+
 export interface PatientPaginate {
   data: Patient[];
-  links?: {
-    first: string | null;
-    last: string | null;
-    prev: string | null;
-    next: string | null;
-  };
-  meta: {
-    current_page: number;
-    from: number;
-    last_page: number;
-    per_page: number;
-    to: number;
-    total: number;
-    path: string;
-    links: Array<{
-      url: string | null;
-      label: string;
-      active: boolean;
-    }>;
-  };
+  links: PaginateLinks;
+  meta: PaginateMeta;
 }

@@ -1,3 +1,10 @@
+export interface Link {
+  url: string | null;
+  label: string;
+  page?: number | null;
+  active: boolean;
+}
+
 export interface Pagination {
   currentPage: number;
   firstPageUrl: string;
@@ -8,12 +15,6 @@ export interface Pagination {
   perPage: number;
   prevPageUrl: string;
   total: number;
-  to: number;
-  from: number;
-}
-
-interface Link {
-  url: string;
-  label: string;
-  active: boolean;
+  to: number | null;
+  from: number | null;
 }

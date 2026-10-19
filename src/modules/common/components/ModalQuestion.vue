@@ -16,10 +16,23 @@
         <CloseIcon />
       </a>
       <div class="p-5 text-center">
-        <i
-          data-lucide="x-circle"
-          class="[--color:currentColor] stroke-(--color) fill-(--color)/25 text-danger mx-auto mt-3 size-16 stroke-1"
-        ></i>
+        <!-- slot icon or fallback based on variant -->
+        <slot name="icon">
+          <i
+            v-if="variant === 'danger'"
+            data-lucide="x-circle"
+            class="[--color:currentColor] stroke-(--color) fill-(--color)/25 text-danger mx-auto mt-3 size-16 stroke-1"
+          ></i>
+          <div
+            v-else
+            class="size-16 rounded-2xl mx-auto mt-3 flex items-center justify-center bg-(--color)/10 border border-(--color)/20 text-(--color)"
+            :class="variantColors[variant] || variantColors.primary"
+          >
+            <svg class="size-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        </slot>
 
         <!-- slot title or prop -->
         <div class="mt-5 text-3xl">
@@ -33,24 +46,31 @@
       </div>
 
       <!-- slot actions buttons -->
-      <div class="px-5 pb-8 text-center">
+      <div class="px-5 pb-8 text-center flex items-center justify-center gap-2">
         <slot name="actions">
-          <!-- Botones por defecto -->
+          <!-- Botón de Confirmación (Lado izquierdo) -->
           <button
-            class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 bg-background border-(--color)/20 h-10 px-4 py-2 mr-1 w-24"
+            class="cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-(--color)/20 border-(--color)/60 text-(--color) hover:bg-(--color)/5 h-10 px-4 py-2"
+            :class="variantColors[variant] || variantColors.danger"
+            :disabled="isBusy"
+            @click="handleConfirm"
+          >
+            <div
+              v-if="isBusy"
+              class="size-4 rounded-full border-2 border-current border-t-transparent animate-spin mr-1"
+            ></div>
+            <span v-if="isBusy">{{ loadingText }}</span>
+            <span v-else>{{ confirmText }}</span>
+          </button>
+
+          <!-- Botón de Cancelación (Lado derecho) -->
+          <button
+            class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 bg-background border-(--color)/20 h-10 px-4 py-2"
             data-tw-dismiss="modal"
-            :disabled="isLoading"
+            :disabled="isBusy"
             @click="handleCancel"
           >
             {{ cancelText }}
-          </button>
-          <button
-            class="cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-(--color)/20 border-(--color)/60 text-(--color) hover:bg-(--color)/5 [--color:var(--color-danger)] h-10 px-4 py-2"
-            :disabled="isLoading"
-            @click="handleConfirm"
-          >
-            <span v-if="isLoading">{{ loadingText }}</span>
-            <span v-else>{{ confirmText }}</span>
           </button>
         </slot>
       </div>
@@ -59,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch, onMounted, onUnmounted } from 'vue';
+import { computed, watch, onMounted, onUnmounted } from 'vue';
 
 import CloseIcon from '@/icons/CloseIcon.vue';
 
@@ -71,9 +91,9 @@ interface Props {
   confirmText?: string;
   cancelText?: string;
   isLoading?: boolean;
+  loading?: boolean;
   loadingText?: string;
-  // onCancel?: () => void;
-  // onConfirm?: () => void;
+  variant?: 'danger' | 'primary' | 'success' | 'warning';
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -84,10 +104,19 @@ const props = withDefaults(defineProps<Props>(), {
   confirmText: 'Aceptar',
   cancelText: 'Cancelar',
   isLoading: false,
+  loading: false,
   loadingText: 'Cargando...',
-  // onConfirm: () => {},
-  // onCancel: () => {},
+  variant: 'danger',
 });
+
+const isBusy = computed(() => props.isLoading || props.loading);
+
+const variantColors: Record<string, string> = {
+  danger: '[--color:var(--color-danger)]',
+  primary: '[--color:var(--color-primary)]',
+  success: '[--color:var(--color-success)]',
+  warning: '[--color:var(--color-warning)]',
+};
 
 /**
  * Emits

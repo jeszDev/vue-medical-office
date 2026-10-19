@@ -6,12 +6,13 @@
       <template v-else>
         <div class="grid grid-cols-12 gap-6">
           <div class="col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
-            <button
-              class="cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-(--color)/20 border-(--color)/60 text-(--color) hover:bg-(--color)/5 [--color:var(--color-primary)] h-10 px-4 py-2 box mr-2"
+            <ButtonBase
+              text="Registrar nuevo paciente"
+              :icon="PlusIcon"
+              color="primary"
+              class="mr-2"
               @click="handleModalCreateUpdate('create')"
-            >
-              Registrar nuevo paciente
-            </button>
+            />
             <div class="mx-auto hidden opacity-70 md:block">
               Mostrando los registros del {{ pagination.from }} al {{ pagination.to }} de
               {{ pagination.total }} registros
@@ -151,26 +152,14 @@
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
                       <div class="flex items-center justify-center">
-                        <RouterLink class="mr-3 flex items-center" :to="`patients/${patient.id}`">
-                          <PreviewIcon />
-                          Ver
+                        <RouterLink
+                          class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-primary/80 hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                          :to="`patients/${patient.id}`"
+                          title="Ver expediente del paciente"
+                        >
+                          <PreviewIcon class="size-3.5" />
+                          <span>Ver</span>
                         </RouterLink>
-                        <!-- <div
-                        class="mr-3 flex items-center cursor-pointer"
-                        @click="handleModalCreateUpdate(patient.id)"
-                      >
-                        <EditIcon />
-                        Editar
-                      </div> -->
-                        <!-- <a
-                        class="text-danger flex items-center"
-                        data-tw-toggle="modal"
-                        data-tw-target="#delete-confirmation-dialog"
-                        href="#"
-                      >
-                        <DeleteIcon />
-                        Eliminar
-                      </a> -->
                       </div>
                     </td>
                   </tr>
@@ -212,6 +201,8 @@ import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import SearchIcon from '@/icons/SearchIcon.vue';
 import CloseIcon from '@/icons/CloseIcon.vue';
 import PreviewIcon from '@/icons/PreviewIcon.vue';
+import PlusIcon from '@/icons/PlusIcon.vue';
+import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import { useAuthStore } from '../../auth/stores/auth.store';
 import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';

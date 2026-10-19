@@ -1,6 +1,6 @@
 <template>
   <div class="relative z-20 pb-16">
-    <FullScreenLoader v-if="isLoadingAppointment" />
+    <FullScreenLoader v-if="isLoadingPage" />
 
     <template v-else>
       <!-- HEADER / BARRA SUPERIOR DE LA ESTACIÓN CLÍNICA -->
@@ -11,7 +11,7 @@
           <button
             type="button"
             class="size-10 rounded-xl border border-foreground/10 bg-foreground/[0.02] hover:bg-foreground/10 flex items-center justify-center text-foreground/70 hover:text-foreground transition-colors cursor-pointer"
-            title="Volver a la agenda"
+            title="Volver"
             @click="goBack"
           >
             <ArrowLeftIcon class="size-4" />
@@ -23,7 +23,7 @@
                 class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary px-2.5 py-0.5 rounded-md bg-primary/10"
               >
                 <StethoscopeIcon class="size-3.5" />
-                Estación de Consulta Médica
+                {{ isEditMode ? 'Edición de Consulta Médica' : 'Estación de Consulta Médica' }}
               </span>
 
               <span
@@ -32,12 +32,22 @@
               >
                 Cita: {{ appointment.folio }}
               </span>
+              <span
+                v-else-if="existingConsultation?.id"
+                class="text-xs font-semibold px-2 py-0.5 rounded-md bg-foreground/5 text-foreground/80 border border-foreground/10 font-mono"
+              >
+                Consulta #{{ existingConsultation.id }}
+              </span>
 
-              <PillBadge size="sm" color="pending" label="En atención activa" />
+              <PillBadge
+                size="sm"
+                :color="isEditMode ? 'warning' : 'pending'"
+                :label="isEditMode ? 'Modo Edición' : 'En atención activa'"
+              />
             </div>
 
             <h2 class="text-lg sm:text-xl font-bold text-foreground mt-1">
-              {{ patient?.nombre_completo || 'Atención de Consulta' }}
+              {{ patient?.nombre_completo || (isEditMode ? 'Editar Consulta' : 'Atención de Consulta') }}
             </h2>
           </div>
         </div>
@@ -51,7 +61,11 @@
 
           <ButtonBase
             color="primary"
-            :text="isPending ? 'Guardando...' : 'Finalizar y Guardar Consulta'"
+            :text="
+              isPending
+                ? (isEditMode ? 'Actualizando...' : 'Guardando...')
+                : (isEditMode ? 'Actualizar Consulta' : 'Finalizar y Guardar Consulta')
+            "
             :disabled="isPending"
             @click="onSubmit"
           >
@@ -453,7 +467,11 @@
 
               <ButtonBase
                 color="primary"
-                :text="isPending ? 'Guardando consulta...' : 'Finalizar y Guardar Consulta'"
+                :text="
+                  isPending
+                    ? (isEditMode ? 'Actualizando...' : 'Guardando consulta...')
+                    : (isEditMode ? 'Actualizar Consulta' : 'Finalizar y Guardar Consulta')
+                "
                 :disabled="isPending"
                 @click="onSubmit"
               >
@@ -470,6 +488,16 @@
         </div>
       </div>
     </template>
+
+    <!-- MODAL DE CONFIRMACIÓN PARA GUARDAR O ACTUALIZAR LA CONSULTA -->
+    <ConsultationSaveModalQuestion
+      v-model="showConfirmSaveModal"
+      :is-edit-mode="isEditMode"
+      :patient-name="patient?.nombre_completo"
+      :is-loading="isPending"
+      @confirm="onConfirmSave"
+      @cancel="onCancelSave"
+    />
 
     <!-- SLIDE-OVER DRAWER PARA CONSULTAR EXPEDIENTES PREVIOS -->
     <ConsultationDetailDrawer

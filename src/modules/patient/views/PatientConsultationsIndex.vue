@@ -1,5 +1,15 @@
 <template>
   <div class="space-y-6">
+    <!-- BARRA SUPERIOR DE ACCIONES -->
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <ButtonBase
+        text="Nueva consulta"
+        :icon="PlusIcon"
+        color="primary"
+        @click="createNewConsultation"
+      />
+    </div>
+
     <!-- 1. RESUMEN CLÍNICO Y ÚLTIMAS CONSTANTES VITALES -->
     <div
       class="box p-5 rounded-2xl border border-foreground/10 bg-background shadow-[0px_3px_5px_#0000000b] relative overflow-hidden"
@@ -23,7 +33,7 @@
           </div>
         </div>
 
-        <!-- Badges y Acciones Rápidas -->
+        <!-- Badges del Resumen Clínico -->
         <div class="flex flex-wrap items-center gap-2">
           <PillBadge
             size="md"
@@ -35,13 +45,6 @@
             size="md"
             color="pending"
             :label="`Última: ${latestConsultationDate}`"
-          />
-          <ButtonBase
-            text="Nueva Consulta"
-            :icon="StethoscopeIcon"
-            color="primary"
-            size="sm"
-            @click="createNewConsultation"
           />
         </div>
       </div>
@@ -172,7 +175,7 @@
         <div class="mt-4">
           <ButtonBase
             text="Iniciar Consulta para este Paciente"
-            :icon="StethoscopeIcon"
+            :icon="PlusIcon"
             color="primary"
             size="sm"
             @click="createNewConsultation"
@@ -339,6 +342,7 @@ import type { Consultation } from '@/modules/consultation/interfaces/consultatio
 import { getAllConsultationsByPatientAction } from '@/modules/consultation/actions';
 
 import StethoscopeIcon from '@/icons/StethoscopeIcon.vue';
+import PlusIcon from '@/icons/PlusIcon.vue';
 import FileTextIcon from '@/icons/FileTextIcon.vue';
 import CalendarIcon from '@/icons/CalendarIcon.vue';
 import ObservationsIcon from '@/icons/ObservationsIcon.vue';

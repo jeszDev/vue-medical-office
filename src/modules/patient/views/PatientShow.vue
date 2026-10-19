@@ -1,5 +1,24 @@
 <template>
-  <TemplateView title="INFORMACIÓN DEL PACIENTE">
+  <TemplateView>
+    <template #header>
+      <div class="flex flex-wrap items-center gap-2.5 mr-auto">
+        <h2 class="text-lg font-bold uppercase tracking-wider text-foreground">
+          Información del Paciente
+        </h2>
+        <template v-if="patient?.nombre_completo">
+          <span class="text-foreground/30 text-lg font-light select-none">/</span>
+          <span class="text-lg sm:text-xl font-bold text-primary">
+            {{ patient.nombre_completo }}
+          </span>
+          <span
+            v-if="patient?.edad"
+            class="text-xs font-semibold px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20"
+          >
+            {{ patient.edad }} años
+          </span>
+        </template>
+      </div>
+    </template>
     <template #main>
       <FullScreenLoader v-if="isLoading" />
 

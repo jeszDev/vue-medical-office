@@ -1,45 +1,51 @@
 <template>
-  <!-- <div
-    class="pt-8 pb-12 px-7 z-10 relative xl:mt-8 before:absolute before:inset-0 before:opacity-[.07] before:bg-foreground before:rounded-4xl after:absolute after:inset-0 after:bg-[color-mix(in_oklch,_var(--color-background),_var(--color-foreground)_2%)] after:rounded-4xl after:border after:border-foreground/[.15] dark:after:opacity-[.59]"
-  > -->
-  <div class="relative z-20">
-    <div class="mt-8 flex items-center">
-      <h2 class="mr-auto text-lg font-medium">Agendar nueva cita</h2>
+  <div class="relative z-20 w-full">
+    <!-- Encabezado compacto -->
+    <div
+      class="flex items-center pb-3 border-b border-foreground/10"
+      :class="{ 'mt-2': !isInsideModal }"
+    >
+      <h2 class="text-base sm:text-lg font-semibold text-foreground">
+        {{ action === 'create' ? 'Agendar nueva cita' : 'Editar cita' }}
+      </h2>
     </div>
-    <!-- BEGIN: Wizard Layout -->
 
-    <div :class="['mt-10 border-t pt-10', !isInsideModal ? 'px-5 sm:px-20' : '']">
-      <form @submit="onSubmit">
-        <div v-if="patientId === '0'" class="flex flex-col gap-2.5 col-span-12 sm:col-span-12">
-          <InputLabel label="La cita es para el paciente" :isRequired="true" />
-          <select
-            v-model="patient_id"
-            v-bind="patient_idAttrs"
-            class="h-10 w-full rounded-md border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          >
-            <option value="" disabled selected>-- Seleccione un paciente</option>
-            <option v-for="(patient, index) in patients" :key="patient.id" :value="patient.id">
-              {{ index + 1 }}. {{ patient.nombre_completo }} - ({{ patient.curp || 'Sin CURP' }})
-            </option>
-          </select>
-          <span v-if="errors.patient_id" class="text-xs text-red-500 font-medium">
-            {{ errors.patient_id }}
-          </span>
-        </div>
-        <div class="mt-5 grid grid-cols-12 gap-4 gap-y-5">
-          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-12">
+    <!-- Formulario con espaciado optimizado -->
+    <div :class="['mt-4', !isInsideModal ? 'px-5 sm:px-20' : '']">
+      <form @submit.prevent="onSubmit">
+        <div class="grid grid-cols-12 gap-4 gap-y-4">
+          <!-- Selector de paciente si no viene preseleccionado -->
+          <div v-if="patientId === '0'" class="flex flex-col gap-2 col-span-12">
+            <InputLabel label="La cita es para el paciente" :isRequired="true" />
+            <select
+              v-model="patient_id"
+              v-bind="patient_idAttrs"
+              class="h-10 w-full rounded-md border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <option value="" disabled selected>-- Seleccione un paciente</option>
+              <option v-for="(patient, index) in patients" :key="patient.id" :value="patient.id">
+                {{ index + 1 }}. {{ patient.nombre_completo }} - ({{ patient.curp || 'Sin CURP' }})
+              </option>
+            </select>
+            <span v-if="errors.patient_id" class="text-xs text-red-500 font-medium">
+              {{ errors.patient_id }}
+            </span>
+          </div>
+
+          <div class="flex flex-col gap-2 col-span-12">
             <InputLabel label="Motivo de la cita" :isRequired="true" />
             <InputBase
               type="text"
               v-model="motivo"
               v-bind="motivoAttrs"
               :error="errors.motivo"
-              placeholder="Ejemplo: realizar ultrasonido"
+              placeholder="Ejemplo: Consulta general o revisión de estudios"
               name="motivo"
             />
           </div>
-          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-6">
-            <InputLabel label="Fecha y hora de inicio de la cita" :isRequired="true" />
+
+          <div class="flex flex-col gap-2 col-span-12 sm:col-span-6">
+            <InputLabel label="Fecha y hora de inicio" :isRequired="true" />
             <InputBaseDate
               type="datetime-local"
               v-model="fecha_hora_inicio"
@@ -48,8 +54,9 @@
               name="fecha_hora_inicio"
             />
           </div>
-          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-6">
-            <InputLabel label="Fecha y hora de termino de la cita" :isRequired="true" />
+
+          <div class="flex flex-col gap-2 col-span-12 sm:col-span-6">
+            <InputLabel label="Fecha y hora de término" :isRequired="true" />
             <InputBaseDate
               type="datetime-local"
               v-model="fecha_hora_termino"
@@ -59,36 +66,114 @@
             />
           </div>
 
-          <div class="flex flex-col gap-2.5 col-span-12">
-            <InputLabel label="Observaciones / anotaciones sobre la cita" :isRequired="false" />
+          <div class="flex flex-col gap-2 col-span-12">
+            <InputLabel label="Observaciones / notas sobre la cita" :isRequired="false" />
             <TextArea
               v-model="observaciones_cita"
               v-bind="observaciones_citaAttrs"
-              placeholder="Ejemplo: traer estudios sobre la tiroides"
-              name="observaciones"
+              placeholder="Ejemplo: Traer estudios previos de laboratorio"
+              name="observaciones_cita"
               :error="errors.observaciones_cita"
             />
           </div>
-        </div>
 
-        <div class="col-span-12 mt-10 flex items-center justify-center sm:justify-end">
-          <ButtonPrimary text="Agendar cita" @click="onSubmit" />
+          <!-- Botones de Acción: Agendar a la izquierda, Cancelar a la derecha -->
+          <div
+            class="col-span-12 mt-4 pt-4 border-t border-foreground/10 flex items-center justify-end gap-3"
+          >
+            <ButtonBase
+              :text="
+                isPending
+                  ? action === 'create'
+                    ? 'Agendando...'
+                    : 'Guardando...'
+                  : action === 'create'
+                    ? 'Agendar cita'
+                    : 'Guardar cambios'
+              "
+              color="primary"
+              :disabled="isPending"
+              @click="onSubmit"
+            />
+            <ButtonBase
+              text="Cancelar"
+              color="secondary"
+              :disabled="isPending"
+              @click="onCancel"
+            />
+          </div>
         </div>
       </form>
     </div>
   </div>
 
-  <div class="grid grid-cols-2 mt-2">
-    <pre class="bg-blue-200 p-2">
-      {{ JSON.stringify(values, null, 2) }}
-    </pre>
-    <pre class="bg-red-200 p-2">
-      {{ JSON.stringify(errors, null, 2) }}
-    </pre>
-    <pre class="bg-green-200 p-2 col-span-2">
-      {{ JSON.stringify(meta, null, 2) }}
-    </pre>
-  </div>
+  <!-- Modal de Confirmación -->
+  <Teleport to="body">
+    <ModalQuestion
+      v-model="showConfirmModal"
+      id="modal-confirm-appointment-save"
+      variant="primary"
+      :title="action === 'create' ? '¿Deseas agendar esta cita?' : '¿Deseas guardar los cambios?'"
+      :confirm-text="action === 'create' ? 'Sí, agendar cita' : 'Sí, guardar cambios'"
+      cancel-text="Revisar datos"
+      :is-loading="isPending"
+      :loading-text="action === 'create' ? 'Agendando...' : 'Guardando...'"
+      @confirm="onConfirmSave"
+      @cancel="onCancelConfirm"
+    >
+      <template #icon>
+        <div
+          class="size-16 rounded-2xl mx-auto mt-3 flex items-center justify-center bg-primary/10 border border-primary/20 text-primary"
+        >
+          <svg class="size-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+        </div>
+      </template>
+      <template #description>
+        <div class="space-y-2 text-sm text-foreground/80">
+          <p>
+            {{
+              action === 'create'
+                ? 'Se registrará la cita médica con la siguiente programación:'
+                : 'Se actualizarán los datos de la cita médica:'
+            }}
+          </p>
+          <div
+            class="p-3 rounded-lg bg-foreground/5 border border-foreground/10 text-left space-y-1.5 text-xs"
+          >
+            <div v-if="selectedPatientName">
+              <span class="font-medium text-foreground">Paciente:</span>
+              <span class="ml-1 text-primary font-bold">{{ selectedPatientName }}</span>
+            </div>
+            <div v-if="pendingAppointmentValues?.motivo">
+              <span class="font-medium text-foreground">Motivo:</span>
+              <span class="ml-1 text-foreground/90 font-medium">
+                {{ pendingAppointmentValues.motivo }}
+              </span>
+            </div>
+            <div v-if="pendingAppointmentValues?.fecha_hora_inicio">
+              <span class="font-medium text-foreground">Inicio:</span>
+              <span class="ml-1 text-foreground/90 font-semibold">
+                {{ String(pendingAppointmentValues.fecha_hora_inicio).replace('T', ' ') }}
+              </span>
+            </div>
+            <div v-if="pendingAppointmentValues?.fecha_hora_termino">
+              <span class="font-medium text-foreground">Término:</span>
+              <span class="ml-1 text-foreground/90 font-semibold">
+                {{ String(pendingAppointmentValues.fecha_hora_termino).replace('T', ' ') }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </template>
+    </ModalQuestion>
+  </Teleport>
 </template>
 
 <script src="./AppointmentCreateUpdate.ts" lang="ts"></script>

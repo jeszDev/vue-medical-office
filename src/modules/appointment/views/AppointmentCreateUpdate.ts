@@ -1,11 +1,12 @@
-import ButtonPrimary from '@/modules/common/components/ButtonPrimary.vue';
+import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import InputLabel from '@/modules/common/components/InputLabel.vue';
 import InputBase from '@/modules/common/components/InputBase.vue';
 import InputBaseDate from '@/modules/common/components/InputBaseDate.vue';
 import TextArea from '@/modules/common/components/TextArea.vue';
-import { computed, defineComponent, watchEffect } from 'vue';
+import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
+import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
-import { useMutation, useQuery } from '@tanstack/vue-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { useToast } from 'vue-toastification';
@@ -13,50 +14,26 @@ import { useToast } from 'vue-toastification';
 import { createUpdateAppointmentAction, getAppointmentByIdAction } from '../actions';
 import { getAllPatientsAction } from '@/modules/patient/actions';
 
-import { watch } from 'vue';
-
-const schema = yup.object({
-  patient_id: yup.string().required('Debe seleccionar un paciente'),
-  motivo: yup.string().required('Este campo es obligatorio'),
-  fecha_hora_inicio: yup
-    .string()
-    .required('Este campo es obligatorio')
-    .test(
-      'hora-cita-5-min-mayor-hora-actual',
-      'La fecha/hora de inicio debe ser al menos 5 minutos después de la hora actual',
-      (value) => {
-        if (!value) return true;
-
-        const validStarDate = new Date();
-        validStarDate.setMinutes(validStarDate.getMinutes() + 5);
-
-        return new Date(value) >= validStarDate;
-      },
-    ),
-  fecha_hora_termino: yup
-    .string()
-    .required('Este campo es obligatorio')
-    .test(
-      'termino-mayor-que-inicio',
-      'La fecha/hora del término de la cita debe ser mayor a la fecha/hora de inicio de la cita',
-      function (value) {
-        const { fecha_hora_inicio } = this.parent;
-
-        if (!fecha_hora_inicio || !value) return true;
-
-        return new Date(value) > new Date(fecha_hora_inicio);
-      },
-    ),
-  observaciones: yup.string().nullable(),
-});
+interface AppointmentFormValues {
+  id?: string;
+  patient_id?: string;
+  motivo: string;
+  fecha_hora_inicio: string;
+  fecha_hora_termino: string;
+  observaciones_cita?: string | null;
+  medico_id?: string;
+  cita_estatus_id?: string;
+}
 
 export default defineComponent({
+  name: 'AppointmentCreateUpdate',
   components: {
-    ButtonPrimary,
+    ButtonBase,
     InputLabel,
     InputBase,
     InputBaseDate,
     TextArea,
+    ModalQuestion,
   },
   props: {
     appointmentId: {
@@ -77,16 +54,59 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const toast = useToast();
+    const queryClient = useQueryClient();
+
+    const showConfirmModal = ref(false);
+    const pendingAppointmentValues = ref<AppointmentFormValues | null>(null);
+
+    const validationSchema = computed(() =>
+      yup.object({
+        patient_id:
+          props.patientId === '0'
+            ? yup.string().required('Debe seleccionar un paciente')
+            : yup.string().nullable().notRequired(),
+        motivo: yup.string().required('El motivo de la cita es obligatorio'),
+        fecha_hora_inicio: yup
+          .string()
+          .required('La fecha y hora de inicio es obligatoria')
+          .test(
+            'hora-cita-5-min-mayor-hora-actual',
+            'La fecha/hora de inicio debe ser al menos 5 minutos después de la hora actual',
+            (value) => {
+              if (!value) return true;
+
+              const validStartDate = new Date();
+              validStartDate.setMinutes(validStartDate.getMinutes() + 5);
+
+              return new Date(value) >= validStartDate;
+            },
+          ),
+        fecha_hora_termino: yup
+          .string()
+          .required('La fecha y hora de término es obligatoria')
+          .test(
+            'termino-mayor-que-inicio',
+            'La fecha/hora de término debe ser posterior a la fecha/hora de inicio',
+            function (value) {
+              const { fecha_hora_inicio } = this.parent;
+
+              if (!fecha_hora_inicio || !value) return true;
+
+              return new Date(value) > new Date(fecha_hora_inicio);
+            },
+          ),
+        observaciones_cita: yup.string().nullable(),
+      }),
+    );
 
     const {
       data: appointment,
       isError,
       isLoading,
     } = useQuery({
-      queryKey: ['appointment', props.appointmentId],
+      queryKey: ['appointment', computed(() => props.appointmentId)],
       queryFn: () => getAppointmentByIdAction(props.appointmentId),
-      // enabled: props.patientId !== 'create', // Evitar la consulta si es 'create'
-      // retry: false,
+      enabled: computed(() => props.appointmentId !== 'create' && !!props.appointmentId),
     });
 
     const { data: patientsResponse } = useQuery({
@@ -96,64 +116,165 @@ export default defineComponent({
 
     const patients = computed(() => patientsResponse.value ?? []);
 
-    const {
-      mutate,
-      isSuccess: isUpdateSuccess,
-      data: updatedAppointment,
-    } = useMutation({
+    const selectedPatientName = computed(() => {
+      const targetId =
+        props.patientId !== '0' ? props.patientId : pendingAppointmentValues.value?.patient_id;
+      if (!targetId) return '';
+      const found = patients.value.find((p) => String(p.id) === String(targetId));
+      return found?.nombre_completo || '';
+    });
+
+    const { mutateAsync, isPending } = useMutation({
       mutationFn: createUpdateAppointmentAction,
+      onSuccess: () => {
+        toast.success(
+          props.appointmentId === 'create'
+            ? 'Cita agendada correctamente'
+            : 'Cita actualizada correctamente',
+        );
+
+        queryClient.invalidateQueries({ queryKey: ['appointments'] });
+        queryClient.invalidateQueries({ queryKey: ['appointment'] });
+
+        if (props.appointmentId === 'create') {
+          resetForm({
+            values: {
+              id: '',
+              fecha_hora_inicio: '',
+              fecha_hora_termino: '',
+              motivo: '',
+              observaciones_cita: '',
+              patient_id: props.patientId !== '0' ? props.patientId : '',
+              medico_id: '',
+              cita_estatus_id: '',
+            },
+          });
+        }
+
+        pendingAppointmentValues.value = null;
+        showConfirmModal.value = false;
+
+        if (!props.isInsideModal) {
+          router.replace({ name: 'appointments.index' });
+        }
+      },
+      onError: (error: Error) => {
+        toast.error(error.message || 'Error al guardar la cita');
+      },
     });
 
     const { values, defineField, errors, handleSubmit, resetForm, meta } = useForm({
-      validationSchema: schema,
+      validationSchema,
+      initialValues: {
+        patient_id: props.patientId !== '0' ? props.patientId : '',
+        motivo: '',
+        fecha_hora_inicio: '',
+        fecha_hora_termino: '',
+        observaciones_cita: '',
+      },
     });
+
     const [patient_id, patient_idAttrs] = defineField('patient_id');
     const [motivo, motivoAttrs] = defineField('motivo');
     const [fecha_hora_inicio, fecha_hora_inicioAttrs] = defineField('fecha_hora_inicio');
     const [fecha_hora_termino, fecha_hora_terminoAttrs] = defineField('fecha_hora_termino');
     const [observaciones_cita, observaciones_citaAttrs] = defineField('observaciones_cita');
 
-    const onSubmit = handleSubmit(async (values) => {
-      const targetPatientId = props.patientId !== '0' ? props.patientId : values.patient_id;
+    const onSubmit = handleSubmit(
+      (formValues) => {
+        const targetPatientId = props.patientId !== '0' ? props.patientId : formValues.patient_id;
+        pendingAppointmentValues.value = {
+          ...formValues,
+          patient_id: targetPatientId,
+        } as AppointmentFormValues;
 
-      mutate({ ...values, patient_id: targetPatientId });
-    });
+        if (props.isInsideModal) {
+          const modalEl = document.getElementById('modal-appointment-create-or-edit');
+          if (modalEl && window.tailwind) {
+            window.tailwind.Modal.getOrCreateInstance(modalEl).hide();
+          }
+        }
 
-    watchEffect(() => {
-      if (isError.value && !isLoading.value) {
-        router.replace({ name: 'patients.index' });
+        showConfirmModal.value = true;
+      },
+      ({ errors: validationErrors }) => {
+        const errorValues = Object.values(validationErrors);
+        if (errorValues.length > 0) {
+          const firstError = errorValues[0];
+          toast.warning(
+            typeof firstError === 'string'
+              ? firstError
+              : 'Por favor completa los campos requeridos de la cita.',
+          );
+        }
+      },
+    );
+
+    const onConfirmSave = async () => {
+      if (!pendingAppointmentValues.value || isPending.value) return;
+
+      try {
+        await mutateAsync(pendingAppointmentValues.value as Record<string, unknown>);
+      } catch {
+        // Manejado en onError
+      }
+    };
+
+    const onCancelConfirm = () => {
+      showConfirmModal.value = false;
+    };
+
+    // Si se cierra el modal de confirmación sin guardar, reabrir el modal de cita con datos intactos
+    watch(showConfirmModal, (isOpen, wasOpen) => {
+      if (!isOpen && wasOpen && pendingAppointmentValues.value && props.isInsideModal) {
+        setTimeout(() => {
+          const modalEl = document.getElementById('modal-appointment-create-or-edit');
+          if (modalEl && window.tailwind) {
+            window.tailwind.Modal.getOrCreateInstance(modalEl).show();
+          }
+        }, 200);
       }
     });
 
-    watch(isUpdateSuccess, (value) => {
-      if (!value) return;
-
-      if (props.isInsideModal) {
-        window.tailwind.Modal.getOrCreateInstance(
-          document.getElementById('modal-appointment-create-or-edit'),
-        ).hide();
-      }
-
+    const onCancel = () => {
       if (props.appointmentId === 'create') {
-        toast.success('Cita agendada correctamente');
-      } else {
-        toast.success('Cita editada correctamente');
+        resetForm({
+          values: {
+            id: '',
+            fecha_hora_inicio: '',
+            fecha_hora_termino: '',
+            motivo: '',
+            observaciones_cita: '',
+            patient_id: props.patientId !== '0' ? props.patientId : '',
+            medico_id: '',
+            cita_estatus_id: '',
+          },
+        });
       }
+      if (props.isInsideModal) {
+        const modalEl = document.getElementById('modal-appointment-create-or-edit');
+        if (modalEl && window.tailwind) {
+          window.tailwind.Modal.getOrCreateInstance(modalEl).hide();
+        }
+      } else {
+        router.back();
+      }
+    };
 
-      resetForm({
-        values: updatedAppointment.value,
-      });
-    });
+    watch(
+      () => props.patientId,
+      (newPatientId) => {
+        if (newPatientId !== '0') {
+          patient_id.value = newPatientId;
+        }
+      },
+      { immediate: true },
+    );
 
     watch(
       appointment,
       (newAppointment) => {
         if (!newAppointment) return;
-
-        // const formattedPatient = {
-        //   ...newPatient,
-        //   fecha_nacimiento: formatDateToInput(newPatient.fecha_nacimiento),
-        // };
 
         resetForm({
           values: newAppointment,
@@ -175,6 +296,7 @@ export default defineComponent({
               fecha_hora_termino: '',
               motivo: '',
               observaciones_cita: '',
+              patient_id: props.patientId !== '0' ? props.patientId : '',
               medico_id: '',
               cita_estatus_id: '',
             },
@@ -183,17 +305,16 @@ export default defineComponent({
       },
     );
 
-    // Redirigir en caso de error al cargar el paciente
     watchEffect(() => {
-      if (isError.value && !isLoading.value) {
+      if (isError.value && !isLoading.value && props.appointmentId !== 'create') {
         router.replace({ name: 'patients.index' });
       }
     });
 
     return {
       patients,
+      selectedPatientName,
 
-      //props
       values,
       errors,
       meta,
@@ -210,11 +331,15 @@ export default defineComponent({
       observaciones_citaAttrs,
       patient_idAttrs,
 
-      // getters
-      action: props.appointmentId === 'create' ? 'create' : 'edit',
+      action: computed(() => (props.appointmentId === 'create' ? 'create' : 'edit')),
+      isPending,
+      showConfirmModal,
+      pendingAppointmentValues,
 
-      // actions
       onSubmit,
+      onConfirmSave,
+      onCancelConfirm,
+      onCancel,
     };
   },
 });

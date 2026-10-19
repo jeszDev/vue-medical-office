@@ -23,7 +23,7 @@
           </div>
         </div>
 
-        <!-- Badges de Estado Rápido -->
+        <!-- Badges y Acciones Rápidas -->
         <div class="flex flex-wrap items-center gap-2">
           <PillBadge
             size="md"
@@ -35,6 +35,13 @@
             size="md"
             color="pending"
             :label="`Última: ${latestConsultationDate}`"
+          />
+          <ButtonBase
+            text="Nueva Consulta"
+            :icon="StethoscopeIcon"
+            color="primary"
+            size="sm"
+            @click="createNewConsultation"
           />
         </div>
       </div>
@@ -162,6 +169,15 @@
           Este paciente aún no tiene consultas médicas registradas en el expediente. Al completar
           una cita médica o registrar una atención, aparecerá aquí su evolución.
         </p>
+        <div class="mt-4">
+          <ButtonBase
+            text="Iniciar Consulta para este Paciente"
+            :icon="StethoscopeIcon"
+            color="primary"
+            size="sm"
+            @click="createNewConsultation"
+          />
+        </div>
       </div>
 
       <!-- Timeline Entries -->
@@ -273,19 +289,32 @@
             </div>
 
             <!-- Card Actions -->
-            <div class="mt-4 pt-3 border-t border-foreground/5 flex items-center justify-between">
+            <div
+              class="mt-4 pt-3 border-t border-foreground/5 flex flex-wrap items-center justify-between gap-2"
+            >
               <span class="text-xs text-foreground/50">
                 Atendido por:
                 <strong class="text-foreground/70">{{ getDoctorDisplayName(consultation) }}</strong>
               </span>
 
-              <ButtonBase
-                text="Ver expediente completo"
-                :icon="PreviewIcon"
-                color="secondary"
-                size="sm"
-                @click="openConsultationDetail(consultation)"
-              />
+              <div class="flex items-center gap-2">
+                <ButtonBase
+                  v-if="consultation.id"
+                  text="Editar"
+                  :icon="EditIcon"
+                  color="secondary"
+                  size="sm"
+                  @click="editConsultation(consultation.id)"
+                />
+
+                <ButtonBase
+                  text="Ver expediente completo"
+                  :icon="PreviewIcon"
+                  color="secondary"
+                  size="sm"
+                  @click="openConsultationDetail(consultation)"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -303,6 +332,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import type { Patient } from '../interfaces/patient.interface';
 import type { Consultation } from '@/modules/consultation/interfaces/consultation.interface';
@@ -313,6 +343,7 @@ import FileTextIcon from '@/icons/FileTextIcon.vue';
 import CalendarIcon from '@/icons/CalendarIcon.vue';
 import ObservationsIcon from '@/icons/ObservationsIcon.vue';
 import PreviewIcon from '@/icons/PreviewIcon.vue';
+import EditIcon from '@/icons/EditIcon.vue';
 
 import PillBadge from '@/modules/common/components/PillBadge.vue';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
@@ -324,6 +355,22 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const router = useRouter();
+
+const createNewConsultation = () => {
+  router.push({
+    name: 'patients.consultations.create',
+    params: { patientId: props.patientId },
+  });
+};
+
+const editConsultation = (consultationId: number | string) => {
+  router.push({
+    name: 'consultations.edit',
+    params: { consultationId },
+  });
+};
 
 // Drawer state
 const isDrawerOpen = ref(false);

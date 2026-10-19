@@ -278,14 +278,24 @@
 
           <!-- Footer -->
           <div
-            class="px-6 py-4 border-t border-foreground/10 flex items-center justify-between bg-foreground/5"
+            class="px-6 py-4 border-t border-foreground/10 flex flex-wrap items-center justify-between gap-3 bg-foreground/5"
           >
-            <ButtonBase
-              text="Imprimir Receta / Nota"
-              :icon="FileTextIcon"
-              color="secondary"
-              @click="printConsultation"
-            />
+            <div class="flex items-center gap-2">
+              <ButtonBase
+                text="Imprimir Receta / Nota"
+                :icon="FileTextIcon"
+                color="secondary"
+                @click="printConsultation"
+              />
+
+              <ButtonBase
+                v-if="consultation?.id"
+                text="Editar Consulta"
+                :icon="EditIcon"
+                color="secondary"
+                @click="editConsultation"
+              />
+            </div>
 
             <ButtonBase text="Cerrar" color="primary" @click="close" />
           </div>
@@ -297,6 +307,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 import type { Consultation } from '../interfaces/consultation.interface';
 import {
   getAppointmentStatusColor,
@@ -309,6 +320,7 @@ import CalendarIcon from '@/icons/CalendarIcon.vue';
 import UserIcon from '@/icons/UserIcon.vue';
 import ClipboardListIcon from '@/icons/ClipboardListIcon.vue';
 import ObservationsIcon from '@/icons/ObservationsIcon.vue';
+import EditIcon from '@/icons/EditIcon.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 
@@ -324,8 +336,19 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
 }>();
 
+const router = useRouter();
+
 const close = () => {
   emit('update:modelValue', false);
+};
+
+const editConsultation = () => {
+  if (!props.consultation?.id) return;
+  close();
+  router.push({
+    name: 'consultations.edit',
+    params: { consultationId: props.consultation.id },
+  });
 };
 
 const formattedDate = computed(() => {

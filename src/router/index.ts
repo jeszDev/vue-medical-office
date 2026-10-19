@@ -74,6 +74,18 @@ const router = createRouter({
           props: true,
           component: () => import('@/modules/appointment/views/AppointmentConsultationCreate.vue'),
         },
+        {
+          path: 'consultations/:consultationId/edit',
+          name: 'consultations.edit',
+          props: true,
+          component: () => import('@/modules/appointment/views/AppointmentConsultationCreate.vue'),
+        },
+        {
+          path: 'patients/:patientId/consultations/create',
+          name: 'patients.consultations.create',
+          props: true,
+          component: () => import('@/modules/appointment/views/AppointmentConsultationCreate.vue'),
+        },
       ],
     },
   ],

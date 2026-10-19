@@ -8,8 +8,7 @@
             text="Nueva cita"
             :icon="PlusIcon"
             color="primary"
-            data-tw-toggle="modal"
-            data-tw-target="#modal-appointment-create-or-edit"
+            @click="openCreateModal"
           />
 
           <div class="mx-auto hidden opacity-70 md:block">
@@ -163,6 +162,17 @@
                         </button>
 
                         <button
+                          v-if="canEditAppointment(appointment)"
+                          type="button"
+                          class="inline-flex items-center justify-center gap-1 w-full max-w-[90px] px-2 py-1 rounded-lg text-xs font-medium text-amber-600/80 hover:text-amber-600 hover:bg-amber-500/10 transition-colors cursor-pointer"
+                          title="Editar cita"
+                          @click="openEditModal(appointment.id)"
+                        >
+                          <EditIcon class="size-3.5 !mr-0" />
+                          <span>Editar</span>
+                        </button>
+
+                        <button
                           v-if="canCancelAppointment(appointment)"
                           type="button"
                           class="inline-flex items-center justify-center gap-1 w-full max-w-[90px] px-2 py-1 rounded-lg text-xs font-medium text-danger/80 hover:text-danger hover:bg-danger/10 transition-colors cursor-pointer"
@@ -174,7 +184,7 @@
                         </button>
 
                         <span
-                          v-if="!canAttendAppointment(appointment) && !canCancelAppointment(appointment)"
+                          v-if="!canAttendAppointment(appointment) && !canEditAppointment(appointment) && !canCancelAppointment(appointment)"
                           class="text-xs text-muted-foreground/60 italic"
                         >
                           —
@@ -194,7 +204,11 @@
       </div>
 
       <DialogBasic id="modal-appointment-create-or-edit" size="3xl">
-        <AppointmentCreateUpdate :patientId appointmentId="create" :is-inside-modal="true" />
+        <AppointmentCreateUpdate
+          :patient-id="patientId"
+          :appointment-id="appointmentModalId"
+          :is-inside-modal="true"
+        />
       </DialogBasic>
 
       <AppointmentCancelModalQuestion
@@ -225,6 +239,7 @@ import {
 } from '@/modules/appointment/helpers/get-appointment-status-color.mapper';
 import CancelIcon from '@/icons/CancelIcon.vue';
 import CloseIcon from '@/icons/CloseIcon.vue';
+import EditIcon from '@/icons/EditIcon.vue';
 import AppointmentCancelModalQuestion from '@/modules/appointment/components/AppointmentCancelModalQuestion.vue';
 import TablePagination from '@/modules/common/components/TablePagination.vue';
 import type { Pagination } from '@/modules/common/interfaces/pagination.interface';
@@ -248,6 +263,33 @@ const searchQuery = ref<string>(route.query.search?.toString() || '');
 
 const showCancelModalQuestion = ref(false);
 const selectedAppointmentId = ref<null | number>(null);
+const appointmentModalId = ref<string>('create');
+
+const canCancelAppointment = (appointment: Appointment) => {
+  const statusName = getAppointmentStatusName(appointment.estatus);
+  return statusName !== 'Cancelada' && statusName !== 'Atendida';
+};
+
+const canEditAppointment = (appointment: Appointment) => {
+  const statusName = getAppointmentStatusName(appointment.estatus);
+  return statusName !== 'Cancelada' && statusName !== 'Atendida';
+};
+
+const openCreateModal = () => {
+  appointmentModalId.value = 'create';
+  const modalEl = document.getElementById('modal-appointment-create-or-edit');
+  if (modalEl && window.tailwind) {
+    window.tailwind.Modal.getOrCreateInstance(modalEl).show();
+  }
+};
+
+const openEditModal = (id: number) => {
+  appointmentModalId.value = String(id);
+  const modalEl = document.getElementById('modal-appointment-create-or-edit');
+  if (modalEl && window.tailwind) {
+    window.tailwind.Modal.getOrCreateInstance(modalEl).show();
+  }
+};
 
 const {
   data: responseAppointments,
@@ -298,10 +340,7 @@ function clearSearch() {
 }
 
 
-const canCancelAppointment = (appointment: Appointment) => {
-  const statusName = getAppointmentStatusName(appointment.estatus);
-  return statusName !== 'Cancelada' && statusName !== 'Atendida';
-};
+
 
 const openCancelModal = (id: number) => {
   selectedAppointmentId.value = id;

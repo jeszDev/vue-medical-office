@@ -73,7 +73,7 @@ export default defineComponent({
             'hora-cita-5-min-mayor-hora-actual',
             'La fecha/hora de inicio debe ser al menos 5 minutos después de la hora actual',
             (value) => {
-              if (!value) return true;
+              if (!value || props.appointmentId !== 'create') return true;
 
               const validStartDate = new Date();
               validStartDate.setMinutes(validStartDate.getMinutes() + 5);
@@ -180,11 +180,18 @@ export default defineComponent({
     const [fecha_hora_termino, fecha_hora_terminoAttrs] = defineField('fecha_hora_termino');
     const [observaciones_cita, observaciones_citaAttrs] = defineField('observaciones_cita');
 
+    const formatDateTimeForInput = (dateStr?: string | null): string => {
+      if (!dateStr) return '';
+      const formatted = dateStr.replace(' ', 'T');
+      return formatted.length >= 16 ? formatted.slice(0, 16) : formatted;
+    };
+
     const onSubmit = handleSubmit(
       (formValues) => {
         const targetPatientId = props.patientId !== '0' ? props.patientId : formValues.patient_id;
         pendingAppointmentValues.value = {
           ...formValues,
+          id: props.appointmentId !== 'create' ? props.appointmentId : undefined,
           patient_id: targetPatientId,
         } as AppointmentFormValues;
 
@@ -274,10 +281,23 @@ export default defineComponent({
     watch(
       appointment,
       (newAppointment) => {
-        if (!newAppointment) return;
+        if (!newAppointment || props.appointmentId === 'create') return;
 
         resetForm({
-          values: newAppointment,
+          values: {
+            id: String(newAppointment.id),
+            motivo: newAppointment.motivo || '',
+            fecha_hora_inicio: formatDateTimeForInput(newAppointment.fecha_hora_inicio),
+            fecha_hora_termino: formatDateTimeForInput(newAppointment.fecha_hora_termino),
+            observaciones_cita:
+              newAppointment.observaciones_cita || newAppointment.observaciones || '',
+            patient_id:
+              props.patientId !== '0'
+                ? props.patientId
+                : newAppointment.patient_id
+                  ? String(newAppointment.patient_id)
+                  : '',
+          },
         });
       },
       {

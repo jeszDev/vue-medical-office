@@ -30,7 +30,7 @@ npm run format        # prettier --write src/
 
 - `npx vue-tsc --build --force` → **72 errores**.
 - `npx eslint .` → **40 errores**.
-- Causas recurrentes: `window.tailwind` sin declarar en `Window`; paginación estilo Laravel mal tipada (`first_page_url`, `next_page_url` vs `firstPageUrl`); `queryKey` con la misma clave semántica escrita de varias formas (`['patient', id]` y `['patient', { patientId }]`); imports/variables sin usar; imports rotos (`TemplateContent.vue` → `../../chain-custody/...`, `ThemeSwitcher.vue` → `@/composables/useTheme`).
+- Causas recurrentes: `window.tailwind` sin declarar en `Window` (resuelto en `env.d.ts`); paginación estilo Laravel mal tipada (`first_page_url`, `next_page_url` vs `firstPageUrl`); `queryKey` con la misma clave semántica escrita de varias formas (`['patient', id]` y `['patient', { patientId }]`); imports/variables sin usar; imports rotos (`TemplateContent.vue` → `../../chain-custody/...`, `ThemeSwitcher.vue` → `@/composables/useTheme`).
 - Estos errores **deben reducirse a cero**; al tocar un archivo, corrige también los de ese archivo y nunca agregues nuevos.
 
 ## Arquitectura
@@ -74,7 +74,7 @@ Archivos: `appointment/views/AppointmentCreateUpdate.{ts,vue}`, `AppointmentCons
    window.tailwind.Modal.getOrCreateInstance(document.getElementById('modal-x')).hide()
    ```
 
-   `window.tailwind` no está tipado (por eso `window.tailwind` genera errores de TS). Usa el patrón 1 para código nuevo.
+   `window.tailwind` está tipado globalmente en `env.d.ts` extendiendo la interfaz `Window` (evitando errores de TS en llamadas imperativas legacy). Siempre preferir el patrón 1 para código nuevo.
 
 ### Navegación y roles
 

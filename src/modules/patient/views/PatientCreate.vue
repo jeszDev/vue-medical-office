@@ -1,20 +1,20 @@
 <template>
-  <!-- <div
-    class="pt-8 pb-12 px-7 z-10 relative xl:mt-8 before:absolute before:inset-0 before:opacity-[.07] before:bg-foreground before:rounded-4xl after:absolute after:inset-0 after:bg-[color-mix(in_oklch,_var(--color-background),_var(--color-foreground)_2%)] after:rounded-4xl after:border after:border-foreground/[.15] dark:after:opacity-[.59]"
-  > -->
-  <div class="relative z-20">
-    <div class="mt-8 flex items-center">
-      <h2 class="mr-auto text-lg font-medium">
+  <div class="relative z-20 w-full">
+    <!-- Encabezado compacto -->
+    <div
+      class="flex items-center pb-3 border-b border-foreground/10"
+      :class="{ 'mt-2': !isInsideModal }"
+    >
+      <h2 class="text-base sm:text-lg font-semibold text-foreground">
         {{ action === 'create' ? 'Registro de nuevo paciente' : 'Editar paciente' }}
       </h2>
     </div>
-    <!-- BEGIN: Wizard Layout -->
 
-    <div :class="['mt-10 border-t pt-10', !isInsideModal ? 'px-5 sm:px-20' : '']">
-      <!-- <div class="text-base font-medium">Profile Settings</div> -->
-      <form @submit="onSubmit">
-        <div class="mt-5 grid grid-cols-12 gap-4 gap-y-5">
-          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-4">
+    <!-- Formulario con espaciado optimizado -->
+    <div :class="['mt-4', !isInsideModal ? 'px-5 sm:px-20' : '']">
+      <form @submit.prevent="onSubmit">
+        <div class="grid grid-cols-12 gap-4 gap-y-4">
+          <div class="flex flex-col gap-2 col-span-12 sm:col-span-4">
             <InputLabel label="Nombre" :isRequired="true" />
             <InputBase
               type="text"
@@ -25,7 +25,7 @@
               placeholder="Ejemplo: Mauricio"
             />
           </div>
-          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-4">
+          <div class="flex flex-col gap-2 col-span-12 sm:col-span-4">
             <InputLabel label="Primer apellido" :isRequired="true" />
             <InputBase
               type="text"
@@ -36,7 +36,7 @@
               placeholder="Ejemplo: Colin"
             />
           </div>
-          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-4">
+          <div class="flex flex-col gap-2 col-span-12 sm:col-span-4">
             <InputLabel label="Segundo apellido" :isRequired="false" />
             <InputBase
               type="text"
@@ -47,7 +47,7 @@
               placeholder="Ejemplo: Yepez"
             />
           </div>
-          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-4">
+          <div class="flex flex-col gap-2 col-span-12 sm:col-span-4">
             <InputLabel label="CURP" :isRequired="false" />
             <InputBase
               type="text"
@@ -58,7 +58,7 @@
               placeholder="Ejemplo: GOHC820512HDFR0001"
             />
           </div>
-          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-4">
+          <div class="flex flex-col gap-2 col-span-12 sm:col-span-4">
             <InputLabel label="Fecha de nacimiento" :isRequired="false" />
             <InputBaseDate
               type="date"
@@ -68,8 +68,8 @@
               name="fecha_nacimiento"
             />
           </div>
-          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-4">
-            <InputLabel label="Télefono" :isRequired="false" />
+          <div class="flex flex-col gap-2 col-span-12 sm:col-span-4">
+            <InputLabel label="Teléfono" :isRequired="false" />
             <InputBase
               type="tel"
               v-model="telefono"
@@ -79,8 +79,8 @@
               placeholder="Ejemplo: 44 31 86 37 55"
             />
           </div>
-          <div class="flex flex-col gap-2.5 col-span-12 sm:col-span-6">
-            <InputLabel label="Correo eléctronico" :isRequired="false" />
+          <div class="flex flex-col gap-2 col-span-12 sm:col-span-6">
+            <InputLabel label="Correo electrónico" :isRequired="false" />
             <InputBase
               type="email"
               v-model="correo_electronico"
@@ -91,7 +91,7 @@
             />
           </div>
 
-          <div class="flex flex-col gap-2.5 col-span-12">
+          <div class="flex flex-col gap-2 col-span-12">
             <InputLabel label="Observaciones" :isRequired="false" />
             <TextArea
               v-model="observaciones"
@@ -100,26 +100,84 @@
               :error="errors.observaciones"
             />
           </div>
-        </div>
 
-        <div class="col-span-12 mt-10 flex items-center justify-center sm:justify-end">
-          <ButtonPrimary :text="action === 'create' ? 'Registrar' : 'Editar'" @click="onSubmit" />
+          <!-- Botones de Acción: Registrar a la izquierda, Cancelar a la derecha -->
+          <div
+            class="col-span-12 mt-4 pt-4 border-t border-foreground/10 flex items-center justify-end gap-3"
+          >
+            <ButtonBase
+              :text="
+                isPending
+                  ? action === 'create'
+                    ? 'Registrando...'
+                    : 'Guardando...'
+                  : action === 'create'
+                    ? 'Registrar'
+                    : 'Guardar cambios'
+              "
+              color="primary"
+              :disabled="isPending"
+              @click="onSubmit"
+            />
+            <ButtonBase
+              text="Cancelar"
+              color="secondary"
+              :disabled="isPending"
+              @click="onCancel"
+            />
+          </div>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- <div class="grid grid-cols-2 mt-2">
-    <pre class="bg-blue-200 p-2">
-      {{ JSON.stringify(values, null, 2) }}
-    </pre>
-    <pre class="bg-red-200 p-2">
-      {{ JSON.stringify(errors, null, 2) }}
-    </pre>
-    <pre class="bg-green-200 p-2 col-span-2">
-      {{ JSON.stringify(meta, null, 2) }}
-    </pre>
-  </div> -->
+  <!-- Modal de Confirmación -->
+  <Teleport to="body">
+    <ModalQuestion
+      v-model="showConfirmModal"
+      id="modal-confirm-patient-save"
+      variant="primary"
+      :title="action === 'create' ? '¿Deseas registrar al paciente?' : '¿Deseas guardar los cambios?'"
+      :confirm-text="action === 'create' ? 'Sí, registrar' : 'Sí, guardar cambios'"
+      cancel-text="Revisar datos"
+      :is-loading="isPending"
+      :loading-text="action === 'create' ? 'Registrando...' : 'Guardando...'"
+      @confirm="onConfirmSave"
+      @cancel="onCancelConfirm"
+    >
+      <template #icon>
+        <div
+          class="size-16 rounded-2xl mx-auto mt-3 flex items-center justify-center bg-primary/10 border border-primary/20 text-primary"
+        >
+          <svg class="size-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
+          </svg>
+        </div>
+      </template>
+      <template #description>
+        <div class="space-y-1">
+          <p>
+            {{
+              action === 'create'
+                ? 'Se creará el expediente clínico del paciente con los datos ingresados.'
+                : 'Se actualizarán los datos del paciente en el sistema.'
+            }}
+          </p>
+          <p v-if="pendingPatientValues?.nombre" class="text-xs font-medium text-foreground/80 mt-1">
+            Paciente:
+            <span class="text-primary font-bold">
+              {{ pendingPatientValues.nombre }} {{ pendingPatientValues.primer_apellido || '' }}
+            </span>
+          </p>
+        </div>
+      </template>
+    </ModalQuestion>
+  </Teleport>
 </template>
 
 <script src="./PatientCreate.ts" lang="ts"></script>

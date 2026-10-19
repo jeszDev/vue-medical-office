@@ -1,11 +1,12 @@
-import ButtonPrimary from '@/modules/common/components/ButtonPrimary.vue';
+import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import InputLabel from '@/modules/common/components/InputLabel.vue';
 import InputBase from '@/modules/common/components/InputBase.vue';
 import InputBaseDate from '@/modules/common/components/InputBaseDate.vue';
 import TextArea from '@/modules/common/components/TextArea.vue';
-import { defineComponent, watchEffect } from 'vue';
+import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
+import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
-import { useMutation, useQuery } from '@tanstack/vue-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { useToast } from 'vue-toastification';
@@ -13,12 +14,10 @@ import { useToast } from 'vue-toastification';
 import { createUpdatePatientAction, getPatientByIdAction } from '../actions';
 import formatDateToInput from '@/helpers/format-date-to-input.helper';
 
-import { watch } from 'vue';
-
 const schema = yup.object({
   curp: yup.string().nullable().notRequired(),
-  nombre: yup.string().required('Este campo es obligatorio'),
-  primer_apellido: yup.string().required('Este campo es obligatorio'),
+  nombre: yup.string().required('El nombre es obligatorio'),
+  primer_apellido: yup.string().required('El primer apellido es obligatorio'),
   segundo_apellido: yup.string().nullable(),
   fecha_nacimiento: yup.string().nullable(),
   telefono: yup.string().nullable().notRequired(),
@@ -26,13 +25,27 @@ const schema = yup.object({
   observaciones: yup.string().nullable(),
 });
 
+interface PatientFormValues {
+  id?: string;
+  curp?: string | null;
+  nombre: string;
+  primer_apellido: string;
+  segundo_apellido?: string | null;
+  fecha_nacimiento?: string | null;
+  telefono?: string | null;
+  correo_electronico?: string | null;
+  observaciones?: string | null;
+}
+
 export default defineComponent({
+  name: 'PatientCreate',
   components: {
-    ButtonPrimary,
+    ButtonBase,
     InputLabel,
     InputBase,
     InputBaseDate,
     TextArea,
+    ModalQuestion,
   },
   props: {
     patientId: {
@@ -48,31 +61,64 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const toast = useToast();
-    // const modal = props.isInsideModal
-    // console.log(`patientIddd: ${props.patientId}`);
+    const queryClient = useQueryClient();
+
+    const showConfirmModal = ref(false);
+    const pendingPatientValues = ref<PatientFormValues | null>(null);
 
     const {
       data: patient,
       isError,
       isLoading,
     } = useQuery({
-      queryKey: ['patient', props.patientId],
+      queryKey: ['patient', computed(() => props.patientId)],
       queryFn: () => getPatientByIdAction(props.patientId),
-      // enabled: props.patientId !== 'create', // Evitar la consulta si es 'create'
-      // retry: false,
+      enabled: computed(() => props.patientId !== 'create' && !!props.patientId),
     });
 
-    const {
-      mutate,
-      isSuccess: isUpdateSuccess,
-      data: updatedPatient,
-    } = useMutation({
+    const { mutateAsync, isPending } = useMutation({
       mutationFn: createUpdatePatientAction,
+      onSuccess: () => {
+        toast.success(
+          props.patientId === 'create'
+            ? 'Paciente registrado correctamente'
+            : 'Paciente actualizado correctamente',
+        );
+
+        queryClient.invalidateQueries({ queryKey: ['patients'] });
+
+        if (props.patientId === 'create') {
+          resetForm({
+            values: {
+              id: '',
+              curp: '',
+              nombre: '',
+              primer_apellido: '',
+              segundo_apellido: '',
+              fecha_nacimiento: '',
+              telefono: '',
+              correo_electronico: '',
+              observaciones: '',
+            },
+          });
+        }
+
+        pendingPatientValues.value = null;
+        showConfirmModal.value = false;
+
+        if (!props.isInsideModal) {
+          router.replace({ name: 'patients.index' });
+        }
+      },
+      onError: (error: Error) => {
+        toast.error(error.message || 'Error al guardar el paciente');
+      },
     });
 
     const { values, defineField, errors, handleSubmit, resetForm, meta } = useForm({
       validationSchema: schema,
     });
+
     const [curp, curpAttrs] = defineField('curp');
     const [nombre, nombreAttrs] = defineField('nombre');
     const [primer_apellido, primer_apellidoAttrs] = defineField('primer_apellido');
@@ -82,35 +128,79 @@ export default defineComponent({
     const [correo_electronico, correo_electronicoAttrs] = defineField('correo_electronico');
     const [observaciones, observacionesAttrs] = defineField('observaciones');
 
-    const onSubmit = handleSubmit(async (values) => {
-      mutate(values);
+    const onSubmit = handleSubmit(
+      (formValues) => {
+        pendingPatientValues.value = formValues as PatientFormValues;
 
-      if (props.isInsideModal) {
-        window.tailwind.Modal.getOrCreateInstance(
-          document.getElementById('modal-patient-create-or-edit'),
-        ).hide();
+        if (props.isInsideModal) {
+          const modalEl = document.getElementById('modal-patient-create-or-edit');
+          if (modalEl && window.tailwind) {
+            window.tailwind.Modal.getOrCreateInstance(modalEl).hide();
+          }
+        }
+
+        showConfirmModal.value = true;
+      },
+      ({ errors: validationErrors }) => {
+        const errorKeys = Object.keys(validationErrors);
+        if (errorKeys.length > 0) {
+          toast.warning('Por favor completa los campos obligatorios: Nombre y Primer apellido.');
+        }
+      },
+    );
+
+    const onConfirmSave = async () => {
+      if (!pendingPatientValues.value || isPending.value) return;
+
+      try {
+        await mutateAsync(pendingPatientValues.value as Record<string, unknown>);
+      } catch {
+        // Manejado en onError
+      }
+    };
+
+    const onCancelConfirm = () => {
+      showConfirmModal.value = false;
+    };
+
+    // Si se cierra el modal de confirmación sin haber guardado y estamos dentro de un modal,
+    // reabrimos el modal de registro manteniendo los datos intactos
+    watch(showConfirmModal, (isOpen, wasOpen) => {
+      if (!isOpen && wasOpen && pendingPatientValues.value && props.isInsideModal) {
+        setTimeout(() => {
+          const modalEl = document.getElementById('modal-patient-create-or-edit');
+          if (modalEl && window.tailwind) {
+            window.tailwind.Modal.getOrCreateInstance(modalEl).show();
+          }
+        }, 200);
       }
     });
 
-    watchEffect(() => {
-      if (isError.value && !isLoading.value) {
-        router.replace({ name: 'patients.index' });
-      }
-    });
-
-    watch(isUpdateSuccess, (value) => {
-      if (!value) return;
-
+    const onCancel = () => {
       if (props.patientId === 'create') {
-        toast.success('Paciente creado correctamente');
-      } else {
-        toast.success('Paciente editado correctamente');
+        resetForm({
+          values: {
+            id: '',
+            curp: '',
+            nombre: '',
+            primer_apellido: '',
+            segundo_apellido: '',
+            fecha_nacimiento: '',
+            telefono: '',
+            correo_electronico: '',
+            observaciones: '',
+          },
+        });
       }
-
-      resetForm({
-        values: updatedPatient.value,
-      });
-    });
+      if (props.isInsideModal) {
+        const modalEl = document.getElementById('modal-patient-create-or-edit');
+        if (modalEl && window.tailwind) {
+          window.tailwind.Modal.getOrCreateInstance(modalEl).hide();
+        }
+      } else {
+        router.back();
+      }
+    };
 
     watch(
       patient,
@@ -152,15 +242,14 @@ export default defineComponent({
       },
     );
 
-    // Redirigir en caso de error al cargar el paciente
+    // Redirigir en caso de error al cargar el paciente en modo edición
     watchEffect(() => {
-      if (isError.value && !isLoading.value) {
+      if (isError.value && !isLoading.value && props.patientId !== 'create') {
         router.replace({ name: 'patients.index' });
       }
     });
 
     return {
-      //props
       values,
       errors,
       meta,
@@ -183,11 +272,15 @@ export default defineComponent({
       correo_electronicoAttrs,
       observacionesAttrs,
 
-      // getters
-      action: props.patientId === 'create' ? 'create' : 'edit',
+      action: computed(() => (props.patientId === 'create' ? 'create' : 'edit')),
+      isPending,
+      showConfirmModal,
+      pendingPatientValues,
 
-      // actions
       onSubmit,
+      onConfirmSave,
+      onCancelConfirm,
+      onCancel,
     };
   },
 });

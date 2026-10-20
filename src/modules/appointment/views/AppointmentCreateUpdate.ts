@@ -4,6 +4,7 @@ import InputBase from '@/modules/common/components/InputBase.vue';
 import InputBaseDate from '@/modules/common/components/InputBaseDate.vue';
 import TextArea from '@/modules/common/components/TextArea.vue';
 import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
+import SelectSearchable from '@/modules/common/components/SelectSearchable.vue';
 import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
@@ -34,6 +35,7 @@ export default defineComponent({
     InputBaseDate,
     TextArea,
     ModalQuestion,
+    SelectSearchable,
   },
   props: {
     appointmentId: {
@@ -115,6 +117,14 @@ export default defineComponent({
     });
 
     const patients = computed(() => patientsResponse.value ?? []);
+
+    const patientOptions = computed(() =>
+      patients.value.map((patient) => ({
+        value: String(patient.id),
+        label: patient.nombre_completo,
+        sublabel: patient.curp ? `CURP: ${patient.curp}` : 'Sin CURP',
+      })),
+    );
 
     const selectedPatientName = computed(() => {
       const targetId =
@@ -333,6 +343,7 @@ export default defineComponent({
 
     return {
       patients,
+      patientOptions,
       selectedPatientName,
 
       values,

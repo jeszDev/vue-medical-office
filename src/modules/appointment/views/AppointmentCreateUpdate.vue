@@ -14,22 +14,16 @@
     <div :class="['mt-4', !isInsideModal ? 'px-5 sm:px-20' : '']">
       <form @submit.prevent="onSubmit">
         <div class="grid grid-cols-12 gap-4 gap-y-4">
-          <!-- Selector de paciente si no viene preseleccionado -->
+          <!-- Selector de paciente con buscador si no viene preseleccionado -->
           <div v-if="patientId === '0'" class="flex flex-col gap-2 col-span-12">
             <InputLabel label="La cita es para el paciente" :isRequired="true" />
-            <select
+            <SelectSearchable
               v-model="patient_id"
+              :options="patientOptions"
+              placeholder="Buscar paciente por nombre o CURP..."
+              :error="errors.patient_id"
               v-bind="patient_idAttrs"
-              class="h-10 w-full rounded-md border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            >
-              <option value="" disabled selected>-- Seleccione un paciente</option>
-              <option v-for="(patient, index) in patients" :key="patient.id" :value="patient.id">
-                {{ index + 1 }}. {{ patient.nombre_completo }} - ({{ patient.curp || 'Sin CURP' }})
-              </option>
-            </select>
-            <span v-if="errors.patient_id" class="text-xs text-red-500 font-medium">
-              {{ errors.patient_id }}
-            </span>
+            />
           </div>
 
           <div class="flex flex-col gap-2 col-span-12">

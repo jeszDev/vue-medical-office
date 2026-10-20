@@ -13,6 +13,7 @@ import { useToast } from 'vue-toastification';
 
 import { createUpdatePatientAction, getPatientByIdAction } from '../actions';
 import formatDateToInput from '@/helpers/format-date-to-input.helper';
+import { useModalFormReset } from '@/modules/common/composables/useModalFormReset';
 
 const schema = yup.object({
   curp: yup.string().nullable().notRequired(),
@@ -176,7 +177,7 @@ export default defineComponent({
       }
     });
 
-    const onCancel = () => {
+    const resetPatientForm = () => {
       if (props.patientId === 'create') {
         resetForm({
           values: {
@@ -191,7 +192,27 @@ export default defineComponent({
             observaciones: '',
           },
         });
+      } else if (patient.value) {
+        const formattedPatient = {
+          ...patient.value,
+          fecha_nacimiento: formatDateToInput(patient.value.fecha_nacimiento),
+        };
+        resetForm({
+          values: formattedPatient,
+        });
       }
+      pendingPatientValues.value = null;
+      showConfirmModal.value = false;
+    };
+
+    useModalFormReset(
+      'modal-patient-create-or-edit',
+      resetPatientForm,
+      computed(() => props.isInsideModal),
+    );
+
+    const onCancel = () => {
+      resetPatientForm();
       if (props.isInsideModal) {
         const modalEl = document.getElementById('modal-patient-create-or-edit');
         if (modalEl && window.tailwind) {
@@ -223,22 +244,8 @@ export default defineComponent({
 
     watch(
       () => props.patientId,
-      (newPatientId) => {
-        if (newPatientId === 'create') {
-          resetForm({
-            values: {
-              id: '',
-              curp: '',
-              nombre: '',
-              primer_apellido: '',
-              segundo_apellido: '',
-              fecha_nacimiento: '',
-              telefono: '',
-              correo_electronico: '',
-              observaciones: '',
-            },
-          });
-        }
+      () => {
+        resetPatientForm();
       },
     );
 

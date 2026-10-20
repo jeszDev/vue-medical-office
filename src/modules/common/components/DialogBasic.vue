@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="modalRef"
     data-tw-backdrop=""
     class="modal group bg-black/60 transition-[visibility,opacity] w-screen h-screen fixed left-0 top-0 z-[10000] [&:not(.show)]:duration-[0s,0.2s] [&:not(.show)]:delay-[0.2s,0s] [&:not(.show)]:invisible [&:not(.show)]:opacity-0 [&.show]:visible [&.show]:opacity-100 [&.show]:duration-[0s,0.4s]"
     :id="id"
@@ -11,9 +12,10 @@
       ]"
     >
       <a
-        class="bg-background/80 hover:bg-background absolute right-0 top-0 -mr-3 -mt-3 flex size-9 items-center justify-center rounded-full border shadow backdrop-blur"
+        class="bg-background/80 hover:bg-background absolute right-0 top-0 -mr-3 -mt-3 flex size-9 items-center justify-center rounded-full border shadow backdrop-blur cursor-pointer"
         data-tw-dismiss="modal"
         href="#"
+        @click.prevent="onCloseClick"
       >
         <CloseIcon />
       </a>
@@ -25,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-// import { X as XIcon } from 'lucide-vue-next';
+import { ref, onMounted, onUnmounted } from 'vue';
 import CloseIcon from '@/icons/CloseIcon.vue';
 
 interface Props {
@@ -36,6 +38,33 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   id: 'basic-dialog',
   size: 'md',
+});
+
+const emit = defineEmits<{
+  (e: 'close'): void;
+  (e: 'hidden'): void;
+}>();
+
+const modalRef = ref<HTMLElement | null>(null);
+
+const onHidden = () => {
+  emit('hidden');
+};
+
+const onCloseClick = () => {
+  emit('close');
+};
+
+onMounted(() => {
+  if (modalRef.value) {
+    modalRef.value.addEventListener('hidden.tw.modal', onHidden);
+  }
+});
+
+onUnmounted(() => {
+  if (modalRef.value) {
+    modalRef.value.removeEventListener('hidden.tw.modal', onHidden);
+  }
 });
 
 const sizes = {

@@ -100,7 +100,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { onClickOutside } from '@vueuse/core';
 import { ChevronDown, Check, X } from 'lucide-vue-next';
 
@@ -140,6 +140,18 @@ const isOpen = ref(false);
 const searchQuery = ref('');
 const isTyping = ref(false);
 const highlightedIndex = ref(-1);
+
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (!newVal) {
+      searchQuery.value = '';
+      isTyping.value = false;
+      isOpen.value = false;
+      highlightedIndex.value = -1;
+    }
+  },
+);
 
 const selectedOption = computed(() => {
   return props.options.find((opt) => String(opt.value) === String(props.modelValue));

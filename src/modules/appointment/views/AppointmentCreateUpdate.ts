@@ -53,6 +53,14 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    initialStartDate: {
+      type: String,
+      default: '',
+    },
+    initialEndDate: {
+      type: String,
+      default: '',
+    },
   },
   setup(props) {
     const router = useRouter();
@@ -179,8 +187,8 @@ export default defineComponent({
       initialValues: {
         patient_id: props.patientId !== '0' ? props.patientId : '',
         motivo: '',
-        fecha_hora_inicio: '',
-        fecha_hora_termino: '',
+        fecha_hora_inicio: props.initialStartDate || '',
+        fecha_hora_termino: props.initialEndDate || '',
         observaciones_cita: '',
       },
     });
@@ -259,8 +267,8 @@ export default defineComponent({
         resetForm({
           values: {
             id: '',
-            fecha_hora_inicio: '',
-            fecha_hora_termino: '',
+            fecha_hora_inicio: props.initialStartDate || '',
+            fecha_hora_termino: props.initialEndDate || '',
             motivo: '',
             observaciones_cita: '',
             patient_id: props.patientId !== '0' ? props.patientId : '',
@@ -351,6 +359,16 @@ export default defineComponent({
       () => props.appointmentId,
       () => {
         resetAppointmentForm();
+      },
+    );
+
+    watch(
+      () => [props.initialStartDate, props.initialEndDate],
+      ([newStart, newEnd]) => {
+        if (props.appointmentId === 'create') {
+          if (newStart) fecha_hora_inicio.value = newStart;
+          if (newEnd) fecha_hora_termino.value = newEnd;
+        }
       },
     );
 

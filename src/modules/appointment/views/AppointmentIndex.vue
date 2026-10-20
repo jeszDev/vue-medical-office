@@ -1,5 +1,16 @@
 <template>
-  <TemplateView title="CALENDARIO DE CITAS">
+  <TemplateView>
+    <template #header>
+      <div class="flex flex-wrap items-center justify-between w-full gap-4">
+        <h2 class="text-lg font-medium">CALENDARIO DE CITAS</h2>
+        <ButtonBase
+          text="Agendar nueva cita"
+          :icon="PlusIcon"
+          color="primary"
+          @click="openCreateModal"
+        />
+      </div>
+    </template>
     <template #main>
       <!-- Eliminamos el v-if que destruía a vue-cal y dejamos el calendario fijo -->
       <vue-cal
@@ -25,6 +36,14 @@
           @consultation="goToConsultation($event)"
         />
       </DialogBasic>
+
+      <DialogBasic id="modal-appointment-create-or-edit" size="3xl">
+        <AppointmentCreateUpdate
+          patient-id="0"
+          appointment-id="create"
+          :is-inside-modal="true"
+        />
+      </DialogBasic>
     </template>
   </TemplateView>
 </template>
@@ -32,7 +51,10 @@
 <script setup lang="ts">
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
+import ButtonBase from '@/modules/common/components/ButtonBase.vue';
+import PlusIcon from '@/icons/PlusIcon.vue';
 import AppointmentCalendar from '@/modules/appointment/views/AppointmentCalendar.vue';
+import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
 
 import { ref, computed } from 'vue';
 import { VueCal } from 'vue-cal';
@@ -46,6 +68,16 @@ import { getAppointmentStatusName } from '../helpers/get-appointment-status-colo
 import { getAppointmentsAction } from '../actions/get-appointments.action';
 import { useRouter } from 'vue-router';
 
+interface CalViewEvent {
+  view?: {
+    start?: string | Date;
+    end?: string | Date;
+  };
+  start?: string | Date;
+  end?: string | Date;
+  startDate?: string | Date;
+  endDate?: string | Date;
+}
 
 const router = useRouter();
 
@@ -56,13 +88,20 @@ const dateRange = ref<{ from: string | null; to: string | null }>({
 
 const selectedAppointment = ref<null | Appointment>(null);
 
-const onViewChange = (event: any) => {
+const openCreateModal = () => {
+  const modalEl = document.getElementById('modal-appointment-create-or-edit');
+  if (modalEl && window.tailwind) {
+    window.tailwind.Modal.getOrCreateInstance(modalEl).show();
+  }
+};
+
+const onViewChange = (event: CalViewEvent) => {
   if (!event) return;
 
-  let startRaw: any = null;
-  let endRaw: any = null;
+  let startRaw: string | Date | null = null;
+  let endRaw: string | Date | null = null;
 
-  if (event.view && typeof event.view === 'object' && event.view.start) {
+  if (event.view && typeof event.view === 'object' && event.view.start && event.view.end) {
     startRaw = event.view.start;
     endRaw = event.view.end;
   } else if (event.start && event.end) {
@@ -87,8 +126,6 @@ const onViewChange = (event: any) => {
       from: newFrom,
       to: newTo,
     };
-
-    console.log('🚀 Petición única a la API:', dateRange.value);
   }
 };
 
@@ -107,12 +144,7 @@ const getStatusClass = (status: AppointmentStatusObject | string | undefined | n
   }
 };
 
-
-const {
-  data: events,
-  isLoading,
-  error,
-} = useQuery({
+const { data: events } = useQuery({
   queryKey: ['appointments', dateRange],
   queryFn: () => getAppointmentsAction(dateRange.value.from, dateRange.value.to),
   enabled: computed(() => !!dateRange.value.from && !!dateRange.value.to),
@@ -135,14 +167,15 @@ const onEventClick = ({ event }: CalendarEvent) => {
   selectedAppointment.value = event.appointment;
 };
 
-const goToConsultation = (appointmentId) => {
-  window.tailwind.Modal.getOrCreateInstance(
-    document.getElementById('modal-appointment-calendar'),
-  ).hide();
+const goToConsultation = (appointmentId: number | string) => {
+  const modalEl = document.getElementById('modal-appointment-calendar');
+  if (modalEl && window.tailwind) {
+    window.tailwind.Modal.getOrCreateInstance(modalEl).hide();
+  }
 
   router.push({
     name: 'appointments.consultations.create',
-    params: { appointmentId: appointmentId },
+    params: { appointmentId: String(appointmentId) },
   });
 };
 </script>

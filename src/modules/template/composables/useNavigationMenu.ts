@@ -7,7 +7,7 @@ export interface MenuItem {
   iconName?: string;
   roles?: string[]; // Allowed roles. If empty/undefined, visible to all authenticated users.
   group?: string;
-  params?: Record<string, any>;
+  params?: Record<string, unknown>;
 }
 
 export function useNavigationMenu() {
@@ -44,13 +44,6 @@ export function useNavigationMenu() {
       title: 'Calendario de Citas',
       routeName: 'appointments.index',
       iconName: 'calendar',
-      group: 'CITAS Y AGENDA',
-      roles: ['admin', 'doctor', 'recepcionista', 'paciente', 'médico', 'medico'],
-    },
-    {
-      title: 'Crear Cita',
-      routeName: 'appointments.create',
-      iconName: 'calendar-plus',
       group: 'CITAS Y AGENDA',
       roles: ['admin', 'doctor', 'recepcionista', 'paciente', 'médico', 'medico'],
     },

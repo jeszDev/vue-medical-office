@@ -14,6 +14,7 @@ import { useToast } from 'vue-toastification';
 
 import { createUpdateAppointmentAction, getAppointmentByIdAction } from '../actions';
 import { getAllPatientsAction } from '@/modules/patient/actions';
+import { useModalFormReset } from '@/modules/common/composables/useModalFormReset';
 
 interface AppointmentFormValues {
   id?: string;
@@ -253,7 +254,7 @@ export default defineComponent({
       }
     });
 
-    const onCancel = () => {
+    const resetAppointmentForm = () => {
       if (props.appointmentId === 'create') {
         resetForm({
           values: {
@@ -267,7 +268,38 @@ export default defineComponent({
             cita_estatus_id: '',
           },
         });
+      } else if (appointment.value) {
+        resetForm({
+          values: {
+            id: String(appointment.value.id || ''),
+            fecha_hora_inicio: appointment.value.fecha_hora_inicio || '',
+            fecha_hora_termino: appointment.value.fecha_hora_termino || '',
+            motivo: appointment.value.motivo || '',
+            observaciones_cita:
+              appointment.value.observaciones || appointment.value.observaciones_cita || '',
+            patient_id:
+              props.patientId !== '0'
+                ? props.patientId
+                : appointment.value.patient_id
+                  ? String(appointment.value.patient_id)
+                  : '',
+            medico_id: String(appointment.value.medico_id || ''),
+            cita_estatus_id: String(appointment.value.cita_estatus_id || ''),
+          },
+        });
       }
+      pendingAppointmentValues.value = null;
+      showConfirmModal.value = false;
+    };
+
+    useModalFormReset(
+      'modal-appointment-create-or-edit',
+      resetAppointmentForm,
+      computed(() => props.isInsideModal),
+    );
+
+    const onCancel = () => {
+      resetAppointmentForm();
       if (props.isInsideModal) {
         const modalEl = document.getElementById('modal-appointment-create-or-edit');
         if (modalEl && window.tailwind) {
@@ -317,21 +349,8 @@ export default defineComponent({
 
     watch(
       () => props.appointmentId,
-      (newAppointmentId) => {
-        if (newAppointmentId === 'create') {
-          resetForm({
-            values: {
-              id: '',
-              fecha_hora_inicio: '',
-              fecha_hora_termino: '',
-              motivo: '',
-              observaciones_cita: '',
-              patient_id: props.patientId !== '0' ? props.patientId : '',
-              medico_id: '',
-              cita_estatus_id: '',
-            },
-          });
-        }
+      () => {
+        resetAppointmentForm();
       },
     );
 

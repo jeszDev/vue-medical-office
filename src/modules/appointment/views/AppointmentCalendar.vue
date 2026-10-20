@@ -68,8 +68,7 @@
           :icon="EditIcon"
           color="secondary"
           :disabled="statusName === 'Cancelada' || isPendingCancelAppointment"
-          data-tw-toggle="modal"
-          data-tw-target="#modal-patient-create-or-edit"
+          @click="onEdit"
         />
         <ButtonBase
           text="Cancelar cita"
@@ -130,6 +129,7 @@ const props = defineProps<Props>();
 const emit = defineEmits<{
   (e: 'updated', appointment: Appointment): void;
   (e: 'consultation', appointmentId: number): void;
+  (e: 'edit', appointmentId: number): void;
 }>();
 
 const { functionCancelAppointment, isPendingCancelAppointment } = useCancelAppointment();
@@ -159,6 +159,11 @@ const onCancel = async () => {
 const goToConsultation = () => {
   if (!props.appointment?.id) return;
   emit('consultation', props.appointment.id);
+};
+
+const onEdit = () => {
+  if (!props.appointment?.id) return;
+  emit('edit', props.appointment.id);
 };
 </script>
 

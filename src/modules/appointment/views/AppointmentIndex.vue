@@ -54,6 +54,7 @@
           :time-from="8 * 60"
           :time-step="30"
           :time-to="20 * 60"
+          :time-cell-height="54"
           :time="true"
           :today-button="true"
           :views="['day', 'week', 'month']"
@@ -66,17 +67,23 @@
         >
           <template #event="{ event }">
             <div
-              class="flex flex-col h-full justify-between p-1.5 text-xs leading-tight overflow-hidden"
+              class="flex flex-col h-full justify-center p-1 sm:p-1.5 text-xs overflow-hidden select-none leading-snug gap-0.5"
+              :title="`${event.title} (${formatTime(event.start)} - ${formatTime(event.end)})\n${event.appointment?.motivo || ''}`"
             >
-              <div class="font-bold truncate text-[11px] sm:text-xs">
-                {{ event.title }}
+              <!-- Fila 1: Nombre de paciente y rango horario compacto -->
+              <div class="flex items-center justify-between gap-1 min-w-0">
+                <span class="font-bold truncate text-[11px] sm:text-xs tracking-tight">
+                  {{ event.title }}
+                </span>
+                <span class="text-[9px] sm:text-[10px] font-mono shrink-0 opacity-90 font-medium">
+                  {{ formatTime(event.start) }}-{{ formatTime(event.end) }}
+                </span>
               </div>
-              <div class="text-[10px] opacity-90 truncate font-mono">
-                {{ formatTime(event.start) }} - {{ formatTime(event.end) }}
-              </div>
+
+              <!-- Fila 2: Motivo de la cita -->
               <div
                 v-if="event.appointment?.motivo && event.appointment?.motivo !== event.title"
-                class="text-[10px] opacity-80 truncate italic"
+                class="text-[10px] opacity-90 truncate italic"
               >
                 {{ event.appointment.motivo }}
               </div>
@@ -94,11 +101,7 @@
         />
       </DialogBasic>
 
-      <DialogBasic
-        id="modal-appointment-create-or-edit"
-        size="3xl"
-        @hidden="onFormModalHidden"
-      >
+      <DialogBasic id="modal-appointment-create-or-edit" size="3xl">
         <AppointmentCreateUpdate
           patient-id="0"
           :appointment-id="appointmentModalId"
@@ -119,7 +122,7 @@ import PlusIcon from '@/icons/PlusIcon.vue';
 import AppointmentCalendar from '@/modules/appointment/views/AppointmentCalendar.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
 
-import { ref, computed } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import { VueCal } from 'vue-cal';
 import 'vue-cal/style';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
@@ -244,20 +247,19 @@ const onCellClick = (cellData: unknown) => {
 
   const endDate = new Date(startDate.getTime() + 30 * 60 * 1000);
 
-  initialStartDate.value = formatLocalISO(startDate);
-  initialEndDate.value = formatLocalISO(endDate);
-  appointmentModalId.value = 'create';
-
-  const modalEl = document.getElementById('modal-appointment-create-or-edit');
-  if (modalEl && window.tailwind) {
-    window.tailwind.Modal.getOrCreateInstance(modalEl).show();
-  }
-};
-
-const onFormModalHidden = () => {
   initialStartDate.value = '';
   initialEndDate.value = '';
-  appointmentModalId.value = 'create';
+
+  nextTick(() => {
+    initialStartDate.value = formatLocalISO(startDate);
+    initialEndDate.value = formatLocalISO(endDate);
+    appointmentModalId.value = 'create';
+
+    const modalEl = document.getElementById('modal-appointment-create-or-edit');
+    if (modalEl && window.tailwind) {
+      window.tailwind.Modal.getOrCreateInstance(modalEl).show();
+    }
+  });
 };
 
 const onEditAppointment = (appointmentId: number | string) => {
@@ -317,15 +319,22 @@ const onViewChange = (event: CalViewEvent) => {
   }
 };
 
+const parseAppointmentDate = (dateStr?: string | null): Date | null => {
+  if (!dateStr) return null;
+  const isoStr = dateStr.includes('T') ? dateStr : dateStr.replace(' ', 'T');
+  const d = new Date(isoStr);
+  return isNaN(d.getTime()) ? null : d;
+};
+
 const getStatusClass = (status: AppointmentStatusObject | string | undefined | null) => {
-  const name = getAppointmentStatusName(status);
+  const name = getAppointmentStatusName(status).toLowerCase();
   switch (name) {
-    case 'Pendiente':
+    case 'pendiente':
       return 'event-pendiente';
-    case 'Confirmada':
-    case 'Atendida':
+    case 'confirmada':
+    case 'atendida':
       return 'event-confirmada';
-    case 'Cancelada':
+    case 'cancelada':
       return 'event-cancelada';
     default:
       return 'event-default';
@@ -337,13 +346,26 @@ const { data: events, isFetching } = useQuery({
   queryFn: () => getAppointmentsAction(dateRange.value.from, dateRange.value.to),
   enabled: computed(() => !!dateRange.value.from && !!dateRange.value.to),
   select: (data) =>
-    (data || []).map((appointment: Appointment) => ({
-      start: new Date(appointment.fecha_hora_inicio),
-      end: new Date(appointment.fecha_hora_termino),
-      title: appointment.pacientes?.[0]?.nombre_completo || appointment.motivo || 'Cita médica',
-      appointment,
-      class: getStatusClass(appointment.estatus),
-    })),
+    (data || [])
+      .filter(
+        (appointment: Appointment) =>
+          !!appointment?.fecha_hora_inicio && !!appointment?.fecha_hora_termino,
+      )
+      .map((appointment: Appointment) => {
+        const start = parseAppointmentDate(appointment.fecha_hora_inicio);
+        const end = parseAppointmentDate(appointment.fecha_hora_termino);
+        if (!start || !end) return null;
+
+        const patientName = appointment.pacientes?.[0]?.nombre_completo;
+        return {
+          start,
+          end,
+          title: patientName || appointment.motivo || 'Cita médica',
+          appointment,
+          class: getStatusClass(appointment.estatus),
+        };
+      })
+      .filter((e): e is NonNullable<typeof e> => !!e),
 });
 
 const calendarEvents = computed(() => (events.value ?? []).map((e) => ({ ...e })));

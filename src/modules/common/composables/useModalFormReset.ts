@@ -19,8 +19,6 @@ export function useModalFormReset(
   };
 
   onMounted(() => {
-    if (!toValue(isEnabled)) return;
-
     modalElement = document.getElementById(modalId);
     if (modalElement) {
       modalElement.addEventListener('hidden.tw.modal', handleHidden);

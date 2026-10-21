@@ -132,6 +132,7 @@ export default defineComponent({
     const onSubmit = handleSubmit(
       (formValues) => {
         pendingPatientValues.value = formValues as PatientFormValues;
+        showConfirmModal.value = true;
 
         if (props.isInsideModal) {
           const modalEl = document.getElementById('modal-patient-create-or-edit');
@@ -139,8 +140,6 @@ export default defineComponent({
             window.tailwind.Modal.getOrCreateInstance(modalEl).hide();
           }
         }
-
-        showConfirmModal.value = true;
       },
       ({ errors: validationErrors }) => {
         const errorKeys = Object.keys(validationErrors);
@@ -173,6 +172,7 @@ export default defineComponent({
           if (modalEl && window.tailwind) {
             window.tailwind.Modal.getOrCreateInstance(modalEl).show();
           }
+          pendingPatientValues.value = null;
         }, 200);
       }
     });
@@ -208,7 +208,9 @@ export default defineComponent({
     useModalFormReset(
       'modal-patient-create-or-edit',
       resetPatientForm,
-      computed(() => props.isInsideModal),
+      computed(
+        () => props.isInsideModal && !showConfirmModal.value && !pendingPatientValues.value,
+      ),
     );
 
     const onCancel = () => {

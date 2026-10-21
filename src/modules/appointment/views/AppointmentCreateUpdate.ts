@@ -214,14 +214,14 @@ export default defineComponent({
           patient_id: targetPatientId,
         } as AppointmentFormValues;
 
+        showConfirmModal.value = true;
+
         if (props.isInsideModal) {
           const modalEl = document.getElementById('modal-appointment-create-or-edit');
           if (modalEl && window.tailwind) {
             window.tailwind.Modal.getOrCreateInstance(modalEl).hide();
           }
         }
-
-        showConfirmModal.value = true;
       },
       ({ errors: validationErrors }) => {
         const errorValues = Object.values(validationErrors);
@@ -258,6 +258,7 @@ export default defineComponent({
           if (modalEl && window.tailwind) {
             window.tailwind.Modal.getOrCreateInstance(modalEl).show();
           }
+          pendingAppointmentValues.value = null;
         }, 200);
       }
     });
@@ -303,7 +304,9 @@ export default defineComponent({
     useModalFormReset(
       'modal-appointment-create-or-edit',
       resetAppointmentForm,
-      computed(() => props.isInsideModal),
+      computed(
+        () => props.isInsideModal && !showConfirmModal.value && !pendingAppointmentValues.value,
+      ),
     );
 
     const onCancel = () => {

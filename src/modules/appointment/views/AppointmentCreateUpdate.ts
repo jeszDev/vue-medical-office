@@ -366,8 +366,8 @@ export default defineComponent({
       () => [props.initialStartDate, props.initialEndDate],
       ([newStart, newEnd]) => {
         if (props.appointmentId === 'create') {
-          if (newStart) fecha_hora_inicio.value = newStart;
-          if (newEnd) fecha_hora_termino.value = newEnd;
+          fecha_hora_inicio.value = newStart || '';
+          fecha_hora_termino.value = newEnd || '';
         }
       },
     );

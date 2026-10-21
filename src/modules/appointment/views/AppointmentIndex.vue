@@ -94,7 +94,11 @@
         />
       </DialogBasic>
 
-      <DialogBasic id="modal-appointment-create-or-edit" size="3xl">
+      <DialogBasic
+        id="modal-appointment-create-or-edit"
+        size="3xl"
+        @hidden="onFormModalHidden"
+      >
         <AppointmentCreateUpdate
           patient-id="0"
           :appointment-id="appointmentModalId"
@@ -138,6 +142,23 @@ interface CalViewEvent {
   endDate?: string | Date;
 }
 
+interface VueCalCellClickPayload {
+  cell?: {
+    start?: Date | string;
+    end?: Date | string;
+    [key: string]: unknown;
+  };
+  cursor?: {
+    date?: Date | string;
+    x?: number;
+    y?: number;
+    [key: string]: unknown;
+  };
+  date?: Date | string;
+  startDate?: Date | string;
+  [key: string]: unknown;
+}
+
 const router = useRouter();
 const queryClient = useQueryClient();
 
@@ -172,13 +193,56 @@ const openCreateModal = () => {
   }
 };
 
-const onCellClick = (cellData: Date | { date?: Date; [key: string]: unknown }) => {
-  const rawDate = cellData instanceof Date ? cellData : cellData?.date;
+const extractDateFromCellClick = (payload: unknown): Date | null => {
+  if (!payload) return null;
+  if (payload instanceof Date) return isNaN(payload.getTime()) ? null : payload;
+
+  const data = payload as VueCalCellClickPayload;
+
+  // 1. Cursor date (proporciona día y hora exacta en la celda donde se hizo clic)
+  if (data.cursor?.date) {
+    const d = new Date(data.cursor.date);
+    if (!isNaN(d.getTime())) return d;
+  }
+
+  // 2. Propiedad date directa
+  if (data.date) {
+    const d = new Date(data.date);
+    if (!isNaN(d.getTime())) return d;
+  }
+
+  // 3. Propiedad startDate directa
+  if (data.startDate) {
+    const d = new Date(data.startDate);
+    if (!isNaN(d.getTime())) return d;
+  }
+
+  // 4. Fallback: fecha de inicio de la celda
+  if (data.cell?.start) {
+    const d = new Date(data.cell.start);
+    if (!isNaN(d.getTime())) return d;
+  }
+
+  return null;
+};
+
+const onCellClick = (cellData: unknown) => {
+  const rawDate = extractDateFromCellClick(cellData);
   if (!rawDate) return;
 
-  const clickedDate = new Date(rawDate);
-  const startDate = new Date(clickedDate);
-  const endDate = new Date(clickedDate.getTime() + 30 * 60 * 1000);
+  const startDate = new Date(rawDate);
+
+  // Si la hora es 00:00 (por ejemplo al hacer clic desde la vista mensual), asignar hora de apertura por defecto (09:00)
+  if (startDate.getHours() === 0 && startDate.getMinutes() === 0) {
+    startDate.setHours(9, 0, 0, 0);
+  } else {
+    // Redondear al intervalo inferior de 30 minutos (cuadrícula habitual de citas)
+    const minutes = startDate.getMinutes();
+    const snappedMinutes = Math.floor(minutes / 30) * 30;
+    startDate.setMinutes(snappedMinutes, 0, 0);
+  }
+
+  const endDate = new Date(startDate.getTime() + 30 * 60 * 1000);
 
   initialStartDate.value = formatLocalISO(startDate);
   initialEndDate.value = formatLocalISO(endDate);
@@ -188,6 +252,12 @@ const onCellClick = (cellData: Date | { date?: Date; [key: string]: unknown }) =
   if (modalEl && window.tailwind) {
     window.tailwind.Modal.getOrCreateInstance(modalEl).show();
   }
+};
+
+const onFormModalHidden = () => {
+  initialStartDate.value = '';
+  initialEndDate.value = '';
+  appointmentModalId.value = 'create';
 };
 
 const onEditAppointment = (appointmentId: number | string) => {
@@ -334,6 +404,15 @@ const goToConsultation = (appointmentId: number | string) => {
 :deep(.vuecal__event:hover) {
   transform: scale(1.02);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+:deep(.vuecal__cell:not(.disabled)) {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+:deep(.vuecal__cell:not(.disabled):hover) {
+  background-color: rgba(59, 130, 246, 0.05);
 }
 
 :deep(.vuecal__today-btn) {

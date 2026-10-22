@@ -2,20 +2,31 @@
   <div class="relative z-20 w-full">
     <!-- Encabezado compacto -->
     <div
-      class="flex items-center pb-3 border-b border-foreground/10"
+      class="flex items-center justify-between pb-3 border-b border-foreground/10"
       :class="{ 'mt-2': !isInsideModal }"
     >
-      <h2 class="text-base sm:text-lg font-semibold text-foreground">
-        {{ action === 'create' ? 'Agendar nueva cita' : 'Editar cita' }}
-      </h2>
+      <div class="flex items-center gap-2.5">
+        <h2 class="text-base sm:text-lg font-semibold text-foreground">
+          {{ action === 'create' ? 'Agendar nueva cita' : 'Editar cita' }}
+        </h2>
+        <span
+          v-if="action === 'edit' && appointmentFolio"
+          class="px-2 py-0.5 text-xs font-mono font-medium rounded-md bg-foreground/5 text-foreground/70 border border-foreground/10"
+        >
+          Folio: {{ appointmentFolio }}
+        </span>
+      </div>
     </div>
 
     <!-- Formulario con espaciado optimizado -->
     <div :class="['mt-4', !isInsideModal ? 'px-5 sm:px-20' : '']">
       <form @submit.prevent="onSubmit">
         <div class="grid grid-cols-12 gap-4 gap-y-4">
-          <!-- Selector de paciente con buscador si no viene preseleccionado -->
-          <div v-if="patientId === '0'" class="flex flex-col gap-2 col-span-12">
+          <!-- Modo creación: Selector con buscador si no viene preseleccionado -->
+          <div
+            v-if="action === 'create' && patientId === '0'"
+            class="flex flex-col gap-2 col-span-12"
+          >
             <InputLabel label="La cita es para el paciente" :isRequired="true" />
             <SelectSearchable
               v-model="patient_id"
@@ -24,6 +35,36 @@
               :error="errors.patient_id"
               v-bind="patient_idAttrs"
             />
+          </div>
+
+          <!-- Modo edición: Paciente inmutable (Solo lectura) -->
+          <div v-else-if="action === 'edit'" class="flex flex-col gap-2 col-span-12">
+            <InputLabel label="Paciente de la cita" :isRequired="false" />
+            <div
+              class="p-3 rounded-xl bg-foreground/[0.03] border border-foreground/10 flex items-center justify-between gap-3"
+            >
+              <div class="flex items-center gap-3 min-w-0">
+                <div
+                  class="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0"
+                >
+                  <UserIcon class="size-4 shrink-0" />
+                </div>
+                <div class="min-w-0">
+                  <div class="font-semibold text-foreground text-sm truncate">
+                    {{ currentPatientName || 'Cargando paciente...' }}
+                  </div>
+                  <div
+                    v-if="currentPatientCurp"
+                    class="text-xs text-foreground/60 font-mono mt-0.5"
+                  >
+                    CURP: {{ currentPatientCurp }}
+                  </div>
+                </div>
+              </div>
+              <span class="text-[11px] text-foreground/50 italic shrink-0 hidden sm:inline">
+                Paciente asociado a esta cita
+              </span>
+            </div>
           </div>
 
           <div class="flex flex-col gap-2 col-span-12">

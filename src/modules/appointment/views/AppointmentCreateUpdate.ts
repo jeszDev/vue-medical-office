@@ -5,6 +5,7 @@ import InputBaseDate from '@/modules/common/components/InputBaseDate.vue';
 import TextArea from '@/modules/common/components/TextArea.vue';
 import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
 import SelectSearchable from '@/modules/common/components/SelectSearchable.vue';
+import UserIcon from '@/icons/UserIcon.vue';
 import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
@@ -37,6 +38,7 @@ export default defineComponent({
     TextArea,
     ModalQuestion,
     SelectSearchable,
+    UserIcon,
   },
   props: {
     appointmentId: {
@@ -73,7 +75,7 @@ export default defineComponent({
     const validationSchema = computed(() =>
       yup.object({
         patient_id:
-          props.patientId === '0'
+          props.appointmentId === 'create' && props.patientId === '0'
             ? yup.string().required('Debe seleccionar un paciente')
             : yup.string().nullable().notRequired(),
         motivo: yup.string().required('El motivo de la cita es obligatorio'),
@@ -135,7 +137,42 @@ export default defineComponent({
       })),
     );
 
+    const appointmentFolio = computed(() => {
+      if (props.appointmentId === 'create') return '';
+      if (appointment.value?.folio) return appointment.value.folio;
+      const id = appointment.value?.id || props.appointmentId;
+      return id ? `#${id}` : '';
+    });
+
+    const currentPatient = computed(() => {
+      if (props.patientId !== '0') {
+        const found = patients.value.find((p) => String(p.id) === String(props.patientId));
+        if (found) return found;
+      }
+      if (appointment.value?.pacientes && appointment.value.pacientes.length > 0) {
+        return appointment.value.pacientes[0];
+      }
+      const targetId = values.patient_id || patient_id.value;
+      if (targetId) {
+        return patients.value.find((p) => String(p.id) === String(targetId)) || null;
+      }
+      return null;
+    });
+
+    const currentPatientName = computed(() => {
+      return (
+        currentPatient.value?.nombre_completo ||
+        appointment.value?.pacientes?.[0]?.nombre_completo ||
+        ''
+      );
+    });
+
+    const currentPatientCurp = computed(() => {
+      return currentPatient.value?.curp || appointment.value?.pacientes?.[0]?.curp || '';
+    });
+
     const selectedPatientName = computed(() => {
+      if (currentPatientName.value) return currentPatientName.value;
       const targetId =
         props.patientId !== '0' ? props.patientId : pendingAppointmentValues.value?.patient_id;
       if (!targetId) return '';
@@ -207,7 +244,14 @@ export default defineComponent({
 
     const onSubmit = handleSubmit(
       (formValues) => {
-        const targetPatientId = props.patientId !== '0' ? props.patientId : formValues.patient_id;
+        const targetPatientId =
+          props.patientId !== '0'
+            ? props.patientId
+            : formValues.patient_id ||
+              (appointment.value?.pacientes?.[0]?.id
+                ? String(appointment.value.pacientes[0].id)
+                : values.patient_id);
+
         pendingAppointmentValues.value = {
           ...formValues,
           id: props.appointmentId !== 'create' ? props.appointmentId : undefined,
@@ -347,9 +391,11 @@ export default defineComponent({
             patient_id:
               props.patientId !== '0'
                 ? props.patientId
-                : newAppointment.patient_id
-                  ? String(newAppointment.patient_id)
-                  : '',
+                : newAppointment.pacientes?.[0]?.id
+                  ? String(newAppointment.pacientes[0].id)
+                  : newAppointment.patient_id
+                    ? String(newAppointment.patient_id)
+                    : '',
           },
         });
       },
@@ -385,6 +431,9 @@ export default defineComponent({
       patients,
       patientOptions,
       selectedPatientName,
+      appointmentFolio,
+      currentPatientName,
+      currentPatientCurp,
 
       values,
       errors,

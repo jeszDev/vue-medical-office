@@ -21,26 +21,41 @@
       </div>
     </template>
     <template #main>
-      <!-- Leyenda de estatus visual -->
-      <div class="flex flex-wrap items-center gap-3 text-xs mb-4 text-foreground/80">
-        <span class="font-semibold text-foreground/60 uppercase tracking-wider text-[11px]">
-          Estatus:
-        </span>
-        <span
-          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-400/15 text-yellow-600 dark:text-yellow-400 font-medium border border-yellow-400/30"
+      <!-- Leyenda de estatus visual, resumen y filtro -->
+      <div class="flex flex-wrap items-center justify-between gap-3 text-xs mb-4 text-foreground/80">
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+          <span class="font-semibold text-foreground/60 uppercase tracking-wider text-[11px]">
+            Estatus:
+          </span>
+          <span
+            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-400/15 text-yellow-600 dark:text-yellow-400 font-medium border border-yellow-400/30"
+          >
+            <span class="size-2 rounded-full bg-yellow-400"></span> Pendiente ({{ appointmentsSummary.pendientes }})
+          </span>
+          <span
+            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/15 text-green-700 dark:text-green-400 font-medium border border-green-500/30"
+          >
+            <span class="size-2 rounded-full bg-green-500"></span> Confirmada / Atendida ({{ appointmentsSummary.confirmadas }})
+          </span>
+          <span
+            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-400/15 text-slate-600 dark:text-slate-400 font-medium border border-slate-400/30 transition-opacity"
+            :class="{ 'opacity-40 line-through': hideCancelled }"
+          >
+            <span class="size-2 rounded-full bg-slate-400"></span> Cancelada ({{ appointmentsSummary.canceladas }})
+          </span>
+        </div>
+
+        <!-- Filtro interactivo para ocultar citas canceladas -->
+        <label
+          class="flex items-center gap-2 cursor-pointer select-none text-xs text-foreground/75 hover:text-foreground transition-colors ml-auto"
         >
-          <span class="size-2 rounded-full bg-yellow-400"></span> Pendiente
-        </span>
-        <span
-          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/15 text-green-700 dark:text-green-400 font-medium border border-green-500/30"
-        >
-          <span class="size-2 rounded-full bg-green-500"></span> Confirmada / Atendida
-        </span>
-        <span
-          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-400/15 text-slate-600 dark:text-slate-400 font-medium border border-slate-400/30"
-        >
-          <span class="size-2 rounded-full bg-slate-400"></span> Cancelada
-        </span>
+          <input
+            type="checkbox"
+            v-model="hideCancelled"
+            class="rounded border-foreground/20 text-primary focus:ring-primary/20 size-4 cursor-pointer"
+          />
+          <span class="font-medium">Ocultar canceladas</span>
+        </label>
       </div>
 
       <!-- Calendario con soporte de cell-click, today-button y slot enriquecido -->
@@ -50,15 +65,19 @@
       >
         <vue-cal
           locale="es"
-          active-view="week"
+          v-model:view="currentView"
+          v-model:view-date="currentViewDate"
+          v-model:selected-date="currentSelectedDate"
           :time-from="8 * 60"
           :time-step="30"
           :time-to="20 * 60"
           :time-cell-height="54"
           :time="true"
           :today-button="true"
+          :watch-real-time="true"
           :views="['day', 'week', 'month']"
           :events="calendarEvents"
+          :events-on-month-view="true"
           :overlaps-per-time-step="true"
           @ready="onViewChange($event)"
           @view-change="onViewChange($event)"
@@ -165,6 +184,11 @@ interface VueCalCellClickPayload {
 const router = useRouter();
 const queryClient = useQueryClient();
 
+const currentView = ref<'day' | 'week' | 'month'>('week');
+const currentViewDate = ref<Date>(new Date());
+const currentSelectedDate = ref<Date>(new Date());
+const hideCancelled = ref<boolean>(false);
+
 const dateRange = ref<{ from: string | null; to: string | null }>({
   from: null,
   to: null,
@@ -235,7 +259,15 @@ const onCellClick = (cellData: unknown) => {
 
   const startDate = new Date(rawDate);
 
-  // Si la hora es 00:00 (por ejemplo al hacer clic desde la vista mensual), asignar hora de apertura por defecto (09:00)
+  // 🎯 Si estamos en la vista mensual, cambiar a la vista de día para esa fecha (drill-down)
+  if (currentView.value === 'month') {
+    currentViewDate.value = startDate;
+    currentSelectedDate.value = startDate;
+    currentView.value = 'day';
+    return;
+  }
+
+  // Si la hora es 00:00 (por ejemplo al hacer clic desde encabezado de día), asignar hora de apertura por defecto (09:00)
   if (startDate.getHours() === 0 && startDate.getMinutes() === 0) {
     startDate.setHours(9, 0, 0, 0);
   } else {
@@ -287,6 +319,13 @@ const onAppointmentUpdated = (updatedAppointment: Appointment) => {
 
 const onViewChange = (event: CalViewEvent) => {
   if (!event) return;
+
+  const viewObj = event as { id?: string; view?: { id?: string } };
+  if (viewObj.id && ['day', 'week', 'month'].includes(viewObj.id)) {
+    currentView.value = viewObj.id as 'day' | 'week' | 'month';
+  } else if (viewObj.view?.id && ['day', 'week', 'month'].includes(viewObj.view.id)) {
+    currentView.value = viewObj.view.id as 'day' | 'week' | 'month';
+  }
 
   let startRaw: string | Date | null = null;
   let endRaw: string | Date | null = null;
@@ -368,7 +407,41 @@ const { data: events, isFetching } = useQuery({
       .filter((e): e is NonNullable<typeof e> => !!e),
 });
 
-const calendarEvents = computed(() => (events.value ?? []).map((e) => ({ ...e })));
+const appointmentsSummary = computed(() => {
+  const all = events.value ?? [];
+  let confirmadas = 0;
+  let pendientes = 0;
+  let canceladas = 0;
+
+  for (const item of all) {
+    const status = getAppointmentStatusName(item.appointment?.estatus).toLowerCase();
+    if (status === 'confirmada' || status === 'atendida') {
+      confirmadas++;
+    } else if (status === 'pendiente') {
+      pendientes++;
+    } else if (status === 'cancelada') {
+      canceladas++;
+    }
+  }
+
+  return {
+    total: all.length,
+    confirmadas,
+    pendientes,
+    canceladas,
+  };
+});
+
+const calendarEvents = computed(() => {
+  let list = events.value ?? [];
+  if (hideCancelled.value) {
+    list = list.filter((e) => {
+      const status = getAppointmentStatusName(e.appointment?.estatus).toLowerCase();
+      return status !== 'cancelada';
+    });
+  }
+  return list.map((e) => ({ ...e }));
+});
 
 const onEventClick = ({ event }: CalendarEvent) => {
   window.tailwind.Modal.getOrCreateInstance(
@@ -391,6 +464,23 @@ const goToConsultation = (appointmentId: number | string) => {
 </script>
 
 <style scoped>
+:deep(.vuecal__now-line) {
+  border-color: #ef4444;
+  border-width: 2px;
+  z-index: 10;
+}
+
+:deep(.vuecal__now-line::before) {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  background-color: #ef4444;
+  border-radius: 9999px;
+}
+
 :deep(.vuecal__event.event-pendiente) {
   background-color: #facc15;
   border: none;

@@ -1,9 +1,7 @@
 <template>
   <FullScreenLoader v-if="!patient" />
-  <TemplateView v-else title="INFORMACIÓN">
-    <template #main>
-      <div v-if="patient">
-        <div class="flex flex-col lg:flex-row">
+  <div v-else>
+    <div class="flex flex-col lg:flex-row">
           <!-- Nombre -->
           <!-- Columna izquierda: Avatar e Identificación del Paciente -->
           <div
@@ -153,8 +151,6 @@
           <PatientCreate :patient-id="patient.id" />
         </DialogBasic>
       </div>
-    </template>
-  </TemplateView>
 </template>
 
 <script setup lang="ts">
@@ -176,7 +172,6 @@ import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
 // import { useQuery } from '@tanstack/vue-query';
 // import { getPatientByIdAction } from '../actions/get-patient-by-id.action';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
-import TemplateView from '@/modules/template/components/TemplateView.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
 
 interface Props {

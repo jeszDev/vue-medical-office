@@ -1,8 +1,7 @@
 <template>
   <FullScreenLoader v-if="isLoading && !responseAppointments" />
-  <TemplateView v-else :title="`AGENDA DE CITAS`">
-    <template #main>
-      <div class="grid grid-cols-12 gap-6">
+  <div v-else>
+    <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
           <ButtonBase
             text="Nueva cita"
@@ -216,15 +215,13 @@
         :appointmentId="selectedAppointmentId"
         @cancelled="handleCancelled"
       />
-    </template>
-  </TemplateView>
+  </div>
 </template>
 
 <script setup lang="ts">
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import PlusIcon from '@/icons/PlusIcon.vue';
 import SearchIcon from '@/icons/SearchIcon.vue';
-import TemplateView from '@/modules/template/components/TemplateView.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
 import { keepPreviousData, useQuery } from '@tanstack/vue-query';

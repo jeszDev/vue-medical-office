@@ -70,39 +70,21 @@
                   Historial clínico
                 </button>
               </li>
+              <li role="presentation" class="z-20 w-full">
+                <button
+                  class="[&.active]:bg-background inline-flex w-full cursor-pointer items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 font-medium [&.active]:shadow gap-1.5"
+                  :class="{ active: activeTab === 'documents' }"
+                  type="button"
+                  role="tab"
+                  :aria-selected="activeTab === 'documents'"
+                  @click="changeTab('documents')"
+                >
+                  <FolderArchive class="size-4" />
+                  Estudios y Documentos
+                </button>
+              </li>
             </ul>
             <div class="tab-content mt-3.5 rounded-xl border p-5">
-              <!-- <div
-                class="tab-pane hidden [&.active]:block"
-                :class="{ active: activeTab === 'information' }"
-                role="tabpanel"
-              >
-                <PatientShowInformation
-                  v-if="activeTab === 'information'"
-                  :patient-id="patientId"
-                />
-              </div>
-              <div
-                class="tab-pane hidden [&.active]:block"
-                :class="{ active: activeTab === 'appointments' }"
-                role="tabpanel"
-              >
-                <PatientAppointmentsIndex
-                  v-else-if="activeTab === 'appointments'"
-                  :patient-id="patientId"
-                />
-              </div>
-              <div
-                class="tab-pane hidden [&.active]:block"
-                :class="{ active: activeTab === 'consultations' }"
-                role="tabpanel"
-              >
-                <PatientConsultationsIndex
-                  v-else-if="activeTab === 'consultations'"
-                  :patient-id="patientId"
-                />
-              </div> -->
-
               <KeepAlive>
                 <component :is="currentTabComponent" :patient="patient" :patient-id="patientId" />
               </KeepAlive>
@@ -123,6 +105,7 @@ import { getPatientByIdAction } from '../actions/get-patient-by-id.action';
 import CalendarIcon from '@/icons/CalendarIcon.vue';
 import FileTextIcon from '@/icons/FileTextIcon.vue';
 import UserIcon from '@/icons/UserIcon.vue';
+import { FolderArchive } from 'lucide-vue-next';
 
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
@@ -130,16 +113,15 @@ import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 import PatientAppointmentsIndex from '@/modules/patient/views/PatientAppointmentsIndex.vue';
 import PatientShowInformation from '@/modules/patient/views/PatientShowInformation.vue';
 import PatientConsultationsIndex from '@/modules/patient/views/PatientConsultationsIndex.vue';
+import PatientDocumentsTab from '@/modules/clinical-document/components/PatientDocumentsTab.vue';
 
 interface Props {
   patientId: string;
 }
 
-type PatientTab = 'information' | 'appointments' | 'consultations';
+type PatientTab = 'information' | 'appointments' | 'consultations' | 'documents';
 
 const props = defineProps<Props>();
-
-// const activeTab = ref<PatientTab>('information');
 
 const route = useRoute();
 const router = useRouter();
@@ -157,6 +139,8 @@ const currentTabComponent = computed(() => {
       return PatientAppointmentsIndex;
     case 'consultations':
       return PatientConsultationsIndex;
+    case 'documents':
+      return PatientDocumentsTab;
     default:
       return PatientShowInformation;
   }

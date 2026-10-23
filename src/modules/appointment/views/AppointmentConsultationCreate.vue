@@ -455,6 +455,56 @@
               </div>
             </div>
 
+            <!-- 7. Estudios y Documentos Clínicos Adjuntos -->
+            <div
+              class="box p-5 sm:p-6 rounded-2xl border border-foreground/10 bg-background shadow-[0px_3px_5px_#0000000b] space-y-5"
+            >
+              <div class="flex items-center justify-between pb-3 border-b border-foreground/10">
+                <div>
+                  <h3 class="text-base font-bold text-foreground flex items-center gap-2">
+                    <FolderArchive class="size-5 text-primary" />
+                    7. Estudios y Documentos Clínicos Adjuntos
+                  </h3>
+                  <p class="text-xs text-muted-foreground mt-0.5">
+                    Anexar radiografías, ultrasonidos, análisis de laboratorio o fotografías clínicas
+                  </p>
+                </div>
+                <PillBadge
+                  size="sm"
+                  color="secondary"
+                  :label="`${(existingDocuments?.length || 0) + queuedDocuments.length} archivos`"
+                />
+              </div>
+
+              <!-- Si estamos en modo edición y ya existen documentos guardados -->
+              <div v-if="isEditMode && existingDocuments && existingDocuments.length > 0" class="space-y-3">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-foreground/70">
+                  Estudios guardados previamente ({{ existingDocuments.length }})
+                </h4>
+                <DocumentList
+                  :documents="existingDocuments"
+                  :consultation-id="currentConsultationId"
+                  :show-filters="false"
+                  @document-deleted="refetchExistingDocuments"
+                  @document-restored="refetchExistingDocuments"
+                />
+              </div>
+
+              <!-- Zona Dropzone para agregar a la cola -->
+              <div>
+                <DocumentDropzone
+                  :disabled="isPending"
+                  @files-selected="onFilesSelected"
+                />
+              </div>
+
+              <!-- Cola de archivos pendientes -->
+              <DocumentQueueList
+                :queue="queuedDocuments"
+                @remove="onRemoveFromQueue"
+              />
+            </div>
+
             <!-- BOTONES DE ACCIÓN INFERIORES -->
             <div
               class="box p-4 sm:p-5 rounded-2xl border border-foreground/10 bg-background shadow-[0px_3px_5px_#0000000b] flex flex-col sm:flex-row items-center justify-between gap-4"

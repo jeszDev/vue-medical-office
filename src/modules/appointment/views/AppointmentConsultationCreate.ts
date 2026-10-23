@@ -23,6 +23,16 @@ import ObservationsIcon from '@/icons/ObservationsIcon.vue';
 import PreviewIcon from '@/icons/PreviewIcon.vue';
 import PhoneIcon from '@/icons/PhoneIcon.vue';
 import EmailIcon from '@/icons/EmailIcon.vue';
+import { FolderArchive } from 'lucide-vue-next';
+
+import DocumentDropzone from '@/modules/clinical-document/components/DocumentDropzone.vue';
+import DocumentQueueList from '@/modules/clinical-document/components/DocumentQueueList.vue';
+import DocumentList from '@/modules/clinical-document/components/DocumentList.vue';
+import {
+  uploadConsultationDocumentAction,
+  getConsultationDocumentsAction,
+} from '@/modules/clinical-document/actions';
+import type { QueuedDocument } from '@/modules/clinical-document/interfaces/clinical-document.interface';
 
 import {
   createUpdateConsultationAction,
@@ -122,6 +132,10 @@ export default defineComponent({
     PreviewIcon,
     PhoneIcon,
     EmailIcon,
+    FolderArchive,
+    DocumentDropzone,
+    DocumentQueueList,
+    DocumentList,
   },
   props: {
     appointmentId: {
@@ -274,10 +288,78 @@ export default defineComponent({
       return false;
     });
 
+    // 8.5. Gestión de documentos y estudios clínicos anexados
+    const queuedDocuments = ref<QueuedDocument[]>([]);
+
+    const onFilesSelected = (files: File[]) => {
+      for (const file of files) {
+        const rawName = file.name.replace(/\.[^/.]+$/, '');
+        const formattedTitle = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+        queuedDocuments.value.push({
+          id: `${Date.now()}-${Math.random()}`,
+          file,
+          tipo_documento: 'laboratorio',
+          titulo: formattedTitle,
+          descripcion: '',
+          previewUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
+          status: 'pending',
+        });
+      }
+    };
+
+    const onRemoveFromQueue = (index: number) => {
+      const item = queuedDocuments.value[index];
+      if (item?.previewUrl) {
+        URL.revokeObjectURL(item.previewUrl);
+      }
+      queuedDocuments.value.splice(index, 1);
+    };
+
+    // Documentos ya guardados en caso de edición
+    const { data: existingDocuments, refetch: refetchExistingDocuments } = useQuery({
+      queryKey: ['consultation-documents', computed(() => currentConsultationId.value)],
+      queryFn: () => {
+        if (!currentConsultationId.value) return [];
+        return getConsultationDocumentsAction(currentConsultationId.value);
+      },
+      enabled: computed(() => Boolean(currentConsultationId.value)),
+    });
+
     // 9. Mutación para guardar o actualizar consulta
     const { mutateAsync, isPending } = useMutation({
       mutationFn: createUpdateConsultationAction,
-      onSuccess: () => {
+      onSuccess: async (savedConsultation) => {
+        const targetConsultationId = savedConsultation?.id || currentConsultationId.value;
+
+        // Subida en cadena si hay documentos en cola
+        if (targetConsultationId && queuedDocuments.value.length > 0) {
+          toast.info('Subiendo estudios clínicos anexados...');
+          let uploadedCount = 0;
+          for (const item of queuedDocuments.value) {
+            item.status = 'uploading';
+            try {
+              await uploadConsultationDocumentAction(targetConsultationId, {
+                archivo: item.file,
+                tipo_documento: item.tipo_documento,
+                titulo: item.titulo,
+                descripcion: item.descripcion || undefined,
+              });
+              item.status = 'success';
+              uploadedCount++;
+            } catch (err) {
+              console.error('Error al subir archivo en cola:', err);
+              item.status = 'error';
+              item.errorMessage = 'Fallo al subir';
+            }
+          }
+
+          if (uploadedCount > 0) {
+            toast.success(
+              `${uploadedCount} ${uploadedCount === 1 ? 'estudio clínico adjuntado' : 'estudios clínicos adjuntados'} a la consulta.`,
+            );
+          }
+        }
+
         toast.success(
           isEditMode.value
             ? 'Consulta médica actualizada correctamente'
@@ -286,19 +368,25 @@ export default defineComponent({
 
         queryClient.invalidateQueries({ queryKey: ['appointments'] });
         queryClient.invalidateQueries({ queryKey: ['patient-consultations'] });
+        if (targetConsultationId) {
+          queryClient.invalidateQueries({
+            queryKey: ['consultation-documents', String(targetConsultationId)],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ['consultation', String(targetConsultationId)],
+          });
+        }
         if (effectiveAppointmentId.value) {
           queryClient.invalidateQueries({
             queryKey: ['appointment', effectiveAppointmentId.value],
           });
         }
-        if (currentConsultationId.value) {
-          queryClient.invalidateQueries({
-            queryKey: ['consultation', String(currentConsultationId.value)],
-          });
-        }
 
         if (effectivePatientId.value) {
           queryClient.invalidateQueries({ queryKey: ['patient', String(effectivePatientId.value)] });
+          queryClient.invalidateQueries({
+            queryKey: ['patient-documents', String(effectivePatientId.value)],
+          });
           router.push({
             name: 'patients.show',
             params: { patientId: String(effectivePatientId.value) },
@@ -480,6 +568,13 @@ export default defineComponent({
       selectedConsultation,
       viewConsultationDetail,
       formatConsultationDate,
+
+      queuedDocuments,
+      onFilesSelected,
+      onRemoveFromQueue,
+      existingDocuments,
+      refetchExistingDocuments,
+      currentConsultationId,
     };
   },
 });

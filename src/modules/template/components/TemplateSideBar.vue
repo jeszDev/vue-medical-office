@@ -97,6 +97,7 @@ import {
   UserPlus as UserPlusIcon,
   Calendar as CalendarIcon,
   CalendarPlus as CalendarPlusIcon,
+  CalendarClock as CalendarClockIcon,
   Shield as ShieldIcon,
   User as UserIcon,
   LogOut as LogOutIcon,
@@ -120,12 +121,15 @@ const getIconComponent = (iconName?: string) => {
       return CalendarIcon;
     case 'calendar-plus':
       return CalendarPlusIcon;
+    case 'calendar-clock':
+      return CalendarClockIcon;
     case 'shield':
       return ShieldIcon;
     default:
       return DashboardIcon;
   }
 };
+
 </script>
 
 <style scoped></style>

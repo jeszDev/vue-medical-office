@@ -48,6 +48,13 @@ export function useNavigationMenu() {
       roles: ['admin', 'doctor', 'recepcionista', 'paciente', 'médico', 'medico'],
     },
     {
+      title: 'Solicitudes de Citas',
+      routeName: 'appointments.requests',
+      iconName: 'calendar-clock',
+      group: 'CITAS Y AGENDA',
+      roles: ['admin', 'administrador', 'recepcionista', 'doctor', 'medico', 'médico'],
+    },
+    {
       title: 'Gestión de Roles',
       routeName: 'patients.index', // placeholder route
       iconName: 'shield',

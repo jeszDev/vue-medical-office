@@ -274,6 +274,44 @@
                 {{ consultation.observaciones || consultation.notas }}
               </p>
             </div>
+
+            <!-- Estudios y Documentos Clínicos Adjuntos -->
+            <div
+              v-if="consultation?.id"
+              class="box p-5 rounded-xl border border-foreground/10 bg-background shadow-xs space-y-3"
+            >
+              <div class="flex items-center justify-between pb-2 border-b border-foreground/10">
+                <div
+                  class="text-xs font-bold uppercase tracking-wider text-foreground/70 flex items-center gap-1.5"
+                >
+                  <FolderArchive class="size-4 text-primary" />
+                  Estudios y Documentos Adjuntos ({{ consultationDocuments?.length || 0 }})
+                </div>
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline cursor-pointer"
+                  @click="isUploadModalOpen = true"
+                >
+                  <PlusIcon class="size-3.5" />
+                  Anexar Estudio
+                </button>
+              </div>
+
+              <div v-if="isLoadingDocuments" class="py-6 flex justify-center">
+                <div
+                  class="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent"
+                ></div>
+              </div>
+
+              <DocumentList
+                v-else
+                :documents="consultationDocuments || []"
+                :consultation-id="consultation.id"
+                :show-filters="false"
+                @document-deleted="refetchDocuments"
+                @document-restored="refetchDocuments"
+              />
+            </div>
           </div>
 
           <!-- Footer -->
@@ -302,17 +340,29 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal para Anexar Estudio Rápido -->
+    <DocumentUploadModal
+      v-if="consultation?.id"
+      v-model="isUploadModalOpen"
+      :consultation-id="consultation.id"
+      @document-uploaded="refetchDocuments"
+    />
   </Teleport>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import type { Consultation } from '../interfaces/consultation.interface';
 import {
   getAppointmentStatusColor,
   getAppointmentStatusName,
 } from '@/modules/appointment/helpers/get-appointment-status-color.mapper';
+import { getConsultationDocumentsAction } from '@/modules/clinical-document/actions/get-consultation-documents.action';
+import DocumentList from '@/modules/clinical-document/components/DocumentList.vue';
+import DocumentUploadModal from '@/modules/clinical-document/components/DocumentUploadModal.vue';
 import CloseIcon from '@/icons/CloseIcon.vue';
 import StethoscopeIcon from '@/icons/StethoscopeIcon.vue';
 import FileTextIcon from '@/icons/FileTextIcon.vue';
@@ -321,6 +371,8 @@ import UserIcon from '@/icons/UserIcon.vue';
 import ClipboardListIcon from '@/icons/ClipboardListIcon.vue';
 import ObservationsIcon from '@/icons/ObservationsIcon.vue';
 import EditIcon from '@/icons/EditIcon.vue';
+import PlusIcon from '@/icons/PlusIcon.vue';
+import { FolderArchive } from 'lucide-vue-next';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 
@@ -337,6 +389,26 @@ const emit = defineEmits<{
 }>();
 
 const router = useRouter();
+const queryClient = useQueryClient();
+
+const isUploadModalOpen = ref(false);
+
+const { data: consultationDocuments, isLoading: isLoadingDocuments } = useQuery({
+  queryKey: ['consultation-documents', computed(() => props.consultation?.id)],
+  queryFn: () => {
+    if (!props.consultation?.id) return [];
+    return getConsultationDocumentsAction(props.consultation.id);
+  },
+  enabled: computed(() => Boolean(props.modelValue && props.consultation?.id)),
+});
+
+const refetchDocuments = () => {
+  if (props.consultation?.id) {
+    queryClient.invalidateQueries({
+      queryKey: ['consultation-documents', props.consultation.id],
+    });
+  }
+};
 
 const close = () => {
   emit('update:modelValue', false);

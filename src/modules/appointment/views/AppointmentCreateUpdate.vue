@@ -7,7 +7,13 @@
     >
       <div class="flex items-center gap-2.5">
         <h2 class="text-base sm:text-lg font-semibold text-foreground">
-          {{ action === 'create' ? 'Agendar nueva cita' : 'Editar cita' }}
+          {{
+            action === 'create'
+              ? 'Agendar nueva cita'
+              : !appointment?.fecha_hora_inicio
+                ? 'Asignar horario y confirmar cita'
+                : 'Editar cita'
+          }}
         </h2>
         <span
           v-if="action === 'edit' && appointmentFolio"
@@ -16,7 +22,35 @@
           Folio: {{ appointmentFolio }}
         </span>
       </div>
+      <PillBadge
+        v-if="appointment && !appointment.fecha_hora_inicio"
+        size="sm"
+        color="warning"
+        label="Solicitud pendiente de asignación"
+      />
     </div>
+
+    <!-- Banner informativo de solicitud del paciente -->
+    <div
+      v-if="appointment?.fecha_preferida || appointment?.turno_preferido"
+      class="mt-3 p-3 rounded-xl bg-primary/10 border border-primary/20 text-foreground flex flex-col sm:flex-row sm:items-center justify-between gap-2.5"
+    >
+      <div class="flex items-center gap-2 text-xs sm:text-sm">
+        <span class="font-semibold text-primary">Fecha preferida:</span>
+        <span class="font-medium text-foreground">
+          {{ appointment.fecha_preferida || 'A convenir' }}
+        </span>
+      </div>
+      <div v-if="appointment?.turno_preferido" class="flex items-center gap-2 shrink-0">
+        <span class="text-xs text-foreground/70">Turno preferido:</span>
+        <PillBadge
+          size="sm"
+          :color="getShiftBadgeColor(appointment.turno_preferido)"
+          :label="getShiftBadgeLabel(appointment.turno_preferido)"
+        />
+      </div>
+    </div>
+
 
     <!-- Formulario con espaciado optimizado -->
     <div :class="['mt-4', !isInsideModal ? 'px-5 sm:px-20' : '']">

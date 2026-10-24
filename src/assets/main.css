@@ -7,7 +7,7 @@
 @import './css/app.css';
 
 .Vue-Toastification__container {
-  z-index: 99999 !important;
+  z-index: 999999 !important;
 }
 
 /* Estilo del Nombre de la Marca */

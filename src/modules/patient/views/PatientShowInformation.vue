@@ -148,7 +148,7 @@
         </div>
 
         <DialogBasic id="modal-patient-create-or-edit" size="3xl">
-          <PatientCreate :patient-id="patient.id" />
+          <PatientCreate :patient-id="String(patient.id)" :is-inside-modal="true" />
         </DialogBasic>
       </div>
 </template>

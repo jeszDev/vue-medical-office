@@ -17,6 +17,13 @@ import { createUpdateAppointmentAction, getAppointmentByIdAction } from '../acti
 import { getAllPatientsAction } from '@/modules/patient/actions';
 import { useModalFormReset } from '@/modules/common/composables/useModalFormReset';
 
+import PillBadge from '@/modules/common/components/PillBadge.vue';
+import {
+  getShiftLabel,
+  getShiftBadgeLabel,
+  getShiftBadgeColor,
+} from '../helpers/appointment-shift.mapper';
+
 interface AppointmentFormValues {
   id?: string;
   patient_id?: string;
@@ -39,8 +46,10 @@ export default defineComponent({
     ModalQuestion,
     SelectSearchable,
     UserIcon,
+    PillBadge,
   },
   props: {
+
     appointmentId: {
       type: String,
       required: true,
@@ -191,6 +200,7 @@ export default defineComponent({
 
         queryClient.invalidateQueries({ queryKey: ['appointments'] });
         queryClient.invalidateQueries({ queryKey: ['appointment'] });
+        queryClient.invalidateQueries({ queryKey: ['appointment-requests'] });
 
         if (props.appointmentId === 'create') {
           resetForm({
@@ -380,22 +390,46 @@ export default defineComponent({
       (newAppointment) => {
         if (!newAppointment || props.appointmentId === 'create') return;
 
+        let startValue = formatDateTimeForInput(newAppointment.fecha_hora_inicio);
+        let endValue = formatDateTimeForInput(newAppointment.fecha_hora_termino);
+
+        // Si es una solicitud de cita sin fecha/hora asignada pero tiene fecha_preferida,
+        // sugerir un horario inicial según el turno preferido
+        if (!startValue && newAppointment.fecha_preferida) {
+          const normShift = (newAppointment.turno_preferido || '').toLowerCase();
+          let defaultHour = '09:00';
+          let defaultEndHour = '09:30';
+          if (normShift === 'vespertino') {
+            defaultHour = '15:00';
+            defaultEndHour = '15:30';
+          } else if (normShift === 'indistinto') {
+            defaultHour = '10:00';
+            defaultEndHour = '10:30';
+          }
+          startValue = `${newAppointment.fecha_preferida}T${defaultHour}`;
+          endValue = `${newAppointment.fecha_preferida}T${defaultEndHour}`;
+        }
+
+        const resolvedPatientId =
+          props.patientId !== '0'
+            ? props.patientId
+            : newAppointment.pacientes?.[0]?.id
+              ? String(newAppointment.pacientes[0].id)
+              : newAppointment.paciente?.id
+                ? String(newAppointment.paciente.id)
+                : newAppointment.patient_id
+                  ? String(newAppointment.patient_id)
+                  : '';
+
         resetForm({
           values: {
             id: String(newAppointment.id),
             motivo: newAppointment.motivo || '',
-            fecha_hora_inicio: formatDateTimeForInput(newAppointment.fecha_hora_inicio),
-            fecha_hora_termino: formatDateTimeForInput(newAppointment.fecha_hora_termino),
+            fecha_hora_inicio: startValue,
+            fecha_hora_termino: endValue,
             observaciones_cita:
               newAppointment.observaciones_cita || newAppointment.observaciones || '',
-            patient_id:
-              props.patientId !== '0'
-                ? props.patientId
-                : newAppointment.pacientes?.[0]?.id
-                  ? String(newAppointment.pacientes[0].id)
-                  : newAppointment.patient_id
-                    ? String(newAppointment.patient_id)
-                    : '',
+            patient_id: resolvedPatientId,
           },
         });
       },
@@ -434,6 +468,11 @@ export default defineComponent({
       appointmentFolio,
       currentPatientName,
       currentPatientCurp,
+
+      appointment,
+      getShiftLabel,
+      getShiftBadgeLabel,
+      getShiftBadgeColor,
 
       values,
       errors,

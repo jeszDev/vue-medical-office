@@ -37,10 +37,10 @@ export interface AppointmentConsultation {
 export interface Appointment {
   id: number;
   folio?: string;
-  fecha_hora_inicio: string;
-  fecha_hora_termino: string;
+  fecha_hora_inicio: string | null;
+  fecha_hora_termino: string | null;
   fecha_preferida?: string | null;
-  turno_preferido?: string | null;
+  turno_preferido?: 'matutino' | 'vespertino' | 'indistinto' | null;
   motivo: string;
   observaciones?: string | null;
   observaciones_cita?: string | null;
@@ -52,12 +52,15 @@ export interface Appointment {
   consulta?: AppointmentConsultation | null;
   pacientes?: Patient[];
 
-  fecha_inicio: string;
-  fecha_termino: string;
-  hora_inicio: string;
-  hora_termino: string;
+  fecha_inicio?: string;
+  fecha_termino?: string;
+  hora_inicio?: string;
+  hora_termino?: string;
 
   patient_id?: string | number;
+  paciente?: Patient;
+  created_at?: string;
+  creado_el?: string;
 }
 
 export interface AppointmentListResponse {

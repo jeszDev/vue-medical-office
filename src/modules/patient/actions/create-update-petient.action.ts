@@ -1,5 +1,6 @@
 import { medicalOfficeApi } from '@/api/medicalOfficeApi';
 import type { Patient } from '../interfaces/patient.interface';
+import { getApiErrorMessage } from '@/helpers/api-error.helper';
 
 export const createUpdatePatientAction = async (patient: Partial<Patient>) => {
   try {
@@ -12,7 +13,7 @@ export const createUpdatePatientAction = async (patient: Partial<Patient>) => {
     return data;
   } catch (error) {
     console.error('Error al crear o actualizar paciente:', error);
-    throw error;
+    throw new Error(getApiErrorMessage(error, 'Error al registrar al paciente'));
   }
 };
 
@@ -30,6 +31,6 @@ const updatePatient = async (patient: Partial<Patient>) => {
     return data;
   } catch (error) {
     console.error('Error al actualizar paciente:', error);
-    throw new Error('Error al actualizar los datos del paciente');
+    throw new Error(getApiErrorMessage(error, 'Error al actualizar los datos del paciente'));
   }
 };

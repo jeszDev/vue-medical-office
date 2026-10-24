@@ -131,7 +131,10 @@ export default defineComponent({
 
     const onSubmit = handleSubmit(
       (formValues) => {
-        pendingPatientValues.value = formValues as PatientFormValues;
+        pendingPatientValues.value = {
+          ...formValues,
+          id: props.patientId !== 'create' ? props.patientId : undefined,
+        } as PatientFormValues;
         showConfirmModal.value = true;
 
         if (props.isInsideModal) {

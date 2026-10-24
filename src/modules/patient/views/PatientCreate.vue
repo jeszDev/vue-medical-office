@@ -47,7 +47,7 @@
               placeholder="Ejemplo: Yepez"
             />
           </div>
-          <div class="flex flex-col gap-2 col-span-12 sm:col-span-4">
+          <div class="flex flex-col gap-2 col-span-12 sm:col-span-6">
             <InputLabel label="CURP" :isRequired="false" />
             <InputBase
               type="text"
@@ -58,7 +58,7 @@
               placeholder="Ejemplo: GOHC820512HDFR0001"
             />
           </div>
-          <div class="flex flex-col gap-2 col-span-12 sm:col-span-4">
+          <div class="flex flex-col gap-2 col-span-12 sm:col-span-6">
             <InputLabel label="Fecha de nacimiento" :isRequired="false" />
             <InputBaseDate
               type="date"
@@ -68,7 +68,7 @@
               name="fecha_nacimiento"
             />
           </div>
-          <div class="flex flex-col gap-2 col-span-12 sm:col-span-4">
+          <div class="flex flex-col gap-2 col-span-12 sm:col-span-6">
             <InputLabel label="Teléfono" :isRequired="false" />
             <InputBase
               type="tel"

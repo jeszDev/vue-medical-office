@@ -3,10 +3,10 @@ import type { Appointment } from '../interfaces/appointment.interface';
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import { useToast } from 'vue-toastification';
 
-const toast = useToast();
-const authStore = useAuthStore();
-
 export const createUpdateAppointmentAction = async (appointment: Partial<Appointment>) => {
+  const toast = useToast();
+  const authStore = useAuthStore();
+
   try {
     if (appointment.id && appointment.id !== '') {
       return await updateappointment(appointment);

@@ -165,7 +165,7 @@ import {
 } from 'lucide-vue-next';
 
 import { useNavigationMenu } from '../composables/useNavigationMenu';
-import { getAppointmentRequestsAction } from '@/modules/appointment/actions';
+import { getAppointmentRequestsAction } from '@/modules/appointment/actions/get-appointment-requests.action';
 import {
   normalizeShift,
   getShiftBadgeLabel,

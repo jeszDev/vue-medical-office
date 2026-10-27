@@ -5,7 +5,7 @@ import { loginAction } from '../actions/login.action';
 import { useLocalStorage } from '@vueuse/core';
 import { checkAuthAction } from '../actions/check-auth.action';
 import { logoutAction } from '../actions/logout.action';
-import { useRouter } from 'vue-router';
+import router from '@/router';
 
 export const useAuthStore = defineStore('auth', () => {
   const authStatus = ref<AuthStatus>(AuthStatus.Checking);
@@ -36,11 +36,13 @@ export const useAuthStore = defineStore('auth', () => {
   };
 
   const logout = async () => {
-    const logoutResp = await logoutAction();
-
-    if (logoutResp.success) {
+    try {
+      await logoutAction();
+    } catch (error) {
+      console.error('Logout request failed:', error);
+    } finally {
       cleanStore();
-      useRouter().push({ name: 'login' });
+      await router.replace({ name: 'login' });
     }
   };
 
@@ -48,6 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
     authStatus.value = AuthStatus.Unauthenticated;
     user.value = undefined;
     token.value = '';
+    localStorage.removeItem('token');
     return false;
   };
 

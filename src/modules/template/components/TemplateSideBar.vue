@@ -41,7 +41,7 @@
         <div class="flex flex-col gap-0.5">
           <RouterLink
             :to="{ name: 'patients.index' }"
-            class="hover:bg-foreground/5 -mx-3 flex items-center gap-2.5 rounded-lg px-4 py-1.5 text-sm"
+            class="hover:bg-foreground/5 -mx-3 flex items-center gap-2.5 rounded-lg px-4 py-1.5 text-sm cursor-pointer"
           >
             <UserIcon class="size-4 text-current" />
             Mi Cuenta
@@ -51,7 +51,7 @@
         <div class="flex flex-col gap-0.5">
           <button
             @click.prevent="onLogout"
-            class="hover:bg-destructive/10 text-destructive -mx-3 flex items-center gap-2.5 rounded-lg px-4 py-1.5 text-sm w-full text-left transition-colors"
+            class="hover:bg-destructive/10 text-destructive -mx-3 flex items-center gap-2.5 rounded-lg px-4 py-1.5 text-sm w-full text-left transition-colors cursor-pointer"
           >
             <LogOutIcon class="size-4 text-destructive" />
             Cerrar Sesión
@@ -72,7 +72,7 @@
       </li>
       <li v-for="item in items" :key="item.routeName">
         <RouterLink
-          class="side-menu__link"
+          class="side-menu__link cursor-pointer"
           exact-active-class="side-menu__link--active"
           :to="{ name: item.routeName, params: item.params }"
         >
@@ -91,6 +91,7 @@
 import SimpleBar from 'simplebar-vue';
 import { useAuthStore } from '../../auth/stores/auth.store';
 import { useNavigationMenu } from '../composables/useNavigationMenu';
+import { useLogoutModal } from '../../auth/composables/useLogoutModal';
 import ArrowRightIcon from '@/icons/ArrowRightIcon.vue';
 import {
   Users as UsersIcon,
@@ -106,9 +107,10 @@ import {
 
 const authStore = useAuthStore();
 const { groupedMenuItems } = useNavigationMenu();
+const { open: openLogoutModal } = useLogoutModal();
 
-const onLogout = async () => {
-  await authStore.logout();
+const onLogout = () => {
+  openLogoutModal();
 };
 
 const getIconComponent = (iconName?: string) => {

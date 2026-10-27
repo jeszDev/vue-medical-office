@@ -11,6 +11,9 @@ import TemplateSideBar from './components/TemplateSideBar.vue';
 import { useAuthStore } from '../auth/stores/auth.store';
 import BurguerMenuIcon from '@/icons/BurguerMenuIcon.vue';
 import ArrowLeftIcon from '@/icons/ArrowLeftIcon.vue';
+import { LogOut as LogOutIcon } from 'lucide-vue-next';
+import { useLogoutModal } from '../auth/composables/useLogoutModal';
+import AuthLogoutModalQuestion from '../auth/components/AuthLogoutModalQuestion.vue';
 
 const {
   initMenu,
@@ -23,6 +26,7 @@ const {
 } = useMenuReactive();
 
 const authStore = useAuthStore();
+const { open: openLogoutModal } = useLogoutModal();
 
 onMounted(() => {
   // Page loader animation
@@ -298,10 +302,10 @@ onMounted(() => {
                     </div>
                   </div>
                 </div>
-                <div class="group/profile relative size-9 flex-none">
+                <div class="group/profile relative size-9 flex-none cursor-pointer">
                   <span
                     data-content=""
-                    class="tooltip border-(--color)/5 block relative flex-none overflow-hidden rounded-full border-3 ring-1 ring-(--color)/40 size-full [--color:var(--color-nav-foreground)]"
+                    class="tooltip border-(--color)/5 block relative flex-none overflow-hidden rounded-full border-3 ring-1 ring-(--color)/40 size-full [--color:var(--color-nav-foreground)] cursor-pointer"
                   >
                     <img
                       class="absolute top-0 size-full object-cover"
@@ -322,7 +326,7 @@ onMounted(() => {
                       <div class="bg-foreground/5 h-px"></div>
                       <div class="flex flex-col gap-0.5">
                         <a
-                          class="hover:bg-foreground/5 -mx-3 flex gap-2.5 rounded-lg px-4 py-1.5"
+                          class="hover:bg-foreground/5 -mx-3 flex gap-2.5 rounded-lg px-4 py-1.5 cursor-pointer"
                           href=""
                         >
                           <i
@@ -332,7 +336,7 @@ onMounted(() => {
                           Profile
                         </a>
                         <a
-                          class="hover:bg-foreground/5 -mx-3 flex gap-2.5 rounded-lg px-4 py-1.5"
+                          class="hover:bg-foreground/5 -mx-3 flex gap-2.5 rounded-lg px-4 py-1.5 cursor-pointer"
                           href=""
                         >
                           <i
@@ -342,7 +346,7 @@ onMounted(() => {
                           Add Account
                         </a>
                         <a
-                          class="hover:bg-foreground/5 -mx-3 flex gap-2.5 rounded-lg px-4 py-1.5"
+                          class="hover:bg-foreground/5 -mx-3 flex gap-2.5 rounded-lg px-4 py-1.5 cursor-pointer"
                           href=""
                         >
                           <i
@@ -352,7 +356,7 @@ onMounted(() => {
                           Reset Password
                         </a>
                         <a
-                          class="hover:bg-foreground/5 -mx-3 flex gap-2.5 rounded-lg px-4 py-1.5"
+                          class="hover:bg-foreground/5 -mx-3 flex gap-2.5 rounded-lg px-4 py-1.5 cursor-pointer"
                           href=""
                         >
                           <i
@@ -364,21 +368,14 @@ onMounted(() => {
                       </div>
                       <div class="bg-foreground/5 h-px"></div>
                       <div class="flex flex-col gap-0.5">
-                        <a
-                          class="hover:bg-foreground/5 -mx-3 flex gap-2.5 rounded-lg px-4 py-1.5"
-                          data-tw-toggle="modal"
-                          data-tw-target="#modal-logout"
-                          href="#"
+                        <button
+                          type="button"
+                          class="hover:bg-destructive/10 text-destructive -mx-3 flex items-center gap-2.5 rounded-lg px-4 py-1.5 text-sm w-full text-left transition-colors cursor-pointer"
+                          @click.prevent="openLogoutModal"
                         >
-                          <!-- <i
-                            data-lucide="power"
-                            class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25"
-                          ></i> -->
-                          <!-- <PowerIcon
-                            class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25"
-                          /> -->
-                          Logout
-                        </a>
+                          <LogOutIcon class="size-4 text-destructive" />
+                          Cerrar Sesión
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -634,6 +631,8 @@ onMounted(() => {
       </div>
     </div>
   </div>
+
+  <AuthLogoutModalQuestion />
 </template>
 
 <style scoped></style>

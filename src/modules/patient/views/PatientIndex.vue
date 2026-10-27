@@ -178,15 +178,6 @@
       </template>
     </template>
   </TemplateView>
-
-  <ModalQuestion
-    id="modal-logout"
-    title="¿Quieres cerrar sesión?"
-    description="Si cierras sesión, tendrás que volver a iniciar sesión."
-    confirmText="Sí, cerrar sesión"
-    cancelText="Cancelar"
-    @confirm="handleLogout"
-  />
 </template>
 
 <script setup lang="ts">
@@ -196,20 +187,16 @@ import { getPatientsAction } from '../actions/get-patients.action';
 import TablePagination from '@/modules/common/components/TablePagination.vue';
 import { Pagination } from '../../common/interfaces/pagination.interface';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
-import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import SearchIcon from '@/icons/SearchIcon.vue';
 import CloseIcon from '@/icons/CloseIcon.vue';
 import PreviewIcon from '@/icons/PreviewIcon.vue';
 import PlusIcon from '@/icons/PlusIcon.vue';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
-import { useAuthStore } from '../../auth/stores/auth.store';
 import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 import type { Patient } from '../interfaces/patient.interface';
-
-const authStore = useAuthStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -273,16 +260,6 @@ const handleModalCreateUpdate = (patientId: 'create' | number) => {
   window.tailwind.Modal.getOrCreateInstance(
     document.getElementById('modal-patient-create-or-edit'),
   ).show();
-};
-
-const handleLogout = async () => {
-  const modalElement = document.querySelector('.modal.show');
-  if (modalElement) {
-    window.tailwind.Modal.getOrCreateInstance(modalElement).hide();
-  }
-  setTimeout(() => {
-    authStore.logout();
-  }, 300);
 };
 
 watch(

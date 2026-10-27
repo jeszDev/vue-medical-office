@@ -97,10 +97,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { useRoute, useRouter } from 'vue-router';
 import { getPatientByIdAction } from '../actions/get-patient-by-id.action';
+import { useBreadcrumb } from '@/modules/common/composables/useBreadcrumb';
 
 import CalendarIcon from '@/icons/CalendarIcon.vue';
 import FileTextIcon from '@/icons/FileTextIcon.vue';
@@ -126,6 +127,7 @@ const props = defineProps<Props>();
 const route = useRoute();
 const router = useRouter();
 const activeTab = ref<PatientTab>((route.query.tab as PatientTab) || 'information');
+const { setBreadcrumbs } = useBreadcrumb();
 
 // Al cambiar de tab actualizas la query sin recargar:
 const changeTab = (tab: PatientTab) => {
@@ -150,6 +152,34 @@ const { data: patient, isLoading } = useQuery({
   queryKey: ['patient', props.patientId],
   queryFn: () => getPatientByIdAction(props.patientId),
 });
+
+const tabLabels: Record<PatientTab, string> = {
+  information: 'Información',
+  appointments: 'Agenda',
+  consultations: 'Historial clínico',
+  documents: 'Estudios y Documentos',
+};
+
+const updatePatientBreadcrumbs = () => {
+  const patientName = patient.value?.nombre_completo || 'Detalle del Paciente';
+  const tabLabel = tabLabels[activeTab.value] || 'Información';
+
+  setBreadcrumbs([
+    { title: 'Pacientes', routeName: 'patients.index' },
+    { title: `${patientName} (${tabLabel})` },
+  ]);
+};
+
+watch([patient, activeTab], updatePatientBreadcrumbs, { immediate: true });
+
+watch(
+  () => route.query.tab,
+  (newTab) => {
+    if (newTab && newTab !== activeTab.value && Object.keys(tabLabels).includes(newTab as string)) {
+      activeTab.value = newTab as PatientTab;
+    }
+  },
+);
 </script>
 
 <style scoped></style>

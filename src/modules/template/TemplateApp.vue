@@ -10,11 +10,9 @@ import { useMenuReactive } from './composables/useMenuReactive';
 import TemplateSideBar from './components/TemplateSideBar.vue';
 import TemplateBreadcrumb from './components/TemplateBreadcrumb.vue';
 import TemplateNotificationDropdown from './components/TemplateNotificationDropdown.vue';
-import { useAuthStore } from '../auth/stores/auth.store';
+import TemplateProfileDropdown from './components/TemplateProfileDropdown.vue';
 import BurguerMenuIcon from '@/icons/BurguerMenuIcon.vue';
 import ArrowLeftIcon from '@/icons/ArrowLeftIcon.vue';
-import { LogOut as LogOutIcon } from 'lucide-vue-next';
-import { useLogoutModal } from '../auth/composables/useLogoutModal';
 import AuthLogoutModalQuestion from '../auth/components/AuthLogoutModalQuestion.vue';
 
 const {
@@ -26,9 +24,6 @@ const {
   closeMobileMenuRef,
   toggleCompactMenu,
 } = useMenuReactive();
-
-const authStore = useAuthStore();
-const { open: openLogoutModal } = useLogoutModal();
 
 onMounted(() => {
   // Page loader animation
@@ -128,84 +123,7 @@ onMounted(() => {
                 </div>
                 <TemplateBreadcrumb />
                 <TemplateNotificationDropdown />
-                <div class="group/profile relative size-9 flex-none cursor-pointer">
-                  <span
-                    data-content=""
-                    class="tooltip border-(--color)/5 block relative flex-none overflow-hidden rounded-full border-3 ring-1 ring-(--color)/40 size-full [--color:var(--color-nav-foreground)] cursor-pointer"
-                  >
-                    <img
-                      class="absolute top-0 size-full object-cover"
-                      src="@/assets/images/fakers/profile-13.jpg"
-                      alt="Midone - Tailwind Admin Dashboard Template"
-                    />
-                  </span>
-                  <div class="hidden group-hover/profile:block">
-                    <div
-                      class="box p-5 before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:bg-background/30 before:z-[-1] after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-[0px_3px_5px_#0000000b] after:z-[-1] after:backdrop-blur-md before:shadow-foreground/5 absolute right-0 top-0 z-50 -mr-0.5 -mt-0.5 flex w-64 flex-col gap-2.5 px-6 py-5 before:rounded-2xl before:shadow-xl before:backdrop-blur after:rounded-2xl"
-                    >
-                      <div class="flex flex-col gap-0.5">
-                        <div class="font-medium">{{ authStore.user?.name || 'Usuario' }}</div>
-                        <div class="mt-0.5 text-xs opacity-70 capitalize">
-                          {{ authStore.user?.roles?.[0] || 'Personal' }}
-                        </div>
-                      </div>
-                      <div class="bg-foreground/5 h-px"></div>
-                      <div class="flex flex-col gap-0.5">
-                        <a
-                          class="hover:bg-foreground/5 -mx-3 flex gap-2.5 rounded-lg px-4 py-1.5 cursor-pointer"
-                          href=""
-                        >
-                          <i
-                            data-lucide="users"
-                            class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25"
-                          ></i>
-                          Profile
-                        </a>
-                        <a
-                          class="hover:bg-foreground/5 -mx-3 flex gap-2.5 rounded-lg px-4 py-1.5 cursor-pointer"
-                          href=""
-                        >
-                          <i
-                            data-lucide="shield-alert"
-                            class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25"
-                          ></i>
-                          Add Account
-                        </a>
-                        <a
-                          class="hover:bg-foreground/5 -mx-3 flex gap-2.5 rounded-lg px-4 py-1.5 cursor-pointer"
-                          href=""
-                        >
-                          <i
-                            data-lucide="file-lock"
-                            class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25"
-                          ></i>
-                          Reset Password
-                        </a>
-                        <a
-                          class="hover:bg-foreground/5 -mx-3 flex gap-2.5 rounded-lg px-4 py-1.5 cursor-pointer"
-                          href=""
-                        >
-                          <i
-                            data-lucide="file-question"
-                            class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25"
-                          ></i>
-                          Help
-                        </a>
-                      </div>
-                      <div class="bg-foreground/5 h-px"></div>
-                      <div class="flex flex-col gap-0.5">
-                        <button
-                          type="button"
-                          class="hover:bg-destructive/10 text-destructive -mx-3 flex items-center gap-2.5 rounded-lg px-4 py-1.5 text-sm w-full text-left transition-colors cursor-pointer"
-                          @click.prevent="openLogoutModal"
-                        >
-                          <LogOutIcon class="size-4 text-destructive" />
-                          Cerrar Sesión
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <TemplateProfileDropdown />
               </div>
             </div>
             <RouterView />

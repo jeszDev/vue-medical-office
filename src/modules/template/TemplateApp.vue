@@ -8,6 +8,7 @@ import { useMenuReactive } from './composables/useMenuReactive';
 
 // import TemplateContent from './components/TemplateContent.vue';
 import TemplateSideBar from './components/TemplateSideBar.vue';
+import TemplateBreadcrumb from './components/TemplateBreadcrumb.vue';
 import { useAuthStore } from '../auth/stores/auth.store';
 import BurguerMenuIcon from '@/icons/BurguerMenuIcon.vue';
 import ArrowLeftIcon from '@/icons/ArrowLeftIcon.vue';
@@ -124,25 +125,7 @@ onMounted(() => {
                   /> -->
                   <BurguerMenuIcon />
                 </div>
-                <ul
-                  class="truncate gap-x-6 mr-auto hidden [--background-image-chevron:var(--background-image-chevron-light)] [--color-base:--alpha(var(--color-nav-foreground)/70%)] [--color-link:var(--color-nav-foreground)] xl:flex"
-                >
-                  <li
-                    class="[&:not(:last-child)&gt;a]:text-(--color-link) text-(--color-base) before:bg-(image:--background-image-chevron) relative before:absolute before:inset-y-0 before:my-auto before:-ml-4 before:size-2 before:-rotate-90 before:bg-center before:bg-no-repeat before:opacity-70 first:before:hidden"
-                  >
-                    <a href="">Apps</a>
-                  </li>
-                  <li
-                    class="[&:not(:last-child)&gt;a]:text-(--color-link) text-(--color-base) before:bg-(image:--background-image-chevron) relative before:absolute before:inset-y-0 before:my-auto before:-ml-4 before:size-2 before:-rotate-90 before:bg-center before:bg-no-repeat before:opacity-70 first:before:hidden"
-                  >
-                    <a href="">Dashboards</a>
-                  </li>
-                  <li
-                    class="[&:not(:last-child)&gt;a]:text-(--color-link) text-(--color-base) before:bg-(image:--background-image-chevron) relative before:absolute before:inset-y-0 before:my-auto before:-ml-4 before:size-2 before:-rotate-90 before:bg-center before:bg-no-repeat before:opacity-70 first:before:hidden"
-                  >
-                    <a href="">Overview</a>
-                  </li>
-                </ul>
+                <TemplateBreadcrumb />
                 <div
                   class="quick-search-toggle bg-(--color-nav-foreground)/10 border-(--color-nav-foreground)/30 text-(--color-nav-foreground) hover:ring-foreground/5 flex h-9 cursor-pointer items-center rounded-full border px-4 ring-1 ring-transparent ring-offset-2 ring-offset-transparent"
                 >

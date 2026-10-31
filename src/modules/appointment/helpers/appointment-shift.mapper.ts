@@ -10,10 +10,46 @@ export interface ShiftInfo {
 
 export const normalizeShift = (shift?: string | null): TurnoPreferido | null => {
   if (!shift) return null;
-  const s = shift.toLowerCase().trim();
-  if (s === 'matutino' || s === 'matituno') return 'matutino';
-  if (s === 'vespertino') return 'vespertino';
-  if (s === 'indistinto') return 'indistinto';
+  const s = shift
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+
+  if (
+    s === 'matutino' ||
+    s === 'matituno' ||
+    s === 'manana' ||
+    s === 'morning' ||
+    s.includes('matutin') ||
+    s.includes('manan')
+  ) {
+    return 'matutino';
+  }
+
+  if (
+    s === 'vespertino' ||
+    s === 'tarde' ||
+    s === 'afternoon' ||
+    s.includes('vespertin') ||
+    s.includes('tard')
+  ) {
+    return 'vespertino';
+  }
+
+  if (
+    s === 'indistinto' ||
+    s === 'cualquiera' ||
+    s === 'cualquier' ||
+    s === 'sin preferencia' ||
+    s === 'sin_preferencia' ||
+    s === 'ambos' ||
+    s.includes('indistint') ||
+    s.includes('cualquier')
+  ) {
+    return 'indistinto';
+  }
+
   return null;
 };
 

@@ -22,6 +22,7 @@ import {
   getShiftLabel,
   getShiftBadgeLabel,
   getShiftBadgeColor,
+  normalizeShift,
 } from '../helpers/appointment-shift.mapper';
 
 interface AppointmentFormValues {
@@ -396,7 +397,7 @@ export default defineComponent({
         // Si es una solicitud de cita sin fecha/hora asignada pero tiene fecha_preferida,
         // sugerir un horario inicial según el turno preferido
         if (!startValue && newAppointment.fecha_preferida) {
-          const normShift = (newAppointment.turno_preferido || '').toLowerCase();
+          const normShift = normalizeShift(newAppointment.turno_preferido);
           let defaultHour = '09:00';
           let defaultEndHour = '09:30';
           if (normShift === 'vespertino') {

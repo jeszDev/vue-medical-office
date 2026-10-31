@@ -1,5 +1,9 @@
-import { computed } from 'vue';
+import { computed, type Ref } from 'vue';
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
+import { useAppointmentRequestsCount } from '@/modules/appointment/composables/useAppointmentRequestsCount';
+
+export type MenuBadgeValue = number | string | null | undefined;
+export type MenuBadge = MenuBadgeValue | (() => MenuBadgeValue) | Ref<MenuBadgeValue>;
 
 export interface MenuItem {
   title: string;
@@ -8,6 +12,8 @@ export interface MenuItem {
   roles?: string[]; // Allowed roles. If empty/undefined, visible to all authenticated users.
   group?: string;
   params?: Record<string, unknown>;
+  badge?: MenuBadge;
+  badgeClass?: string;
 }
 
 export function useNavigationMenu() {
@@ -31,6 +37,14 @@ export function useNavigationMenu() {
     return allowedRoles.some((role) => userRoles.value.includes(role.toLowerCase()));
   };
 
+  // Pending appointment requests count for authorized roles
+  const canManageRequests = computed(() =>
+    hasRole(['admin', 'administrador', 'recepcionista', 'doctor', 'medico', 'médico']),
+  );
+  const { count: pendingRequestsCount } = useAppointmentRequestsCount({
+    enabled: canManageRequests,
+  });
+
   // Full Menu Schema
   const allMenuItems: MenuItem[] = [
     {
@@ -53,6 +67,7 @@ export function useNavigationMenu() {
       iconName: 'calendar-clock',
       group: 'CITAS Y AGENDA',
       roles: ['admin', 'administrador', 'recepcionista', 'doctor', 'medico', 'médico'],
+      badge: pendingRequestsCount,
     },
     {
       title: 'Gestión de Roles',
@@ -86,5 +101,7 @@ export function useNavigationMenu() {
     hasRole,
     menuItems,
     groupedMenuItems,
+    pendingRequestsCount,
   };
 }
+

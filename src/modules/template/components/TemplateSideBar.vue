@@ -50,6 +50,13 @@
             class="size-4 stroke-[1.5] side-menu__link__icon"
           />
           <div class="side-menu__link__title">{{ item.title }}</div>
+          <div
+            v-if="getBadgeValue(item.badge) !== null"
+            class="side-menu__link__badge"
+            :class="item.badgeClass"
+          >
+            {{ getBadgeValue(item.badge) }}
+          </div>
         </RouterLink>
       </li>
     </ul>
@@ -57,10 +64,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, isRef } from 'vue';
 import SimpleBar from 'simplebar-vue';
 import { useAuthStore } from '../../auth/stores/auth.store';
-import { useNavigationMenu } from '../composables/useNavigationMenu';
+import { useNavigationMenu, type MenuItem } from '../composables/useNavigationMenu';
 import {
   Users as UsersIcon,
   UserPlus as UserPlusIcon,
@@ -80,6 +87,15 @@ const userInitial = computed(() => {
   }
   return 'U';
 });
+
+const getBadgeValue = (badge?: MenuItem['badge']): string | number | null => {
+  if (badge === undefined || badge === null) return null;
+  const raw = typeof badge === 'function' ? badge() : isRef(badge) ? badge.value : badge;
+  if (raw === 0 || raw === '0' || raw === '' || raw === null || raw === undefined) {
+    return null;
+  }
+  return raw;
+};
 
 const getIconComponent = (iconName?: string) => {
   switch (iconName) {
@@ -102,3 +118,4 @@ const getIconComponent = (iconName?: string) => {
 </script>
 
 <style scoped></style>
+

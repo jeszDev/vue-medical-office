@@ -34,61 +34,28 @@
       <FullScreenLoader v-if="isLoading && !requests" />
 
       <template v-else>
-        <!-- Barra de filtros y buscador -->
+        <!-- Tarjetas de filtro por turno estilo Punto de Venta (Midone) -->
+        <AppointmentRequestsShiftCards
+          v-model="selectedShiftFilter"
+          :requests="requests"
+        />
+
+        <!-- Barra secundaria: Resumen de resultados filtrados y buscador -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-          <!-- Filtro por Turno (Píldoras segmentadas con contraste nítido) -->
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="text-xs font-semibold text-foreground/60 mr-1 uppercase tracking-wider">
-              Turno:
+          <div class="flex items-center gap-2 text-xs text-foreground/70">
+            <span>
+              Mostrando <strong class="text-foreground">{{ filteredRequests.length }}</strong> de
+              <strong class="text-foreground">{{ requests.length }}</strong> solicitudes
             </span>
             <button
+              v-if="selectedShiftFilter !== 'all' || searchTerm"
               type="button"
-              class="px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
-              :class="[
-                selectedShiftFilter === 'all'
-                  ? 'bg-primary text-white shadow-md shadow-primary/25 ring-2 ring-primary/20'
-                  : 'bg-background hover:bg-foreground/5 text-foreground/80 border border-foreground/15',
-              ]"
-              @click="selectedShiftFilter = 'all'"
+              class="text-xs text-primary hover:underline cursor-pointer ml-1 inline-flex items-center gap-1 font-medium"
+              title="Restablecer filtros"
+              @click="clearFilters"
             >
-              <span>Todos</span>
-              <span
-                class="px-1.5 py-0.5 rounded-full text-[10px] font-mono leading-none"
-                :class="selectedShiftFilter === 'all' ? 'bg-white/25 text-white' : 'bg-foreground/10 text-foreground/70'"
-              >
-                {{ requests.length }}
-              </span>
-            </button>
-
-            <button
-              v-for="shift in SHIFT_OPTIONS"
-              :key="shift.value"
-              type="button"
-              class="px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
-              :class="[
-                selectedShiftFilter === shift.value
-                  ? 'bg-primary text-white shadow-md shadow-primary/25 ring-2 ring-primary/20'
-                  : 'bg-background hover:bg-foreground/5 text-foreground/80 border border-foreground/15',
-              ]"
-              @click="selectedShiftFilter = shift.value"
-            >
-              <span
-                class="size-2 rounded-full"
-                :class="[
-                  shift.value === 'matutino'
-                    ? 'bg-sky-500'
-                    : shift.value === 'vespertino'
-                      ? 'bg-amber-500'
-                      : 'bg-indigo-500',
-                ]"
-              ></span>
-              <span>{{ shift.badgeLabel }}</span>
-              <span
-                class="px-1.5 py-0.5 rounded-full text-[10px] font-mono leading-none"
-                :class="selectedShiftFilter === shift.value ? 'bg-white/25 text-white' : 'bg-foreground/10 text-foreground/70'"
-              >
-                {{ countByShift(shift.value) }}
-              </span>
+              <CloseIcon class="size-3" />
+              Limpiar filtros
             </button>
           </div>
 
@@ -221,10 +188,9 @@
 
                   <!-- Columna Fecha Preferida -->
                   <td
-                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 border-y border-foreground/10 bg-background first:border-l last:border-r whitespace-nowrap"
                   >
-                    <div class="flex items-center gap-1.5 font-medium text-xs text-foreground">
-                      <CalendarIcon class="size-3.5 text-primary shrink-0" />
+                    <div class="font-medium text-xs text-foreground">
                       {{ formatDate(request.fecha_preferida) }}
                     </div>
                     <div v-if="!request.fecha_preferida" class="text-[11px] text-foreground/50 italic">
@@ -257,20 +223,38 @@
                     </div>
                   </td>
 
-                  <!-- Columna Motivo -->
+                  <!-- Columna Motivo con expansión interactiva en textos largos -->
                   <td
-                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 border-y border-foreground/10 bg-background first:border-l last:border-r max-w-xs"
+                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 border-y border-foreground/10 bg-background first:border-l last:border-r min-w-[200px] max-w-xs align-top"
                   >
-                    <div class="font-medium text-xs text-foreground truncate" :title="request.motivo">
+                    <div
+                      class="font-medium text-xs text-foreground transition-all"
+                      :class="[
+                        isReasonExpanded(request.id) ? 'whitespace-normal break-words' : 'line-clamp-2 break-words',
+                      ]"
+                      :title="request.motivo"
+                    >
                       {{ request.motivo || 'Sin motivo especificado' }}
                     </div>
                     <div
                       v-if="request.observaciones_cita || request.observaciones"
-                      class="text-[11px] text-foreground/60 truncate italic mt-0.5"
+                      class="text-[11px] text-foreground/60 italic mt-1 transition-all"
+                      :class="[
+                        isReasonExpanded(request.id) ? 'whitespace-normal break-words' : 'line-clamp-1 break-words',
+                      ]"
                       :title="request.observaciones_cita || request.observaciones || ''"
                     >
-                      Nota: {{ request.observaciones_cita || request.observaciones }}
+                      <span class="font-medium not-italic text-foreground/70">Nota:</span>
+                      {{ request.observaciones_cita || request.observaciones }}
                     </div>
+                    <button
+                      v-if="hasLongReason(request)"
+                      type="button"
+                      class="text-[11px] font-medium text-primary hover:underline cursor-pointer mt-1 inline-flex items-center gap-0.5"
+                      @click="toggleReasonExpanded(request.id)"
+                    >
+                      <span>{{ isReasonExpanded(request.id) ? 'Ver menos' : 'Ver más...' }}</span>
+                    </button>
                   </td>
 
                   <!-- Columna Fecha de Creación: usa request.creado_el de la interfaz -->
@@ -337,10 +321,10 @@ import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
 import AppointmentCancelModalQuestion from '@/modules/appointment/components/AppointmentCancelModalQuestion.vue';
+import AppointmentRequestsShiftCards from '@/modules/appointment/components/AppointmentRequestsShiftCards.vue';
 
 import {
   CalendarClock as CalendarClockIcon,
-  Calendar as CalendarIcon,
   CalendarCheck as CalendarCheckIcon,
   RefreshCw as RefreshIcon,
   Search as SearchIcon,
@@ -353,7 +337,6 @@ import { getAppointmentRequestsAction } from '../actions/get-appointment-request
 import {
   getShiftDescription,
   normalizeShift,
-  SHIFT_OPTIONS,
   type TurnoPreferido,
 } from '../helpers/appointment-shift.mapper';
 
@@ -381,9 +364,27 @@ const {
 
 const requests = computed<Appointment[]>(() => rawRequests.value ?? []);
 
-// Conteo por turno
-const countByShift = (shiftValue: TurnoPreferido): number => {
-  return requests.value.filter((r) => normalizeShift(r.turno_preferido) === shiftValue).length;
+// Estado de expansión de motivo de solicitud
+const expandedReasonIds = ref<Set<number>>(new Set());
+
+const isReasonExpanded = (id: number): boolean => {
+  return expandedReasonIds.value.has(id);
+};
+
+const toggleReasonExpanded = (id: number) => {
+  const newSet = new Set(expandedReasonIds.value);
+  if (newSet.has(id)) {
+    newSet.delete(id);
+  } else {
+    newSet.add(id);
+  }
+  expandedReasonIds.value = newSet;
+};
+
+const hasLongReason = (appointment: Appointment): boolean => {
+  const motivoLength = (appointment.motivo || '').length;
+  const notaLength = (appointment.observaciones_cita || appointment.observaciones || '').length;
+  return motivoLength > 45 || notaLength > 30;
 };
 
 // Limpieza de filtros

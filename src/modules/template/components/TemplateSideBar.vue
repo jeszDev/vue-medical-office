@@ -4,16 +4,23 @@
     <div
       class="border-background/20 dark:border-foreground/[.09] flex items-center justify-center border-t px-5 py-3.5 opacity-90 xl:border-b"
     >
-      <div
-        class="border-background/20 dark:border-foreground/20 relative size-10 flex-none overflow-hidden rounded-full border-4 bg-primary/20 flex items-center justify-center text-primary font-bold"
-      >
-        <img
-          v-if="authStore.user?.avatar"
-          :src="authStore.user.avatar"
-          class="size-full object-cover"
-          alt="Avatar"
-        />
-        <span v-else>{{ userInitial }}</span>
+      <div class="relative size-10 flex-none">
+        <span
+          class="border-(--color)/5 block relative flex-none overflow-hidden rounded-full border-3 ring-1 ring-(--color)/40 size-full [--color:currentColor]"
+        >
+          <img
+            v-if="authStore.user?.avatar"
+            class="absolute top-0 size-full object-cover"
+            :src="authStore.user.avatar"
+            alt="Avatar"
+          />
+          <div
+            v-else
+            class="flex size-full items-center justify-center font-bold text-xs uppercase bg-(--color)/15 text-(--color)"
+          >
+            {{ userInitial }}
+          </div>
+        </span>
       </div>
       <div
         class="ms-3 flex w-full items-center overflow-hidden transition-opacity group-[.side-menu--collapsed.side-menu--on-hover]:ms-3 group-[.side-menu--collapsed.side-menu--on-hover]:w-full group-[.side-menu--collapsed.side-menu--on-hover]:opacity-100 xl:group-[.side-menu--collapsed]:ms-0 xl:group-[.side-menu--collapsed]:w-0 xl:group-[.side-menu--collapsed]:opacity-0"

@@ -1,29 +1,25 @@
 <template>
-  <div ref="dropdownRef" class="relative flex h-9 items-center">
-    <!-- Botón disparador con campana e indicador de notificaciones -->
+  <div ref="dropdownRef" class="group/notifications relative flex h-9 items-center">
+    <!-- Botón disparador con campana nativa Midone e indicador sutil -->
     <button
       type="button"
-      class="relative flex size-9 items-center justify-center rounded-xl border border-(--color-nav-foreground)/30 bg-(--color-nav-foreground)/10 text-(--color-nav-foreground) hover:bg-(--color-nav-foreground)/20 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20"
-      :class="{ 'ring-2 ring-primary/40 bg-(--color-nav-foreground)/20': isOpen }"
+      class="cursor-pointer relative flex size-9 items-center justify-center text-(--color-nav-foreground) hover:opacity-80 transition-all focus:outline-none"
       :title="tooltipText"
       aria-label="Notificaciones de citas"
       @click="toggleDropdown"
     >
-      <BellIcon class="size-4.5 stroke-[1.6]" />
+      <BellIcon
+        class="size-4 stroke-[1.5] stroke-(--color) fill-(--color)/25 [--color:var(--color-nav-foreground)] transition-transform active:scale-95"
+      />
 
-      <!-- Badge con contador y animación tipo ping si hay solicitudes -->
+      <!-- Indicador sutil de punto cuando hay solicitudes pendientes -->
       <span
         v-if="pendingCount > 0"
-        class="absolute -top-1 -right-1 flex size-4.5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-white shadow-sm ring-2 ring-background"
-      >
-        <span
-          class="absolute inline-flex size-full animate-ping rounded-full bg-destructive opacity-75"
-        ></span>
-        <span class="relative">{{ pendingCount > 9 ? '9+' : pendingCount }}</span>
-      </span>
+        class="absolute top-2 right-2 size-2 rounded-full bg-red-500 ring-2 ring-primary dark:ring-background shadow-xs"
+      />
     </button>
 
-    <!-- Menú desplegable con diseño moderno y soporte para clics fuera -->
+    <!-- Menú desplegable con diseño de doble tarjeta flotante Midone -->
     <Transition
       enter-active-class="transition duration-150 ease-out"
       enter-from-class="transform scale-95 opacity-0"
@@ -34,7 +30,7 @@
     >
       <div
         v-show="isOpen"
-        class="box absolute right-0 top-full mt-2.5 z-50 flex w-80 sm:w-96 flex-col rounded-2xl border border-foreground/10 bg-background/95 p-4 shadow-2xl backdrop-blur-md"
+        class="box p-5 before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:bg-background/30 before:z-[-1] after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-[0px_3px_5px_#0000000b] after:z-[-1] after:backdrop-blur-md before:shadow-foreground/5 absolute right-0 top-full z-50 -mr-0.5 mt-2 flex w-80 sm:w-96 flex-col gap-2.5 px-6 py-5 before:rounded-2xl before:shadow-xl before:backdrop-blur after:rounded-2xl text-foreground"
       >
         <!-- Encabezado del dropdown -->
         <div class="flex items-center justify-between pb-3 border-b border-foreground/10">

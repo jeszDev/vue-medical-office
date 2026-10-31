@@ -1,26 +1,33 @@
 <template>
-  <div ref="dropdownRef" class="relative flex h-9 items-center">
-    <!-- Botón disparador con avatar e inicial del usuario -->
+  <div ref="dropdownRef" class="group/profile relative size-9 flex-none">
+    <!-- Botón disparador con halo de doble anillo Midone -->
     <button
       type="button"
-      class="group/profile relative flex size-9 flex-none items-center justify-center rounded-full border-2 border-(--color-nav-foreground)/30 bg-(--color-nav-foreground)/10 text-(--color-nav-foreground) transition-all hover:ring-2 hover:ring-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer overflow-hidden"
-      :class="{ 'ring-2 ring-primary/40 bg-(--color-nav-foreground)/20': isOpen }"
-      :title="authStore.user?.name || 'Mi Perfil'"
+      class="size-full cursor-pointer focus:outline-none"
+      :title="userName"
       aria-label="Menú de usuario"
       @click="toggleDropdown"
     >
-      <img
-        v-if="authStore.user?.avatar"
-        :src="authStore.user.avatar"
-        class="size-full object-cover"
-        alt="Foto de perfil"
-      />
-      <span v-else class="text-xs font-bold uppercase">
-        {{ userInitial }}
+      <span
+        class="border-(--color)/5 block relative flex-none overflow-hidden rounded-full border-3 ring-1 ring-(--color)/40 size-full [--color:var(--color-nav-foreground)] transition-transform hover:scale-105"
+        :class="{ 'ring-(--color)/80': isOpen }"
+      >
+        <img
+          v-if="authStore.user?.avatar"
+          class="absolute top-0 size-full object-cover"
+          :src="authStore.user.avatar"
+          alt="Foto de perfil"
+        />
+        <div
+          v-else
+          class="flex size-full items-center justify-center font-bold text-xs uppercase bg-(--color)/15 text-(--color)"
+        >
+          {{ userInitial }}
+        </div>
       </span>
     </button>
 
-    <!-- Menú desplegable con información del usuario y opción de cerrar sesión -->
+    <!-- Menú desplegable con diseño de doble tarjeta flotante Midone -->
     <Transition
       enter-active-class="transition duration-150 ease-out"
       enter-from-class="transform scale-95 opacity-0"
@@ -31,52 +38,36 @@
     >
       <div
         v-show="isOpen"
-        class="box absolute right-0 top-full mt-2.5 z-50 flex w-64 flex-col rounded-2xl border border-foreground/10 bg-background/95 p-4 shadow-2xl backdrop-blur-md"
+        class="box p-5 before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:bg-background/30 before:z-[-1] after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-[0px_3px_5px_#0000000b] after:z-[-1] after:backdrop-blur-md before:shadow-foreground/5 absolute right-0 top-full z-50 -mr-0.5 mt-2 flex w-64 flex-col gap-2.5 px-6 py-5 before:rounded-2xl before:shadow-xl before:backdrop-blur after:rounded-2xl text-foreground"
       >
         <!-- Encabezado con información del usuario -->
-        <div class="flex items-center gap-3 pb-3 border-b border-foreground/10">
-          <div
-            class="flex size-10 flex-none items-center justify-center rounded-full bg-primary/15 text-primary font-bold text-sm border border-primary/25 overflow-hidden"
-          >
-            <img
-              v-if="authStore.user?.avatar"
-              :src="authStore.user.avatar"
-              class="size-full object-cover"
-              alt="Foto de perfil"
-            />
-            <span v-else>{{ userInitial }}</span>
+        <div class="flex flex-col gap-0.5">
+          <div class="font-medium text-foreground truncate" :title="userName">
+            {{ userName }}
           </div>
-
-          <div class="flex-1 min-w-0">
-            <div class="font-semibold text-sm text-foreground truncate" :title="userName">
-              {{ userName }}
-            </div>
-            <div
-              v-if="authStore.user?.email"
-              class="text-xs text-foreground/60 truncate mt-0.5"
-              :title="authStore.user.email"
-            >
-              {{ authStore.user.email }}
-            </div>
-            <div class="mt-1">
-              <span
-                class="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-foreground/10 text-foreground/70 capitalize"
-              >
-                {{ userRole }}
-              </span>
-            </div>
+          <div class="text-xs opacity-70 truncate capitalize">
+            {{ userRole }}
+          </div>
+          <div
+            v-if="authStore.user?.email"
+            class="text-[11px] opacity-50 truncate mt-0.5"
+            :title="authStore.user.email"
+          >
+            {{ authStore.user.email }}
           </div>
         </div>
 
+        <div class="bg-foreground/5 h-px my-1"></div>
+
         <!-- Acciones del menú -->
-        <div class="pt-2 flex flex-col gap-1">
+        <div class="flex flex-col gap-0.5">
           <button
             type="button"
-            class="hover:bg-destructive/10 text-destructive flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold w-full text-left transition-colors cursor-pointer"
+            class="hover:bg-destructive/10 text-destructive -mx-3 flex items-center gap-2.5 rounded-lg px-4 py-1.5 text-xs font-semibold w-[calc(100%+1.5rem)] text-left transition-colors cursor-pointer"
             @click="handleLogout"
           >
-            <LogOutIcon class="size-4 text-destructive" />
-            Cerrar Sesión
+            <LogOutIcon class="size-4 stroke-[1.5] stroke-current fill-current/25" />
+            <span>Cerrar Sesión</span>
           </button>
         </div>
       </div>

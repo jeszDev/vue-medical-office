@@ -18,24 +18,12 @@
               {{ pagination.total }} registros
             </div>
             <div class="mt-3 w-full sm:ml-auto sm:mt-0 sm:w-auto md:ml-0">
-              <div class="relative w-64">
-                <input
-                  class="h-10 rounded-md border bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-foreground placeholder:text-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/5 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 box w-full pr-16"
-                  type="text"
-                  placeholder="Buscar paciente..."
-                  v-model="searchInput"
-                  @keyup.enter="doSearch"
-                />
-                <span
-                  v-if="searchInput"
-                  class="absolute inset-y-0 right-7 my-auto flex items-center cursor-pointer text-foreground/40 hover:text-foreground"
-                  title="Limpiar búsqueda"
-                  @click="clearSearch"
-                >
-                  <CloseIcon class="size-4" />
-                </span>
-                <SearchIcon class="cursor-pointer hover:text-primary transition-colors" @click="doSearch" />
-              </div>
+              <SearchInput
+                v-model="searchInput"
+                placeholder="Buscar paciente..."
+                @search="doSearch"
+                @clear="clearSearch"
+              />
             </div>
           </div>
           <!-- BEGIN: Data List -->
@@ -158,8 +146,7 @@ import { Pagination } from '../../common/interfaces/pagination.interface';
 import { useRoute, useRouter } from 'vue-router';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import TableActionButton from '@/modules/common/components/TableActionButton.vue';
-import SearchIcon from '@/icons/SearchIcon.vue';
-import CloseIcon from '@/icons/CloseIcon.vue';
+import SearchInput from '@/modules/common/components/SearchInput.vue';
 import PlusIcon from '@/icons/PlusIcon.vue';
 import { Eye as EyeIcon, CheckSquare as EditIcon } from 'lucide-vue-next';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';

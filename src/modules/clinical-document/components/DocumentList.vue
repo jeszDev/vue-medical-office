@@ -7,15 +7,11 @@
     >
       <div class="flex flex-1 flex-wrap items-center gap-2">
         <!-- Buscador -->
-        <div class="relative min-w-[200px] flex-1 sm:max-w-xs">
-          <Search class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-foreground/40" />
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Buscar por título o archivo..."
-            class="w-full rounded-xl border border-foreground/15 bg-background pl-9 pr-3 py-1.5 text-xs text-foreground outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-          />
-        </div>
+        <SearchInput
+          v-model="searchQuery"
+          placeholder="Buscar por título o archivo..."
+          width-class="min-w-[200px] flex-1 sm:max-w-xs"
+        />
 
         <!-- Filtro por Tipo de Documento -->
         <select
@@ -115,7 +111,8 @@ import { getDocumentDetailAction } from '../actions/get-document-detail.action';
 import DocumentCard from './DocumentCard.vue';
 import DocumentViewerModal from './DocumentViewerModal.vue';
 import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
-import { Search, FileBox } from 'lucide-vue-next';
+import SearchInput from '@/modules/common/components/SearchInput.vue';
+import { FileBox } from 'lucide-vue-next';
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import { useToast } from 'vue-toastification';
 

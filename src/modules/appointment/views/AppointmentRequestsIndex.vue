@@ -62,26 +62,12 @@
 
           <!-- Buscador compacto alineado a la derecha -->
           <div class="w-full sm:w-64 md:w-72 sm:ml-auto shrink-0">
-            <div class="relative w-full">
-              <input
-                v-model="searchTerm"
-                type="text"
-                placeholder="Buscar solicitud..."
-                title="Buscar por paciente, CURP, folio, motivo o fecha"
-                class="h-9 w-full rounded-lg border bg-background pl-3 pr-14 text-xs text-foreground placeholder:text-foreground/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 border-foreground/15 shadow-xs"
-              />
-              <span
-                v-if="searchTerm"
-                class="absolute inset-y-0 right-7 my-auto flex items-center cursor-pointer text-foreground/40 hover:text-foreground"
-                title="Limpiar búsqueda"
-                @click="searchTerm = ''"
-              >
-                <CloseIcon class="size-3.5" />
-              </span>
-              <span class="absolute inset-y-0 right-2.5 my-auto flex items-center text-foreground/40 pointer-events-none">
-                <SearchIcon class="size-3.5" />
-              </span>
-            </div>
+            <SearchInput
+              v-model="searchTerm"
+              placeholder="Buscar solicitud..."
+              title="Buscar por paciente, CURP, folio, motivo o fecha"
+              width-class="w-full"
+            />
           </div>
         </div>
 
@@ -294,6 +280,7 @@ import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 import TableActionButton from '@/modules/common/components/TableActionButton.vue';
 import TableHead, { type TableColumn } from '@/modules/common/components/TableHead.vue';
+import SearchInput from '@/modules/common/components/SearchInput.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
 import AppointmentCancelModalQuestion from '@/modules/appointment/components/AppointmentCancelModalQuestion.vue';
@@ -303,7 +290,6 @@ import {
   CalendarClock as CalendarClockIcon,
   CalendarCheck as CalendarCheckIcon,
   RefreshCw as RefreshIcon,
-  Search as SearchIcon,
   X as CloseIcon,
   Trash2 as TrashIcon,
 } from 'lucide-vue-next';

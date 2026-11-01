@@ -10,7 +10,6 @@
       </span>
       <ButtonBase
         text="Agendar nueva cita"
-        :icon="PlusIcon"
         color="primary"
         @click="openCreateModal"
       />
@@ -136,7 +135,6 @@
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
-import PlusIcon from '@/icons/PlusIcon.vue';
 import AppointmentCalendar from '@/modules/appointment/views/AppointmentCalendar.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';

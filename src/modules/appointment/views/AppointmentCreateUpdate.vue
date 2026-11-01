@@ -62,7 +62,6 @@
       </div>
     </div>
 
-
     <!-- Formulario con espaciado optimizado -->
     <div :class="['mt-4', !isInsideModal ? 'px-5 sm:px-20' : '']">
       <form @submit.prevent="onSubmit">
@@ -162,18 +161,13 @@
             class="col-span-12 mt-4 pt-4 border-t border-foreground/10 flex items-center justify-end gap-3"
           >
             <ButtonBase
-              :text="action === 'create' ? 'Agendar cita' : 'Guardar cambios'"
+              :text="action === 'create' ? 'Agendar nueva cita' : 'Guardar cambios'"
               color="primary"
               :loading="isPending"
               :loading-text="action === 'create' ? 'Agendando...' : 'Guardando...'"
               @click="onSubmit"
             />
-            <ButtonBase
-              text="Cancelar"
-              color="secondary"
-              :disabled="isPending"
-              @click="onCancel"
-            />
+            <ButtonBase text="Cancelar" color="secondary" :disabled="isPending" @click="onCancel" />
           </div>
         </div>
       </form>

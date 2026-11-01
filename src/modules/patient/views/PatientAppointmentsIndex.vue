@@ -10,8 +10,12 @@
           />
 
           <div class="mx-auto hidden opacity-70 md:block">
-            Mostrando los registros del {{ pagination.from }} al {{ pagination.to }} de
-            {{ pagination.total }} registros
+            <span v-if="pagination.total === 0">0 citas</span>
+            <span v-else-if="pagination.total === 1">Mostrando 1 de 1 cita</span>
+            <span v-else>
+              Mostrando del {{ pagination.from }} al {{ pagination.to }} de
+              {{ pagination.total }} citas
+            </span>
           </div>
 
           <div class="mt-3 w-full sm:ml-auto sm:mt-0 sm:w-auto md:ml-0">

@@ -15,16 +15,18 @@
                 : 'Editar cita'
           }}
         </h2>
-        <span
+        <PillBadge
           v-if="action === 'edit' && appointmentFolio"
-          class="px-2 py-0.5 text-xs font-mono font-medium rounded-md bg-foreground/5 text-foreground/70 border border-foreground/10"
-        >
-          Folio: {{ appointmentFolio }}
-        </span>
+          size="xs"
+          color="foreground"
+          rounded="md"
+          class="font-mono"
+          :label="`Folio: ${appointmentFolio}`"
+        />
       </div>
       <PillBadge
         v-if="appointment && !appointment.fecha_hora_inicio"
-        size="sm"
+        size="xs"
         color="warning"
         label="Solicitud pendiente de asignación"
       />
@@ -44,7 +46,7 @@
       <div v-if="appointment?.turno_preferido" class="flex items-center gap-2 shrink-0">
         <span class="text-xs text-foreground/70">Turno preferido:</span>
         <PillBadge
-          size="sm"
+          size="xs"
           :color="getShiftBadgeColor(appointment.turno_preferido)"
           :label="getShiftBadgeLabel(appointment.turno_preferido)"
         />

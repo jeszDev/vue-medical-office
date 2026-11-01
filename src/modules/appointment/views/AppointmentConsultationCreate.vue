@@ -19,28 +19,35 @@
 
           <div>
             <div class="flex flex-wrap items-center gap-2">
-              <span
-                class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary px-2.5 py-0.5 rounded-md bg-primary/10"
+              <PillBadge
+                size="xs"
+                color="primary"
+                rounded="md"
+                class="font-bold uppercase tracking-wider"
               >
-                <StethoscopeIcon class="size-3.5" />
+                <StethoscopeIcon class="size-3.5 mr-1" />
                 {{ isEditMode ? 'Edición de Consulta Médica' : 'Estación de Consulta Médica' }}
-              </span>
-
-              <span
-                v-if="appointment?.folio"
-                class="text-xs font-semibold px-2 py-0.5 rounded-md bg-foreground/5 text-foreground/80 border border-foreground/10 font-mono"
-              >
-                Cita: {{ appointment.folio }}
-              </span>
-              <span
-                v-else-if="existingConsultation?.id"
-                class="text-xs font-semibold px-2 py-0.5 rounded-md bg-foreground/5 text-foreground/80 border border-foreground/10 font-mono"
-              >
-                Consulta #{{ existingConsultation.id }}
-              </span>
+              </PillBadge>
 
               <PillBadge
-                size="sm"
+                v-if="appointment?.folio"
+                size="xs"
+                color="foreground"
+                rounded="md"
+                class="font-mono font-semibold"
+                :label="`Cita: ${appointment.folio}`"
+              />
+              <PillBadge
+                v-else-if="existingConsultation?.id"
+                size="xs"
+                color="foreground"
+                rounded="md"
+                class="font-mono font-semibold"
+                :label="`Consulta #${existingConsultation.id}`"
+              />
+
+              <PillBadge
+                size="xs"
                 :color="isEditMode ? 'warning' : 'pending'"
                 :label="isEditMode ? 'Modo Edición' : 'En atención activa'"
               />
@@ -239,7 +246,7 @@
                     Razón principal por la que acude el paciente (precargado desde la cita)
                   </p>
                 </div>
-                <PillBadge size="sm" color="pending" label="Requerido" />
+                <PillBadge size="xs" color="pending" label="Requerido" />
               </div>
 
               <div class="mt-4">
@@ -394,7 +401,7 @@
                     Impresión diagnóstica médica principal y diagnósticos secundarios
                   </p>
                 </div>
-                <PillBadge size="sm" color="pending" label="Requerido" />
+                <PillBadge size="xs" color="pending" label="Requerido" />
               </div>
 
               <div class="mt-4">
@@ -419,7 +426,7 @@
                     Plan farmacológico, posología, indicaciones de ingesta y duración del tratamiento
                   </p>
                 </div>
-                <PillBadge size="sm" color="pending" label="Requerido" />
+                <PillBadge size="xs" color="pending" label="Requerido" />
               </div>
 
               <div class="mt-4">

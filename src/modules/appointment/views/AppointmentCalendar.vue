@@ -4,15 +4,17 @@
     <div class="flex items-center justify-between pb-3 mb-4 border-b border-foreground/10 w-full">
       <div class="flex items-center gap-2.5">
         <h2 class="text-base sm:text-lg font-bold tracking-tight">DETALLES DE LA CITA</h2>
-        <span
+        <PillBadge
           v-if="appointment.folio"
-          class="text-xs font-mono px-2 py-0.5 rounded bg-foreground/5 text-foreground/70 border border-foreground/10"
-        >
-          {{ appointment.folio }}
-        </span>
+          size="xs"
+          color="foreground"
+          rounded="md"
+          class="font-mono"
+          :label="appointment.folio"
+        />
       </div>
       <PillBadge
-        size="sm"
+        size="xs"
         :color="badgeColor"
         :label="`CITA ${statusName.toUpperCase()}`"
       />

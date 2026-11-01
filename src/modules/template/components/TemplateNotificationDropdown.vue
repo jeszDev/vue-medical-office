@@ -36,12 +36,12 @@
         <div class="flex items-center justify-between pb-3 border-b border-foreground/10">
           <div class="flex items-center gap-2">
             <span class="font-semibold text-sm text-foreground">Solicitudes de Citas</span>
-            <span
+            <PillBadge
               v-if="pendingCount > 0"
-              class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary/15 text-primary border border-primary/25"
-            >
-              {{ pendingCount }} pendiente{{ pendingCount === 1 ? '' : 's' }}
-            </span>
+              size="xs"
+              color="primary"
+              :label="`${pendingCount} pendiente${pendingCount === 1 ? '' : 's'}`"
+            />
           </div>
 
           <RouterLink
@@ -109,13 +109,13 @@
                   >
                     {{ getPatientDisplayName(request) }}
                   </span>
-                  <span
+                  <PillBadge
                     v-if="request.turno_preferido"
-                    class="px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase shrink-0"
-                    :class="getShiftBadgeStyle(request.turno_preferido)"
-                  >
-                    {{ getShiftBadgeLabel(request.turno_preferido) }}
-                  </span>
+                    size="xs"
+                    :color="getShiftBadgeColor(request.turno_preferido)"
+                    :label="getShiftBadgeLabel(request.turno_preferido)"
+                    class="shrink-0 uppercase"
+                  />
                 </div>
 
                 <p class="text-[11px] text-foreground/70 truncate mt-0.5" :title="request.motivo">
@@ -161,9 +161,10 @@ import {
 } from 'lucide-vue-next';
 
 import { useNavigationMenu } from '../composables/useNavigationMenu';
+import PillBadge from '@/modules/common/components/PillBadge.vue';
 import { getAppointmentRequestsAction } from '@/modules/appointment/actions/get-appointment-requests.action';
 import {
-  normalizeShift,
+  getShiftBadgeColor,
   getShiftBadgeLabel,
 } from '@/modules/appointment/helpers/appointment-shift.mapper';
 import type { Appointment } from '@/modules/appointment/interfaces/appointment.interface';
@@ -223,17 +224,6 @@ const getPatientInitials = (appointment: Appointment): string => {
   const parts = name.trim().split(/\s+/);
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase();
-};
-
-const getShiftBadgeStyle = (shift?: string | null) => {
-  const norm = normalizeShift(shift);
-  if (norm === 'matutino') {
-    return 'bg-sky-500/15 text-sky-700 dark:text-sky-300 border border-sky-500/30';
-  }
-  if (norm === 'vespertino') {
-    return 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30';
-  }
-  return 'bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30';
 };
 
 const formatRelativeOrDate = (dateStr?: string | null): string => {

@@ -6,12 +6,13 @@
           <h2 class="text-lg font-bold tracking-tight text-foreground flex items-center gap-2.5">
             <CalendarClockIcon class="size-5 text-primary" />
             SOLICITUDES DE CITAS PENDIENTES
-            <span
+            <PillBadge
               v-if="filteredRequests.length > 0"
-              class="ml-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/15 text-primary border border-primary/20"
-            >
-              {{ filteredRequests.length }} pendiente{{ filteredRequests.length === 1 ? '' : 's' }}
-            </span>
+              size="xs"
+              color="primary"
+              class="ml-1"
+              :label="`${filteredRequests.length} pendiente${filteredRequests.length === 1 ? '' : 's'}`"
+            />
           </h2>
           <p class="text-xs text-foreground/60 mt-0.5">
             Citas solicitadas por pacientes que requieren revisión, confirmación y asignación de médico y horario.
@@ -164,11 +165,15 @@
 
                   <!-- Columna FOLIO -->
                   <td
-                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 border-y border-foreground/10 bg-background first:border-l last:border-r font-mono text-xs font-semibold text-foreground whitespace-nowrap"
+                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 border-y border-foreground/10 bg-background first:border-l last:border-r whitespace-nowrap"
                   >
-                    <span class="px-2 py-0.5 rounded bg-foreground/5 border border-foreground/10">
-                      {{ request.folio || `#${request.id}` }}
-                    </span>
+                    <PillBadge
+                      size="xs"
+                      color="foreground"
+                      rounded="md"
+                      class="font-mono font-semibold"
+                      :label="request.folio || `#${request.id}`"
+                    />
                   </td>
 
                   <!-- Columna Paciente -->
@@ -203,22 +208,18 @@
                     class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 border-y border-foreground/10 bg-background first:border-l last:border-r"
                   >
                     <div class="flex flex-col gap-1 items-start">
-                      <span
-                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border shadow-xs"
-                        :class="getShiftBadgeConfig(request.turno_preferido).badgeClass"
+                      <PillBadge
+                        size="xs"
+                        :color="getShiftBadgeColor(request.turno_preferido)"
+                        :dot="true"
+                        :label="getShiftBadgeLabel(request.turno_preferido)"
                         :title="getShiftDescription(request.turno_preferido)"
-                      >
-                        <span
-                          class="size-2 rounded-full"
-                          :class="getShiftBadgeConfig(request.turno_preferido).dotClass"
-                        ></span>
-                        {{ getShiftBadgeConfig(request.turno_preferido).label }}
-                      </span>
+                      />
                       <span
-                        v-if="getShiftBadgeConfig(request.turno_preferido).description"
+                        v-if="getShiftDescription(request.turno_preferido)"
                         class="text-[10px] text-foreground/50 ml-1 hidden md:inline-block"
                       >
-                        {{ getShiftBadgeConfig(request.turno_preferido).description }}
+                        {{ getShiftDescription(request.turno_preferido) }}
                       </span>
                     </div>
                   </td>
@@ -264,26 +265,23 @@
                     {{ request.creado_el || formatDateTime(request.created_at) || 'Sin fecha' }}
                   </td>
 
-                  <!-- Columna Acciones -->
+                  <!-- Columna Acciones homologada -->
                   <td
-                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 border-y border-foreground/10 bg-background first:border-l last:border-r text-center"
+                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 border-y border-foreground/10 bg-background first:border-l last:border-r text-center whitespace-nowrap"
                   >
-                    <div class="flex items-center justify-center gap-2">
-                      <ButtonBase
-                        text="Asignar Cita"
+                    <div class="flex items-center justify-center gap-3">
+                      <TableActionButton
+                        variant="success"
                         :icon="CalendarCheckIcon"
-                        color="primary"
-                        class="!px-3 !py-1.5 !text-xs whitespace-nowrap font-medium"
+                        tooltip="Asignar"
                         @click="openAssignModal(request)"
                       />
-                      <button
-                        type="button"
-                        class="p-1.5 rounded-lg text-foreground/60 hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
-                        title="Cancelar / Descartar solicitud"
+                      <TableActionButton
+                        variant="danger"
+                        :icon="TrashIcon"
+                        tooltip="Cancelar"
                         @click="openCancelModal(request)"
-                      >
-                        <TrashIcon class="size-4" />
-                      </button>
+                      />
                     </div>
                   </td>
                 </tr>
@@ -319,6 +317,8 @@ import TemplateView from '@/modules/template/components/TemplateView.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
+import TableActionButton from '@/modules/common/components/TableActionButton.vue';
+import PillBadge from '@/modules/common/components/PillBadge.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
 import AppointmentCancelModalQuestion from '@/modules/appointment/components/AppointmentCancelModalQuestion.vue';
 import AppointmentRequestsShiftCards from '@/modules/appointment/components/AppointmentRequestsShiftCards.vue';
@@ -335,6 +335,8 @@ import {
 import type { Appointment } from '../interfaces/appointment.interface';
 import { getAppointmentRequestsAction } from '../actions/get-appointment-requests.action';
 import {
+  getShiftBadgeColor,
+  getShiftBadgeLabel,
   getShiftDescription,
   normalizeShift,
   type TurnoPreferido,
@@ -391,41 +393,6 @@ const hasLongReason = (appointment: Appointment): boolean => {
 const clearFilters = () => {
   searchTerm.value = '';
   selectedShiftFilter.value = 'all';
-};
-
-// Configuración visual de badges para turno preferido
-const getShiftBadgeConfig = (shift?: string | null) => {
-  const norm = normalizeShift(shift);
-  if (norm === 'matutino') {
-    return {
-      label: 'Turno Matutino',
-      dotClass: 'bg-sky-500',
-      badgeClass: 'bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/30',
-      description: '08:00 - 14:00 hrs',
-    };
-  }
-  if (norm === 'vespertino') {
-    return {
-      label: 'Turno Vespertino',
-      dotClass: 'bg-amber-500',
-      badgeClass: 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30',
-      description: '14:00 - 20:00 hrs',
-    };
-  }
-  if (norm === 'indistinto') {
-    return {
-      label: 'Horario Indistinto',
-      dotClass: 'bg-indigo-500',
-      badgeClass: 'bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border-indigo-500/30',
-      description: 'Cualquier horario disponible',
-    };
-  }
-  return {
-    label: shift || 'Sin turno',
-    dotClass: 'bg-slate-400',
-    badgeClass: 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20',
-    description: '',
-  };
 };
 
 // Obtención amigable del nombre del paciente

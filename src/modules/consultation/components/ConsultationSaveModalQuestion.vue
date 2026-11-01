@@ -1,7 +1,9 @@
 <template>
   <ModalQuestion
     v-model="isOpen"
-    :title="isEditMode ? '¿Deseas guardar los cambios?' : '¿Deseas finalizar y guardar la consulta?'"
+    :title="
+      isEditMode ? '¿Deseas guardar los cambios?' : '¿Deseas finalizar y guardar la consulta?'
+    "
     :confirm-text="isEditMode ? 'Sí, actualizar consulta' : 'Sí, guardar consulta'"
     cancel-text="Revisar datos"
     variant="primary"
@@ -10,11 +12,9 @@
     @cancel="onClose"
   >
     <template #icon>
-      <div
-        class="size-16 rounded-2xl mx-auto mt-3 flex items-center justify-center bg-primary/10 border border-primary/20 text-primary"
-      >
-        <StethoscopeIcon class="size-8" />
-      </div>
+      <StethoscopeIcon
+        class="size-16 stroke-1 mx-auto mt-3 [--color:currentColor] stroke-(--color) fill-(--color)/25 text-primary"
+      />
     </template>
 
     <template #description>

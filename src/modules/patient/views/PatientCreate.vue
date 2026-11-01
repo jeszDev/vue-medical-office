@@ -1,13 +1,7 @@
 <template>
   <div class="relative z-20 w-full">
     <!-- Encabezado de vista o modal -->
-    <div
-      :class="[
-        isInsideModal
-          ? 'flex items-center pb-3'
-          : 'mt-8 flex items-center',
-      ]"
-    >
+    <div :class="[isInsideModal ? 'flex items-center pb-3' : 'mt-8 flex items-center']">
       <h2
         :class="[
           isInsideModal
@@ -121,12 +115,7 @@
               :loading-text="action === 'create' ? 'Registrando...' : 'Guardando...'"
               @click="onSubmit"
             />
-            <ButtonBase
-              text="Cancelar"
-              color="secondary"
-              :disabled="isPending"
-              @click="onCancel"
-            />
+            <ButtonBase text="Cancelar" color="secondary" :disabled="isPending" @click="onCancel" />
           </div>
         </div>
       </form>
@@ -139,7 +128,9 @@
       v-model="showConfirmModal"
       id="modal-confirm-patient-save"
       variant="primary"
-      :title="action === 'create' ? '¿Deseas registrar al paciente?' : '¿Deseas guardar los cambios?'"
+      :title="
+        action === 'create' ? '¿Deseas registrar al paciente?' : '¿Deseas guardar los cambios?'
+      "
       :confirm-text="action === 'create' ? 'Sí, registrar' : 'Sí, guardar cambios'"
       cancel-text="Revisar datos"
       :is-loading="isPending"
@@ -148,18 +139,15 @@
       @cancel="onCancelConfirm"
     >
       <template #icon>
-        <div
-          class="size-16 rounded-2xl mx-auto mt-3 flex items-center justify-center bg-primary/10 border border-primary/20 text-primary"
+        <svg
+          class="size-16 stroke-1 mx-auto mt-3 [--color:currentColor] stroke-(--color) fill-(--color)/25 text-primary"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
         >
-          <svg class="size-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.8"
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            />
-          </svg>
-        </div>
+          <circle cx="12" cy="8" r="5" stroke-width="1" />
+          <path d="M20 21a8 8 0 0 0-16 0" stroke-width="1" />
+        </svg>
       </template>
       <template #description>
         <div class="space-y-1">
@@ -170,7 +158,10 @@
                 : 'Se actualizarán los datos del paciente en el sistema.'
             }}
           </p>
-          <p v-if="pendingPatientValues?.nombre" class="text-xs font-medium text-foreground/80 mt-1">
+          <p
+            v-if="pendingPatientValues?.nombre"
+            class="text-xs font-medium text-foreground/80 mt-1"
+          >
             Paciente:
             <span class="text-primary font-bold">
               {{ pendingPatientValues.nombre }} {{ pendingPatientValues.primer_apellido || '' }}

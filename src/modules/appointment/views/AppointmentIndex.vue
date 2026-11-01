@@ -1,66 +1,74 @@
 <template>
   <TemplateView title="Calendario de citas">
-    <template #actions>
-      <span
-        v-if="isFetching"
-        class="inline-flex items-center gap-1.5 text-xs text-primary font-medium animate-pulse mr-1"
-      >
-        <span class="size-2 rounded-full bg-primary animate-ping"></span>
-        Actualizando agenda...
-      </span>
-      <ButtonBase
-        text="Agendar nueva cita"
-        color="primary"
-        @click="openCreateModal"
-      />
-    </template>
     <template #main>
-      <!-- Leyenda de estatus visual, resumen y filtro -->
-      <div class="flex flex-wrap items-center justify-between gap-3 text-xs mb-4 text-foreground/80">
-        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-          <span class="font-semibold text-foreground/60 uppercase tracking-wider text-[11px]">
-            Estatus:
-          </span>
-          <PillBadge
-            size="sm"
-            color="warning"
-            :dot="true"
-            :label="`Pendiente (${appointmentsSummary.pendientes})`"
-          />
-          <PillBadge
-            size="sm"
-            color="success"
-            :dot="true"
-            :label="`Confirmada / Atendida (${appointmentsSummary.confirmadas})`"
-          />
-          <PillBadge
-            size="sm"
-            color="foreground"
-            :dot="true"
-            class="transition-opacity"
-            :class="{ 'opacity-40 line-through': hideCancelled }"
-            :label="`Cancelada (${appointmentsSummary.canceladas})`"
-          />
+      <div class="grid grid-cols-12 gap-6">
+        <!-- Barra de acciones y filtros estilo Midone -->
+        <div class="col-span-12 mt-2 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <ButtonBase
+              text="Agendar nueva cita"
+              color="primary"
+              class="mr-2"
+              @click="openCreateModal"
+            />
+            <span
+              v-if="isFetching"
+              class="inline-flex items-center gap-1.5 text-xs text-primary font-medium animate-pulse"
+            >
+              <span class="size-2 rounded-full bg-primary animate-ping"></span>
+              Actualizando agenda...
+            </span>
+          </div>
+
+          <!-- Leyenda de estatus visual, resumen y filtro -->
+          <div class="flex flex-wrap items-center gap-3 text-xs text-foreground/80 sm:ml-auto">
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+              <span class="font-semibold text-foreground/60 uppercase tracking-wider text-[11px]">
+                Estatus:
+              </span>
+              <PillBadge
+                size="sm"
+                color="warning"
+                :dot="true"
+                :label="`Pendiente (${appointmentsSummary.pendientes})`"
+              />
+              <PillBadge
+                size="sm"
+                color="success"
+                :dot="true"
+                :label="`Confirmada / Atendida (${appointmentsSummary.confirmadas})`"
+              />
+              <PillBadge
+                size="sm"
+                color="foreground"
+                :dot="true"
+                class="transition-opacity"
+                :class="{ 'opacity-40 line-through': hideCancelled }"
+                :label="`Cancelada (${appointmentsSummary.canceladas})`"
+              />
+            </div>
+
+            <div class="h-4 w-px bg-foreground/10 hidden md:block"></div>
+
+            <!-- Filtro interactivo para ocultar citas canceladas -->
+            <label
+              class="flex items-center gap-2 cursor-pointer select-none text-xs text-foreground/75 hover:text-foreground transition-colors ml-auto sm:ml-0"
+            >
+              <input
+                type="checkbox"
+                v-model="hideCancelled"
+                class="rounded border-foreground/20 text-primary focus:ring-primary/20 size-4 cursor-pointer"
+              />
+              <span class="font-medium">Ocultar canceladas</span>
+            </label>
+          </div>
         </div>
 
-        <!-- Filtro interactivo para ocultar citas canceladas -->
-        <label
-          class="flex items-center gap-2 cursor-pointer select-none text-xs text-foreground/75 hover:text-foreground transition-colors ml-auto"
+        <!-- Calendario con soporte de cell-click, today-button y slot enriquecido -->
+        <div
+          class="col-span-12 transition-opacity duration-200"
+          :class="{ 'opacity-70 pointer-events-none': isFetching }"
         >
-          <input
-            type="checkbox"
-            v-model="hideCancelled"
-            class="rounded border-foreground/20 text-primary focus:ring-primary/20 size-4 cursor-pointer"
-          />
-          <span class="font-medium">Ocultar canceladas</span>
-        </label>
-      </div>
-
-      <!-- Calendario con soporte de cell-click, today-button y slot enriquecido -->
-      <div
-        class="transition-opacity duration-200"
-        :class="{ 'opacity-70 pointer-events-none': isFetching }"
-      >
         <vue-cal
           locale="es"
           v-model:view="currentView"
@@ -108,8 +116,9 @@
           </template>
         </vue-cal>
       </div>
+    </div>
 
-      <DialogBasic id="modal-appointment-calendar" size="3xl">
+    <DialogBasic id="modal-appointment-calendar" size="3xl">
         <AppointmentCalendar
           :appointment="selectedAppointment"
           @updated="onAppointmentUpdated"

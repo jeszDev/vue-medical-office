@@ -13,6 +13,7 @@
   --color-warning: var(--color-yellow-800);
   --color-background: var(--color-slate-50);
   --color-foreground: var(--color-slate-700);
+  --color-muted-foreground: var(--color-slate-500);
 
   --background-image-accent: url('../images/accent.svg');
   --background-image-noise: url('../images/noise.png');
@@ -67,6 +68,7 @@ body {
 .dark {
   --color-background: var(--color-black);
   --color-foreground: var(--color-slate-300);
+  --color-muted-foreground: var(--color-slate-400);
   --background-image-chevron: var(--background-image-chevron-light);
   .box {
     --color-background: color-mix(in oklch, var(--color-white), transparent 99%);

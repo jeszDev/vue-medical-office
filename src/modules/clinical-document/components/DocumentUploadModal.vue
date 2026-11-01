@@ -141,18 +141,13 @@
               />
               <ButtonBase
                 type="submit"
-                :text="isSubmitting ? 'Subiendo estudio...' : 'Anexar Estudio'"
+                text="Anexar Estudio"
+                :icon="UploadCloud"
                 color="primary"
-                :disabled="isSubmitting || !selectedFile"
-              >
-                <template #icon>
-                  <div
-                    v-if="isSubmitting"
-                    class="size-4 animate-spin rounded-full border-2 border-white border-t-transparent"
-                  ></div>
-                  <UploadCloud v-else class="size-4" />
-                </template>
-              </ButtonBase>
+                :loading="isSubmitting"
+                loading-text="Subiendo estudio..."
+                :disabled="!selectedFile"
+              />
             </div>
           </form>
         </div>

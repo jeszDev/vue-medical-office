@@ -68,22 +68,12 @@
 
           <ButtonBase
             color="primary"
-            :text="
-              isPending
-                ? (isEditMode ? 'Actualizando...' : 'Guardando...')
-                : (isEditMode ? 'Actualizar Consulta' : 'Finalizar y Guardar Consulta')
-            "
-            :disabled="isPending"
+            :text="isEditMode ? 'Actualizar Consulta' : 'Finalizar y Guardar Consulta'"
+            :icon="StethoscopeIcon"
+            :loading="isPending"
+            :loading-text="isEditMode ? 'Actualizando...' : 'Guardando...'"
             @click="onSubmit"
-          >
-            <template #icon>
-              <div
-                v-if="isPending"
-                class="size-4 rounded-full border-2 border-primary border-t-transparent animate-spin"
-              ></div>
-              <StethoscopeIcon v-else class="size-4" />
-            </template>
-          </ButtonBase>
+          />
         </div>
       </div>
 
@@ -524,22 +514,12 @@
 
               <ButtonBase
                 color="primary"
-                :text="
-                  isPending
-                    ? (isEditMode ? 'Actualizando...' : 'Guardando consulta...')
-                    : (isEditMode ? 'Actualizar Consulta' : 'Finalizar y Guardar Consulta')
-                "
-                :disabled="isPending"
+                :text="isEditMode ? 'Actualizar Consulta' : 'Finalizar y Guardar Consulta'"
+                :icon="StethoscopeIcon"
+                :loading="isPending"
+                :loading-text="isEditMode ? 'Actualizando...' : 'Guardando consulta...'"
                 @click="onSubmit"
-              >
-                <template #icon>
-                  <div
-                    v-if="isPending"
-                    class="size-4 rounded-full border-2 border-primary border-t-transparent animate-spin"
-                  ></div>
-                  <StethoscopeIcon v-else class="size-4" />
-                </template>
-              </ButtonBase>
+              />
             </div>
           </form>
         </div>

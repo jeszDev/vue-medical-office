@@ -153,17 +153,10 @@
             class="col-span-12 mt-4 pt-4 border-t border-foreground/10 flex items-center justify-end gap-3"
           >
             <ButtonBase
-              :text="
-                isPending
-                  ? action === 'create'
-                    ? 'Agendando...'
-                    : 'Guardando...'
-                  : action === 'create'
-                    ? 'Agendar cita'
-                    : 'Guardar cambios'
-              "
+              :text="action === 'create' ? 'Agendar cita' : 'Guardar cambios'"
               color="primary"
-              :disabled="isPending"
+              :loading="isPending"
+              :loading-text="action === 'create' ? 'Agendando...' : 'Guardando...'"
               @click="onSubmit"
             />
             <ButtonBase

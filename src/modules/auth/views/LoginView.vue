@@ -50,24 +50,18 @@
         </div>
       </div>
       <div class="mt-5 text-center xl:mt-10 xl:text-left">
-        <button
-          class="cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-(--color)/20 border-(--color)/60 text-(--color) hover:bg-(--color)/5 [--color:var(--color-primary)] h-10 login-button box w-full px-4 py-5"
+        <ButtonBase
+          type="button"
+          text="Iniciar"
+          color="primary"
+          variant="soft"
+          size="lg"
+          :loading="isLoading"
+          loading-text="Iniciando sesión..."
+          class="login-button box w-full"
           @click="handleLogin"
-        >
-          Iniciar
-        </button>
-        <!-- <button
-          class="[--color:var(--color-foreground)] cursor-pointer inline-flex border items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-(--color) hover:bg-(--color)/5 bg-background border-(--color)/20 h-10 box mt-4 w-full px-4 py-5"
-        >
-          Registrarse
-        </button> -->
+        />
       </div>
-      <!-- <div class="mt-10 text-center opacity-70 xl:mt-24 xl:text-left">
-        By signin up, you agree to our
-        <a class="text-primary" href=""> Terms and Conditions </a>
-        &
-        <a class="text-primary" href=""> Privacy Policy </a>
-      </div> -->
     </div>
   </div>
 </template>
@@ -75,16 +69,16 @@
 <script setup lang="ts">
 import { useAuthStore } from '../stores/auth.store';
 import { ref } from 'vue';
-
 import { useToast } from 'vue-toastification';
+import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 
 const authStore = useAuthStore();
-// const toast = useToast();
 const emailInputRef = ref<HTMLInputElement | null>(null);
 const passwordInputRef = ref<HTMLInputElement | null>(null);
 
 const email = ref('');
 const password = ref('');
+const isLoading = ref(false);
 
 const toast = useToast();
 
@@ -99,11 +93,15 @@ const handleLogin = async () => {
     return passwordInputRef.value?.focus();
   }
 
-  const ok = await authStore.login(email.value, password.value);
+  isLoading.value = true;
+  try {
+    const ok = await authStore.login(email.value, password.value);
+    if (ok) return;
 
-  if (ok) return;
-
-  toast.error('Usuario  y/o contraseña incorrectos');
+    toast.error('Usuario y/o contraseña incorrectos');
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>
 

@@ -43,54 +43,7 @@
         >
           <div class="relative w-full overflow-auto">
             <table class="w-full caption-bottom border-separate border-spacing-y-[10px] -mt-2">
-
-              <thead class="[&_tr]:border-b-0 [&_tr_th]:h-10">
-                <tr
-                  class="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted border-b-0"
-                >
-                  <th
-                    width="4%"
-                    class="h-12 px-4 text-center font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
-                  >
-                    #
-                  </th>
-                  <th
-                    width="12%"
-                    class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 whitespace-nowrap"
-                  >
-                    FOLIO
-                  </th>
-                  <th
-                    width="15%"
-                    class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 whitespace-nowrap"
-                  >
-                    FECHA Y HORA
-                  </th>
-                  <th
-                    width="18%"
-                    class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 whitespace-nowrap"
-                  >
-                    MÉDICO
-                  </th>
-                  <th
-                    class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
-                  >
-                    MOTIVO
-                  </th>
-                  <th
-                    width="14%"
-                    class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 whitespace-nowrap"
-                  >
-                    ESTATUS
-                  </th>
-                  <th
-                    width="10%"
-                    class="h-12 px-4 font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-center whitespace-nowrap"
-                  >
-                    ACCIONES
-                  </th>
-                </tr>
-              </thead>
+              <TableHead :columns="tableColumns" />
               <tbody class="[&_tr:last-child]:border-0">
                 <tr v-if="!appointments?.length">
                   <td
@@ -223,6 +176,7 @@ import {
   getAppointmentStatusName,
 } from '@/modules/appointment/helpers/get-appointment-status-color.mapper';
 import TableActionButton from '@/modules/common/components/TableActionButton.vue';
+import TableHead, { type TableColumn } from '@/modules/common/components/TableHead.vue';
 import AppointmentCancelModalQuestion from '@/modules/appointment/components/AppointmentCancelModalQuestion.vue';
 import TablePagination from '@/modules/common/components/TablePagination.vue';
 import type { Pagination } from '@/modules/common/interfaces/pagination.interface';
@@ -243,6 +197,16 @@ const props = defineProps<Props>();
 
 const router = useRouter();
 const route = useRoute();
+
+const tableColumns: TableColumn[] = [
+  { key: 'index', label: '#', align: 'center', width: 'w-12' },
+  { key: 'folio', label: 'FOLIO', align: 'left' },
+  { key: 'dateTime', label: 'FECHA Y HORA', align: 'left' },
+  { key: 'doctor', label: 'MÉDICO', align: 'left' },
+  { key: 'reason', label: 'MOTIVO', align: 'left' },
+  { key: 'status', label: 'ESTATUS', align: 'center' },
+  { key: 'actions', label: 'ACCIONES', align: 'center', width: 'w-24' },
+];
 
 const page = ref<number>(Number(route.query.page) || 1);
 const perPage = ref<number>(10);

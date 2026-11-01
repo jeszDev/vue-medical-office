@@ -45,43 +45,7 @@
           >
             <div class="relative w-full overflow-auto">
               <table class="w-full caption-bottom border-separate border-spacing-y-[10px] -mt-2">
-
-                <thead class="[&_tr]:border-b-0 [&_tr_th]:h-10">
-                  <tr
-                    class="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted border-b-0"
-                  >
-                    <th
-                      class="h-12 px-4 text-center font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
-                    >
-                      #
-                    </th>
-                    <th
-                      class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
-                    >
-                      PACIENTE
-                    </th>
-                    <th
-                      class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
-                    >
-                      CURP
-                    </th>
-                    <th
-                      class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
-                    >
-                      CONTACTO
-                    </th>
-                    <th
-                      class="h-12 px-4 text-left font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
-                    >
-                      FECHA DE REGISTRO
-                    </th>
-                    <th
-                      class="h-12 px-4 font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-center"
-                    >
-                      ACCIONES
-                    </th>
-                  </tr>
-                </thead>
+                <TableHead :columns="tableColumns" />
                 <tbody class="[&_tr:last-child]:border-0">
                   <tr
                     v-for="(patient, index) in patients"
@@ -189,6 +153,7 @@ import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { computed, ref, watch } from 'vue';
 import { getPatientsAction } from '../actions/get-patients.action';
 import TablePagination from '@/modules/common/components/TablePagination.vue';
+import TableHead, { type TableColumn } from '@/modules/common/components/TableHead.vue';
 import { Pagination } from '../../common/interfaces/pagination.interface';
 import { useRoute, useRouter } from 'vue-router';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
@@ -210,6 +175,15 @@ const perPage = ref<number>(10);
 const searchInput = ref<string>(route.query.search?.toString() || '');
 const searchQuery = ref<string>(route.query.search?.toString() || '');
 const queryClient = useQueryClient();
+
+const tableColumns: TableColumn[] = [
+  { key: 'index', label: '#', align: 'center', width: 'w-12' },
+  { key: 'patient', label: 'PACIENTE', align: 'left' },
+  { key: 'curp', label: 'CURP', align: 'left' },
+  { key: 'contact', label: 'CONTACTO', align: 'left' },
+  { key: 'registerDate', label: 'FECHA DE REGISTRO', align: 'left' },
+  { key: 'actions', label: 'ACCIONES', align: 'center', width: 'w-24' },
+];
 
 const selectedPatientId = ref<'create' | number>('create');
 

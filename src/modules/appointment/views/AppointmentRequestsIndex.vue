@@ -122,34 +122,7 @@
         >
           <div class="relative w-full overflow-auto">
             <table class="w-full caption-bottom border-separate border-spacing-y-[10px] -mt-2">
-              <thead class="[&_tr]:border-b-0 [&_tr_th]:h-10">
-                <tr class="border-b-0">
-                  <th class="h-10 px-4 text-center font-semibold text-xs text-foreground/60 w-12">
-                    #
-                  </th>
-                  <th class="h-10 px-4 text-left font-semibold text-xs text-foreground/60">
-                    FOLIO
-                  </th>
-                  <th class="h-10 px-4 text-left font-semibold text-xs text-foreground/60">
-                    PACIENTE
-                  </th>
-                  <th class="h-10 px-4 text-left font-semibold text-xs text-foreground/60">
-                    FECHA PREFERIDA
-                  </th>
-                  <th class="h-10 px-4 text-left font-semibold text-xs text-foreground/60">
-                    TURNO PREFERIDO
-                  </th>
-                  <th class="h-10 px-4 text-left font-semibold text-xs text-foreground/60">
-                    MOTIVO DE LA SOLICITUD
-                  </th>
-                  <th class="h-10 px-4 text-left font-semibold text-xs text-foreground/60">
-                    SOLICITADA EL
-                  </th>
-                  <th class="h-10 px-4 text-center font-semibold text-xs text-foreground/60">
-                    ACCIONES
-                  </th>
-                </tr>
-              </thead>
+              <TableHead :columns="tableColumns" />
               <tbody class="[&_tr:last-child]:border-0">
                 <tr
                   v-for="(request, index) in filteredRequests"
@@ -320,6 +293,7 @@ import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 import TableActionButton from '@/modules/common/components/TableActionButton.vue';
+import TableHead, { type TableColumn } from '@/modules/common/components/TableHead.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
 import AppointmentCancelModalQuestion from '@/modules/appointment/components/AppointmentCancelModalQuestion.vue';
@@ -345,6 +319,17 @@ import {
 } from '../helpers/appointment-shift.mapper';
 
 const queryClient = useQueryClient();
+
+const tableColumns: TableColumn[] = [
+  { key: 'index', label: '#', align: 'center', width: 'w-12' },
+  { key: 'folio', label: 'FOLIO', align: 'left' },
+  { key: 'patient', label: 'PACIENTE', align: 'left' },
+  { key: 'preferredDate', label: 'FECHA PREFERIDA', align: 'left' },
+  { key: 'preferredShift', label: 'TURNO PREFERIDO', align: 'left' },
+  { key: 'reason', label: 'MOTIVO DE LA SOLICITUD', align: 'left' },
+  { key: 'requestedAt', label: 'SOLICITADA EL', align: 'left' },
+  { key: 'actions', label: 'ACCIONES', align: 'center', width: 'w-24' },
+];
 
 // Estado de filtros
 const searchTerm = ref('');

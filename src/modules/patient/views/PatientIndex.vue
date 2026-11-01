@@ -1,5 +1,5 @@
 <template>
-  <TemplateView title="LISTADO DE PACIENTES">
+  <TemplateView title="Listado de pacientes">
     <template #main>
       <FullScreenLoader v-if="isLoading && !responsePatients" />
 

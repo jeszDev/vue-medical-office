@@ -1,17 +1,26 @@
 <template>
   <div class="relative z-20 w-full">
-    <!-- Encabezado compacto -->
+    <!-- Encabezado de vista o modal -->
     <div
-      class="flex items-center pb-3 border-b border-foreground/10"
-      :class="{ 'mt-2': !isInsideModal }"
+      :class="[
+        isInsideModal
+          ? 'flex items-center pb-3'
+          : 'mt-8 flex items-center',
+      ]"
     >
-      <h2 class="text-base sm:text-lg font-semibold text-foreground">
+      <h2
+        :class="[
+          isInsideModal
+            ? 'text-base sm:text-lg font-semibold text-foreground'
+            : 'mr-auto text-lg font-medium text-foreground',
+        ]"
+      >
         {{ action === 'create' ? 'Registro de nuevo paciente' : 'Editar paciente' }}
       </h2>
     </div>
 
     <!-- Formulario con espaciado optimizado -->
-    <div :class="['mt-4', !isInsideModal ? 'px-5 sm:px-20' : '']">
+    <div :class="['mt-5', !isInsideModal ? 'px-5 sm:px-20' : '']">
       <form @submit.prevent="onSubmit">
         <div class="grid grid-cols-12 gap-4 gap-y-4">
           <div class="flex flex-col gap-2 col-span-12 sm:col-span-4">

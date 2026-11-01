@@ -1,25 +1,5 @@
 <template>
-  <TemplateView>
-    <template #header>
-      <div class="flex flex-wrap items-center gap-2.5 mr-auto">
-        <h2 class="text-lg font-bold uppercase tracking-wider text-foreground">
-          Información del Paciente
-        </h2>
-        <template v-if="patient?.nombre_completo">
-          <span class="text-foreground/30 text-lg font-light select-none">/</span>
-          <span class="text-lg sm:text-xl font-bold text-primary">
-            {{ patient.nombre_completo }}
-          </span>
-          <PillBadge
-            v-if="patient?.edad"
-            size="xs"
-            color="primary"
-            rounded="md"
-            :label="`${patient.edad} años`"
-          />
-        </template>
-      </div>
-    </template>
+  <TemplateView title="Detalle del paciente">
     <template #main>
       <FullScreenLoader v-if="isLoading" />
 
@@ -111,7 +91,6 @@ import { FolderArchive } from 'lucide-vue-next';
 
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
-import PillBadge from '@/modules/common/components/PillBadge.vue';
 
 import PatientAppointmentsIndex from '@/modules/patient/views/PatientAppointmentsIndex.vue';
 import PatientShowInformation from '@/modules/patient/views/PatientShowInformation.vue';

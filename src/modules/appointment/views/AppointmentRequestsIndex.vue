@@ -1,15 +1,5 @@
 <template>
   <TemplateView title="Solicitudes de citas">
-    <template #actions>
-      <ButtonBase
-        text="Actualizar"
-        :icon="RefreshIcon"
-        color="secondary"
-        :disabled="isFetching"
-        @click="refetch"
-      />
-    </template>
-
     <template #main>
       <FullScreenLoader v-if="isLoading && !requests" />
 
@@ -22,21 +12,18 @@
 
         <!-- Barra secundaria: Resumen de resultados filtrados y buscador -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-          <div class="flex items-center gap-2 text-xs text-foreground/70">
-            <span>
-              Mostrando <strong class="text-foreground">{{ filteredRequests.length }}</strong> de
-              <strong class="text-foreground">{{ requests.length }}</strong> solicitudes
+          <div class="opacity-70">
+            <span v-if="filteredRequests.length === 0">0 solicitudes</span>
+            <span v-else-if="filteredRequests.length === 1 && requests.length === 1">
+              Mostrando 1 de 1 solicitud
             </span>
-            <button
-              v-if="selectedShiftFilter !== 'all' || searchTerm"
-              type="button"
-              class="text-xs text-primary hover:underline cursor-pointer ml-1 inline-flex items-center gap-1 font-medium"
-              title="Restablecer filtros"
-              @click="clearFilters"
-            >
-              <CloseIcon class="size-3" />
-              Limpiar filtros
-            </button>
+            <span v-else-if="filteredRequests.length === 1">
+              Mostrando 1 de {{ requests.length }} solicitudes
+            </span>
+            <span v-else>
+              Mostrando del 1 al {{ filteredRequests.length }} de
+              {{ requests.length }} solicitudes
+            </span>
           </div>
 
           <!-- Buscador compacto alineado a la derecha -->
@@ -255,7 +242,6 @@ import { ref, computed, onMounted, onBeforeUnmount, type Directive } from 'vue';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
-import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 import TableActionButton from '@/modules/common/components/TableActionButton.vue';
 import TableHead, { type TableColumn } from '@/modules/common/components/TableHead.vue';
@@ -268,8 +254,6 @@ import AppointmentRequestsShiftCards from '@/modules/appointment/components/Appo
 import {
   CalendarClock as CalendarClockIcon,
   CalendarCheck as CalendarCheckIcon,
-  RefreshCw as RefreshIcon,
-  X as CloseIcon,
   Trash2 as TrashIcon,
 } from 'lucide-vue-next';
 
@@ -310,7 +294,6 @@ const {
   data: rawRequests,
   isLoading,
   isFetching,
-  refetch,
 } = useQuery({
   queryKey: ['appointment-requests'],
   queryFn: getAppointmentRequestsAction,

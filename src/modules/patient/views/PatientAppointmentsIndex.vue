@@ -5,7 +5,6 @@
         <div class="col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
           <ButtonBase
             text="Nueva cita"
-            :icon="PlusIcon"
             color="primary"
             @click="openCreateModal"
           />
@@ -149,7 +148,6 @@
 
 <script setup lang="ts">
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
-import PlusIcon from '@/icons/PlusIcon.vue';
 import SearchInput from '@/modules/common/components/SearchInput.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';

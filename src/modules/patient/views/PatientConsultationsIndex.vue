@@ -4,7 +4,6 @@
     <div class="flex flex-wrap items-center justify-between gap-4">
       <ButtonBase
         text="Nueva consulta"
-        :icon="PlusIcon"
         color="primary"
         @click="createNewConsultation"
       />
@@ -175,7 +174,6 @@
         <div class="mt-4">
           <ButtonBase
             text="Iniciar Consulta para este Paciente"
-            :icon="PlusIcon"
             color="primary"
             size="sm"
             @click="createNewConsultation"
@@ -337,7 +335,6 @@ import type { Consultation } from '@/modules/consultation/interfaces/consultatio
 import { getAllConsultationsByPatientAction } from '@/modules/consultation/actions';
 
 import StethoscopeIcon from '@/icons/StethoscopeIcon.vue';
-import PlusIcon from '@/icons/PlusIcon.vue';
 import FileTextIcon from '@/icons/FileTextIcon.vue';
 import CalendarIcon from '@/icons/CalendarIcon.vue';
 import ObservationsIcon from '@/icons/ObservationsIcon.vue';

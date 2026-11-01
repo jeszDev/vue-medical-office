@@ -8,7 +8,6 @@
           <div class="col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
             <ButtonBase
               text="Registrar nuevo paciente"
-              :icon="PlusIcon"
               color="primary"
               class="mr-2"
               @click="handleModalCreateUpdate('create')"
@@ -147,7 +146,6 @@ import { useRoute, useRouter } from 'vue-router';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import TableActionButton from '@/modules/common/components/TableActionButton.vue';
 import SearchInput from '@/modules/common/components/SearchInput.vue';
-import PlusIcon from '@/icons/PlusIcon.vue';
 import { Eye as EyeIcon, CheckSquare as EditIcon } from 'lucide-vue-next';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import PatientCreate from '@/modules/patient/views/PatientCreate.vue';

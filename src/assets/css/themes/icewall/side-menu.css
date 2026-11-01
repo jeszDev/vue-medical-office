@@ -120,6 +120,7 @@
             &.side-menu__link--active {
                 font-weight: theme(fontWeight.medium);
                 .side-menu__link__icon {
+                    --color: var(--color-background);
                 }
                 .side-menu__link__title {
                     color: var(--color-background);

@@ -54,7 +54,7 @@
         >
           <component
             :is="getIconComponent(item.iconName)"
-            class="size-4 stroke-[1.5] side-menu__link__icon"
+            class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 side-menu__link__icon"
           />
           <div class="side-menu__link__title">{{ item.title }}</div>
           <div

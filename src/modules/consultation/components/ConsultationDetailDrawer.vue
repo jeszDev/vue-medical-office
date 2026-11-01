@@ -292,7 +292,6 @@
                   class="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline cursor-pointer"
                   @click="isUploadModalOpen = true"
                 >
-                  <PlusIcon class="size-3.5" />
                   Anexar Estudio
                 </button>
               </div>
@@ -371,7 +370,6 @@ import UserIcon from '@/icons/UserIcon.vue';
 import ClipboardListIcon from '@/icons/ClipboardListIcon.vue';
 import ObservationsIcon from '@/icons/ObservationsIcon.vue';
 import EditIcon from '@/icons/EditIcon.vue';
-import PlusIcon from '@/icons/PlusIcon.vue';
 import { FolderArchive } from 'lucide-vue-next';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';

@@ -3,72 +3,48 @@
     <FullScreenLoader v-if="isLoadingPage" />
 
     <template v-else>
-      <!-- HEADER / BARRA SUPERIOR DE LA ESTACIÓN CLÍNICA -->
-      <div
-        class="box p-4 sm:p-5 rounded-2xl border border-foreground/10 bg-background shadow-[0px_3px_5px_#0000000b] flex flex-col md:flex-row md:items-center justify-between gap-4 mt-4"
-      >
-        <div class="flex items-center gap-3">
+      <!-- HEADER / BARRA SUPERIOR DE LA VISTA (PATRÓN B DE MIDONE) -->
+      <div class="mt-8 flex flex-col items-center sm:flex-row">
+        <div class="flex items-center gap-3 mr-auto">
           <button
             type="button"
-            class="size-10 rounded-xl border border-foreground/10 bg-foreground/[0.02] hover:bg-foreground/10 flex items-center justify-center text-foreground/70 hover:text-foreground transition-colors cursor-pointer"
+            class="size-9 rounded-lg border border-foreground/15 bg-background hover:bg-foreground/5 flex items-center justify-center text-foreground/70 hover:text-foreground transition-colors cursor-pointer"
             title="Volver"
             @click="goBack"
           >
             <ArrowLeftIcon class="size-4" />
           </button>
-
-          <div>
-            <div class="flex flex-wrap items-center gap-2">
-              <PillBadge
-                size="xs"
-                color="primary"
-                rounded="md"
-                class="font-bold uppercase tracking-wider"
-              >
-                <StethoscopeIcon class="size-3.5 mr-1" />
-                {{ isEditMode ? 'Edición de Consulta Médica' : 'Estación de Consulta Médica' }}
-              </PillBadge>
-
-              <PillBadge
-                v-if="appointment?.folio"
-                size="xs"
-                color="foreground"
-                rounded="md"
-                class="font-mono font-semibold"
-                :label="`Cita: ${appointment.folio}`"
-              />
-              <PillBadge
-                v-else-if="existingConsultation?.id"
-                size="xs"
-                color="foreground"
-                rounded="md"
-                class="font-mono font-semibold"
-                :label="`Consulta #${existingConsultation.id}`"
-              />
-
-              <PillBadge
-                size="xs"
-                :color="isEditMode ? 'warning' : 'pending'"
-                :label="isEditMode ? 'Modo Edición' : 'En atención activa'"
-              />
-            </div>
-
-            <h2 class="text-lg sm:text-xl font-bold text-foreground mt-1">
-              {{ patient?.nombre_completo || (isEditMode ? 'Editar Consulta' : 'Atención de Consulta') }}
-            </h2>
-          </div>
+          <h2 class="text-lg font-medium text-foreground">
+            {{ isEditMode ? 'Editar consulta' : 'Consulta médica' }}
+          </h2>
+          <PillBadge
+            v-if="appointment?.folio"
+            size="xs"
+            color="foreground"
+            rounded="md"
+            class="font-mono font-semibold"
+            :label="`Cita: ${appointment.folio}`"
+          />
+          <PillBadge
+            v-else-if="existingConsultation?.id"
+            size="xs"
+            color="foreground"
+            rounded="md"
+            class="font-mono font-semibold"
+            :label="`Consulta #${existingConsultation.id}`"
+          />
         </div>
 
-        <div class="flex items-center gap-2 self-end md:self-center">
+        <div class="mt-4 flex w-full sm:mt-0 sm:w-auto items-center gap-2">
           <ButtonBase
-            color="danger"
-            text="Cancelar y volver"
+            color="secondary"
+            text="Cancelar"
             @click="goBack"
           />
 
           <ButtonBase
             color="primary"
-            :text="isEditMode ? 'Actualizar Consulta' : 'Finalizar y Guardar Consulta'"
+            :text="isEditMode ? 'Actualizar consulta' : 'Finalizar y guardar consulta'"
             :icon="StethoscopeIcon"
             :loading="isPending"
             :loading-text="isEditMode ? 'Actualizando...' : 'Guardando...'"
@@ -78,7 +54,7 @@
       </div>
 
       <!-- MAIN SPLIT-VIEW (EXPEDIENTE RÁPIDO + FORMULARIO DE CONSULTA) -->
-      <div class="grid grid-cols-12 gap-6 mt-6">
+      <div class="grid grid-cols-12 gap-6 mt-5">
         <!-- COLUMNA IZQUIERDA: EXPEDIENTE RÁPIDO DEL PACIENTE (35%) -->
         <div class="col-span-12 lg:col-span-4 space-y-6">
           <!-- 1. Tarjeta Resumen del Paciente -->

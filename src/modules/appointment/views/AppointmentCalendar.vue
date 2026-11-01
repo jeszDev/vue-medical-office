@@ -3,7 +3,7 @@
     <!-- Header del modal: Título a la izquierda, estatus a la derecha -->
     <div class="flex items-center justify-between pb-3 mb-4 border-b border-foreground/10 w-full">
       <div class="flex items-center gap-2.5">
-        <h2 class="text-base sm:text-lg font-bold tracking-tight">DETALLES DE LA CITA</h2>
+        <h2 class="text-base sm:text-lg font-semibold text-foreground">Detalles de la cita</h2>
         <PillBadge
           v-if="appointment.folio"
           size="xs"
@@ -16,7 +16,7 @@
       <PillBadge
         size="xs"
         :color="badgeColor"
-        :label="`CITA ${statusName.toUpperCase()}`"
+        :label="statusName"
       />
     </div>
 

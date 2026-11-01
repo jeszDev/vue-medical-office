@@ -1,34 +1,13 @@
 <template>
-  <TemplateView title="SOLICITUDES DE CITAS">
-    <template #header>
-      <div class="flex flex-wrap items-center justify-between w-full gap-4">
-        <div>
-          <h2 class="text-lg font-bold tracking-tight text-foreground flex items-center gap-2.5">
-            <CalendarClockIcon class="size-5 text-primary" />
-            SOLICITUDES DE CITAS PENDIENTES
-            <PillBadge
-              v-if="filteredRequests.length > 0"
-              size="xs"
-              color="primary"
-              class="ml-1"
-              :label="`${filteredRequests.length} pendiente${filteredRequests.length === 1 ? '' : 's'}`"
-            />
-          </h2>
-          <p class="text-xs text-foreground/60 mt-0.5">
-            Citas solicitadas por pacientes que requieren revisión, confirmación y asignación de médico y horario.
-          </p>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <ButtonBase
-            text="Actualizar"
-            :icon="RefreshIcon"
-            color="secondary"
-            :disabled="isFetching"
-            @click="refetch"
-          />
-        </div>
-      </div>
+  <TemplateView title="Solicitudes de citas">
+    <template #actions>
+      <ButtonBase
+        text="Actualizar"
+        :icon="RefreshIcon"
+        color="secondary"
+        :disabled="isFetching"
+        @click="refetch"
+      />
     </template>
 
     <template #main>

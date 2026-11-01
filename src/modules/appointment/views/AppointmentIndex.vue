@@ -1,24 +1,19 @@
 <template>
-  <TemplateView>
-    <template #header>
-      <div class="flex flex-wrap items-center justify-between w-full gap-4">
-        <div class="flex items-center gap-3">
-          <h2 class="text-lg font-medium">CALENDARIO DE CITAS</h2>
-          <span
-            v-if="isFetching"
-            class="inline-flex items-center gap-1.5 text-xs text-primary font-medium animate-pulse"
-          >
-            <span class="size-2 rounded-full bg-primary animate-ping"></span>
-            Actualizando agenda...
-          </span>
-        </div>
-        <ButtonBase
-          text="Agendar nueva cita"
-          :icon="PlusIcon"
-          color="primary"
-          @click="openCreateModal"
-        />
-      </div>
+  <TemplateView title="Calendario de citas">
+    <template #actions>
+      <span
+        v-if="isFetching"
+        class="inline-flex items-center gap-1.5 text-xs text-primary font-medium animate-pulse mr-1"
+      >
+        <span class="size-2 rounded-full bg-primary animate-ping"></span>
+        Actualizando agenda...
+      </span>
+      <ButtonBase
+        text="Agendar nueva cita"
+        :icon="PlusIcon"
+        color="primary"
+        @click="openCreateModal"
+      />
     </template>
     <template #main>
       <!-- Leyenda de estatus visual, resumen y filtro -->

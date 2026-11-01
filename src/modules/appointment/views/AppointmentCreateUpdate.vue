@@ -1,12 +1,21 @@
 <template>
   <div class="relative z-20 w-full">
-    <!-- Encabezado compacto -->
+    <!-- Encabezado de vista o modal -->
     <div
-      class="flex items-center justify-between pb-3 border-b border-foreground/10"
-      :class="{ 'mt-2': !isInsideModal }"
+      :class="[
+        isInsideModal
+          ? 'flex items-center justify-between pb-3 w-full'
+          : 'mt-8 flex items-center justify-between',
+      ]"
     >
       <div class="flex items-center gap-2.5">
-        <h2 class="text-base sm:text-lg font-semibold text-foreground">
+        <h2
+          :class="[
+            isInsideModal
+              ? 'text-base sm:text-lg font-semibold text-foreground'
+              : 'mr-auto text-lg font-medium text-foreground',
+          ]"
+        >
           {{
             action === 'create'
               ? 'Agendar nueva cita'

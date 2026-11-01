@@ -229,6 +229,7 @@
                     class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 border-y border-foreground/10 bg-background first:border-l last:border-r min-w-[200px] max-w-xs align-top"
                   >
                     <div
+                      v-clamp="request.id"
                       class="font-medium text-xs text-foreground transition-all"
                       :class="[
                         isReasonExpanded(request.id) ? 'whitespace-normal break-words' : 'line-clamp-2 break-words',
@@ -239,6 +240,7 @@
                     </div>
                     <div
                       v-if="request.observaciones_cita || request.observaciones"
+                      v-clamp="request.id"
                       class="text-[11px] text-foreground/60 italic mt-1 transition-all"
                       :class="[
                         isReasonExpanded(request.id) ? 'whitespace-normal break-words' : 'line-clamp-1 break-words',
@@ -311,7 +313,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, type Directive } from 'vue';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
@@ -366,8 +368,10 @@ const {
 
 const requests = computed<Appointment[]>(() => rawRequests.value ?? []);
 
-// Estado de expansión de motivo de solicitud
+// Estado de expansión y detección de desbordamiento en motivo/notas
 const expandedReasonIds = ref<Set<number>>(new Set());
+const clampedReasonIds = ref<Record<number, boolean>>({});
+const monitoredElements = new Map<HTMLElement, number>();
 
 const isReasonExpanded = (id: number): boolean => {
   return expandedReasonIds.value.has(id);
@@ -383,10 +387,57 @@ const toggleReasonExpanded = (id: number) => {
   expandedReasonIds.value = newSet;
 };
 
+const checkElementClamp = (el: HTMLElement, id: number) => {
+  if (expandedReasonIds.value.has(id)) return;
+  const isOverflowing = el.scrollHeight > el.clientHeight + 1;
+  if (isOverflowing) {
+    clampedReasonIds.value[id] = true;
+  }
+};
+
+const recheckAllClamps = () => {
+  monitoredElements.forEach((id, el) => {
+    if (!expandedReasonIds.value.has(id)) {
+      const isOverflowing = el.scrollHeight > el.clientHeight + 1;
+      clampedReasonIds.value[id] = isOverflowing;
+    }
+  });
+};
+
+const vClamp: Directive<HTMLElement, number> = {
+  mounted(el, binding) {
+    monitoredElements.set(el, binding.value);
+    checkElementClamp(el, binding.value);
+  },
+  updated(el, binding) {
+    monitoredElements.set(el, binding.value);
+    checkElementClamp(el, binding.value);
+  },
+  unmounted(el) {
+    monitoredElements.delete(el);
+  },
+};
+
+onMounted(() => {
+  window.addEventListener('resize', recheckAllClamps, { passive: true });
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', recheckAllClamps);
+  monitoredElements.clear();
+});
+
 const hasLongReason = (appointment: Appointment): boolean => {
+  if (expandedReasonIds.value.has(appointment.id)) {
+    return true;
+  }
+  if (clampedReasonIds.value[appointment.id] !== undefined) {
+    return clampedReasonIds.value[appointment.id];
+  }
+  // Heurística antes del renderizado DOM: en celda max-w-xs caben ~95-100 caracteres en 2 líneas
   const motivoLength = (appointment.motivo || '').length;
   const notaLength = (appointment.observaciones_cita || appointment.observaciones || '').length;
-  return motivoLength > 45 || notaLength > 30;
+  return motivoLength > 95 || notaLength > 55;
 };
 
 // Limpieza de filtros

@@ -27,22 +27,26 @@
           <span class="font-semibold text-foreground/60 uppercase tracking-wider text-[11px]">
             Estatus:
           </span>
-          <span
-            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-400/15 text-yellow-600 dark:text-yellow-400 font-medium border border-yellow-400/30"
-          >
-            <span class="size-2 rounded-full bg-yellow-400"></span> Pendiente ({{ appointmentsSummary.pendientes }})
-          </span>
-          <span
-            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/15 text-green-700 dark:text-green-400 font-medium border border-green-500/30"
-          >
-            <span class="size-2 rounded-full bg-green-500"></span> Confirmada / Atendida ({{ appointmentsSummary.confirmadas }})
-          </span>
-          <span
-            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-400/15 text-slate-600 dark:text-slate-400 font-medium border border-slate-400/30 transition-opacity"
+          <PillBadge
+            size="sm"
+            color="warning"
+            :dot="true"
+            :label="`Pendiente (${appointmentsSummary.pendientes})`"
+          />
+          <PillBadge
+            size="sm"
+            color="success"
+            :dot="true"
+            :label="`Confirmada / Atendida (${appointmentsSummary.confirmadas})`"
+          />
+          <PillBadge
+            size="sm"
+            color="foreground"
+            :dot="true"
+            class="transition-opacity"
             :class="{ 'opacity-40 line-through': hideCancelled }"
-          >
-            <span class="size-2 rounded-full bg-slate-400"></span> Cancelada ({{ appointmentsSummary.canceladas }})
-          </span>
+            :label="`Cancelada (${appointmentsSummary.canceladas})`"
+          />
         </div>
 
         <!-- Filtro interactivo para ocultar citas canceladas -->
@@ -140,6 +144,7 @@ import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import PlusIcon from '@/icons/PlusIcon.vue';
 import AppointmentCalendar from '@/modules/appointment/views/AppointmentCalendar.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
+import PillBadge from '@/modules/common/components/PillBadge.vue';
 
 import { ref, computed, nextTick } from 'vue';
 import { VueCal } from 'vue-cal';

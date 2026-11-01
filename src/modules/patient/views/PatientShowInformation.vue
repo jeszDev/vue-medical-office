@@ -41,12 +41,7 @@
                     {{ patient.nombre_completo }}
                   </h3>
                   <div v-if="patient.edad" class="mt-1">
-                    <!-- <span
-                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary"
-                    >
-                      {{ patient.edad }} años
-                    </span> -->
-                    <PillBadge size="sm" color="primary" :label="`${patient.edad} años`" />
+                    <PillBadge size="xs" color="primary" :label="`${patient.edad} años`" />
                   </div>
                 </div>
               </div>

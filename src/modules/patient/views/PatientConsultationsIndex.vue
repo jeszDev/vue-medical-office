@@ -208,17 +208,19 @@
               class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-foreground/5"
             >
               <div class="flex flex-wrap items-center gap-2">
-                <span
-                  class="text-xs font-semibold px-2.5 py-1 rounded-md bg-primary/10 text-primary"
-                >
-                  Consulta #{{ consultation.id }}
-                </span>
-                <span
+                <PillBadge
+                  size="xs"
+                  color="primary"
+                  rounded="md"
+                  :label="`Consulta #${consultation.id}`"
+                />
+                <PillBadge
                   v-if="consultation.cita?.folio"
-                  class="text-xs font-medium px-2 py-0.5 rounded-md bg-foreground/5 text-foreground/70 border border-foreground/10"
-                >
-                  Cita: {{ consultation.cita.folio }}
-                </span>
+                  size="xs"
+                  color="foreground"
+                  rounded="md"
+                  :label="`Cita: ${consultation.cita.folio}`"
+                />
                 <span class="text-xs text-foreground/60 flex items-center gap-1">
                   <CalendarIcon class="size-3.5 text-foreground/40" />
                   {{ formatDate(consultation) }}
@@ -227,42 +229,35 @@
 
               <!-- Quick Vitals Badges -->
               <div class="flex flex-wrap items-center gap-2 text-xs">
-                <span
+                <PillBadge
                   v-if="
                     consultation.signos_vitales?.presion_arterial || consultation.presion_arterial
                   "
-                  class="px-2 py-0.5 rounded-full border border-foreground/10 bg-foreground/5 text-foreground/70"
-                >
-                  TA:
-                  {{
-                    consultation.signos_vitales?.presion_arterial || consultation.presion_arterial
-                  }}
-                </span>
-                <span
+                  size="xs"
+                  color="foreground"
+                  :label="`TA: ${consultation.signos_vitales?.presion_arterial || consultation.presion_arterial}`"
+                />
+                <PillBadge
                   v-if="consultation.signos_vitales?.peso || consultation.peso"
-                  class="px-2 py-0.5 rounded-full border border-foreground/10 bg-foreground/5 text-foreground/70"
-                >
-                  {{ consultation.signos_vitales?.peso || consultation.peso }} kg
-                </span>
-                <span
+                  size="xs"
+                  color="foreground"
+                  :label="`${consultation.signos_vitales?.peso || consultation.peso} kg`"
+                />
+                <PillBadge
                   v-if="consultation.signos_vitales?.temperatura || consultation.temperatura"
-                  class="px-2 py-0.5 rounded-full border border-foreground/10 bg-foreground/5 text-foreground/70"
-                >
-                  {{ consultation.signos_vitales?.temperatura || consultation.temperatura }} °C
-                </span>
-                <span
+                  size="xs"
+                  color="foreground"
+                  :label="`${consultation.signos_vitales?.temperatura || consultation.temperatura} °C`"
+                />
+                <PillBadge
                   v-if="
                     consultation.signos_vitales?.frecuencia_cardiaca ||
                     consultation.frecuencia_cardiaca
                   "
-                  class="px-2 py-0.5 rounded-full border border-foreground/10 bg-foreground/5 text-foreground/70"
-                >
-                  {{
-                    consultation.signos_vitales?.frecuencia_cardiaca ||
-                    consultation.frecuencia_cardiaca
-                  }}
-                  bpm
-                </span>
+                  size="xs"
+                  color="foreground"
+                  :label="`${consultation.signos_vitales?.frecuencia_cardiaca || consultation.frecuencia_cardiaca} bpm`"
+                />
               </div>
             </div>
 

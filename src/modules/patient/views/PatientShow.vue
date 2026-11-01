@@ -10,12 +10,13 @@
           <span class="text-lg sm:text-xl font-bold text-primary">
             {{ patient.nombre_completo }}
           </span>
-          <span
+          <PillBadge
             v-if="patient?.edad"
-            class="text-xs font-semibold px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20"
-          >
-            {{ patient.edad }} años
-          </span>
+            size="xs"
+            color="primary"
+            rounded="md"
+            :label="`${patient.edad} años`"
+          />
         </template>
       </div>
     </template>
@@ -110,6 +111,7 @@ import { FolderArchive } from 'lucide-vue-next';
 
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
+import PillBadge from '@/modules/common/components/PillBadge.vue';
 
 import PatientAppointmentsIndex from '@/modules/patient/views/PatientAppointmentsIndex.vue';
 import PatientShowInformation from '@/modules/patient/views/PatientShowInformation.vue';

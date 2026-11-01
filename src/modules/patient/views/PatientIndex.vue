@@ -148,18 +148,22 @@
                     </AccordionComponent>
                   </td> -->
                     <td
-                      width="20%"
-                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                      width="15%"
+                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r whitespace-nowrap"
                     >
-                      <div class="flex items-center justify-center">
-                        <RouterLink
-                          class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-primary/80 hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                      <div class="flex items-center justify-center gap-3 whitespace-nowrap">
+                        <TableActionButton
+                          variant="primary"
+                          :icon="EyeIcon"
+                          tooltip="Ver"
                           :to="`patients/${patient.id}`"
-                          title="Ver expediente del paciente"
-                        >
-                          <PreviewIcon class="size-3.5" />
-                          <span>Ver</span>
-                        </RouterLink>
+                        />
+                        <TableActionButton
+                          variant="neutral"
+                          :icon="EditIcon"
+                          tooltip="Editar"
+                          @click="handleModalCreateUpdate(patient.id)"
+                        />
                       </div>
                     </td>
                   </tr>
@@ -186,12 +190,13 @@ import { computed, ref, watch } from 'vue';
 import { getPatientsAction } from '../actions/get-patients.action';
 import TablePagination from '@/modules/common/components/TablePagination.vue';
 import { Pagination } from '../../common/interfaces/pagination.interface';
-import { useRoute, useRouter, RouterLink } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
+import TableActionButton from '@/modules/common/components/TableActionButton.vue';
 import SearchIcon from '@/icons/SearchIcon.vue';
 import CloseIcon from '@/icons/CloseIcon.vue';
-import PreviewIcon from '@/icons/PreviewIcon.vue';
 import PlusIcon from '@/icons/PlusIcon.vue';
+import { Eye as EyeIcon, CheckSquare as EditIcon } from 'lucide-vue-next';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';

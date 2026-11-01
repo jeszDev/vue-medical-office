@@ -148,40 +148,28 @@
                       width="10%"
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-3 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r whitespace-nowrap"
                     >
-                      <div class="flex flex-col items-center justify-center gap-1">
-                        <button
+                      <div class="flex items-center justify-center gap-3 whitespace-nowrap">
+                        <TableActionButton
                           v-if="canAttendAppointment(appointment)"
-                          type="button"
-                          class="inline-flex items-center justify-center gap-1 w-full max-w-[90px] px-2 py-1 rounded-lg text-xs font-medium text-primary/80 hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
-                          title="Atender consulta médica"
+                          variant="success"
+                          :icon="StethoscopeIcon"
+                          tooltip="Atender"
                           @click="goToConsultation(appointment.id)"
-                        >
-                          <StethoscopeIcon class="size-3.5" />
-                          <span>Atender</span>
-                        </button>
-
-                        <button
+                        />
+                        <TableActionButton
                           v-if="canEditAppointment(appointment)"
-                          type="button"
-                          class="inline-flex items-center justify-center gap-1 w-full max-w-[90px] px-2 py-1 rounded-lg text-xs font-medium text-amber-600/80 hover:text-amber-600 hover:bg-amber-500/10 transition-colors cursor-pointer"
-                          title="Editar cita"
+                          variant="neutral"
+                          :icon="EditIcon"
+                          tooltip="Editar"
                           @click="openEditModal(appointment.id)"
-                        >
-                          <EditIcon class="size-3.5 !mr-0" />
-                          <span>Editar</span>
-                        </button>
-
-                        <button
+                        />
+                        <TableActionButton
                           v-if="canCancelAppointment(appointment)"
-                          type="button"
-                          class="inline-flex items-center justify-center gap-1 w-full max-w-[90px] px-2 py-1 rounded-lg text-xs font-medium text-danger/80 hover:text-danger hover:bg-danger/10 transition-colors cursor-pointer"
-                          title="Cancelar cita"
+                          variant="danger"
+                          :icon="TrashIcon"
+                          tooltip="Cancelar"
                           @click="openCancelModal(appointment.id)"
-                        >
-                          <CancelIcon class="size-3.5 !mr-0" />
-                          <span>Cancelar</span>
-                        </button>
-
+                        />
                         <span
                           v-if="!canAttendAppointment(appointment) && !canEditAppointment(appointment) && !canCancelAppointment(appointment)"
                           class="text-xs text-muted-foreground/60 italic"
@@ -234,15 +222,18 @@ import {
   getAppointmentStatusColor,
   getAppointmentStatusName,
 } from '@/modules/appointment/helpers/get-appointment-status-color.mapper';
-import CancelIcon from '@/icons/CancelIcon.vue';
-import CloseIcon from '@/icons/CloseIcon.vue';
-import EditIcon from '@/icons/EditIcon.vue';
+import TableActionButton from '@/modules/common/components/TableActionButton.vue';
 import AppointmentCancelModalQuestion from '@/modules/appointment/components/AppointmentCancelModalQuestion.vue';
 import TablePagination from '@/modules/common/components/TablePagination.vue';
 import type { Pagination } from '@/modules/common/interfaces/pagination.interface';
 import type { Appointment } from '@/modules/appointment/interfaces/appointment.interface';
 import { useRoute, useRouter } from 'vue-router';
-import StethoscopeIcon from '@/icons/StethoscopeIcon.vue';
+import CloseIcon from '@/icons/CloseIcon.vue';
+import {
+  Stethoscope as StethoscopeIcon,
+  CheckSquare as EditIcon,
+  Trash as TrashIcon,
+} from 'lucide-vue-next';
 
 interface Props {
   patientId: string;

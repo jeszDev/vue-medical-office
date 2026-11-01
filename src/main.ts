@@ -31,11 +31,14 @@ const toastOptions = {
 import App from './App.vue';
 import router from './router';
 
+import { vTooltip } from '@/modules/common/directives/tooltip.directive';
+
 const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
 app.use(VueQueryPlugin);
 app.use(Toast, toastOptions);
+app.directive('tooltip', vTooltip);
 
 app.mount('#app');

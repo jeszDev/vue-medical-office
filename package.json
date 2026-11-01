@@ -28,6 +28,7 @@
     "simplebar": "6.3.0",
     "simplebar-vue": "^2.4.2",
     "tailwindcss": "^4.1.12",
+    "tippy.js": "^6.3.7",
     "vee-validate": "^4.15.1",
     "vue": "^3.5.18",
     "vue-cal": "^5.0.1-rc.34",

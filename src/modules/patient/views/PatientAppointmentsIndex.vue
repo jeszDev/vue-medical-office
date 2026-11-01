@@ -2,151 +2,178 @@
   <FullScreenLoader v-if="isLoading && !responseAppointments" />
   <div v-else>
     <div class="grid grid-cols-12 gap-6">
-        <div class="col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
-          <ButtonBase
-            text="Nueva cita"
-            color="primary"
-            @click="openCreateModal"
+      <div class="col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
+        <ButtonBase text="Agendar nueva cita" color="primary" @click="openCreateModal" />
+
+        <div class="mx-auto hidden opacity-70 md:block">
+          <span v-if="pagination.total === 0">0 citas</span>
+          <span v-else-if="pagination.total === 1">Mostrando 1 de 1 cita</span>
+          <span v-else>
+            Mostrando del {{ pagination.from }} al {{ pagination.to }} de
+            {{ pagination.total }} citas
+          </span>
+        </div>
+
+        <div class="mt-3 w-full sm:ml-auto sm:mt-0 sm:w-auto md:ml-0">
+          <SearchInput
+            v-model="searchInput"
+            placeholder="Buscar cita..."
+            @search="doSearch"
+            @clear="clearSearch"
           />
-
-          <div class="mx-auto hidden opacity-70 md:block">
-            <span v-if="pagination.total === 0">0 citas</span>
-            <span v-else-if="pagination.total === 1">Mostrando 1 de 1 cita</span>
-            <span v-else>
-              Mostrando del {{ pagination.from }} al {{ pagination.to }} de
-              {{ pagination.total }} citas
-            </span>
-          </div>
-
-          <div class="mt-3 w-full sm:ml-auto sm:mt-0 sm:w-auto md:ml-0">
-            <SearchInput
-              v-model="searchInput"
-              placeholder="Buscar cita..."
-              @search="doSearch"
-              @clear="clearSearch"
-            />
-          </div>
         </div>
-
-        <div
-          class="col-span-12 overflow-auto lg:overflow-visible transition-opacity"
-          :class="{ 'opacity-60 pointer-events-none': isFetching }"
-        >
-          <div class="relative w-full overflow-auto">
-            <table class="w-full caption-bottom border-separate border-spacing-y-[10px] -mt-2">
-              <TableHead :columns="tableColumns" />
-              <tbody class="[&_tr:last-child]:border-0">
-                <tr v-if="!appointments?.length">
-                  <td
-                    colspan="7"
-                    class="text-center shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
-                  >
-                    El paciente no tiene citas registradas.
-                  </td>
-                </tr>
-                <template v-else v-for="(appointment, index) in appointments" :key="appointment.id">
-                  <tr
-                    class="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted border-b-0"
-                  >
-                    <td
-                      width="4%"
-                      class="text-center shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
-                    >
-                      {{ (pagination.currentPage - 1) * pagination.perPage + index + 1 }}
-                    </td>
-                    <td
-                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r font-medium text-primary whitespace-nowrap"
-                    >
-                      {{ appointment.folio || 'S/F' }}
-                    </td>
-                    <td
-                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r whitespace-nowrap"
-                    >
-                      <div class="font-medium text-foreground">
-                        {{ appointment.fecha_inicio }}
-                      </div>
-                      <div class="text-xs text-muted-foreground mt-0.5">
-                        {{ appointment.hora_inicio }} - {{ appointment.hora_termino }}
-                      </div>
-                    </td>
-                    <td
-                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r whitespace-nowrap"
-                    >
-                      {{ getAppointmentDoctorName(appointment) }}
-                    </td>
-                    <td
-                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
-                    >
-                      {{ appointment.motivo }}
-                    </td>
-                    <td
-                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r whitespace-nowrap"
-                    >
-                      <PillBadge
-                        size="sm"
-                        :color="getAppointmentStatusColor(appointment.estatus)"
-                        :label="getAppointmentStatusName(appointment.estatus)"
-                      />
-                    </td>
-                    <td
-                      width="10%"
-                      class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-3 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r whitespace-nowrap"
-                    >
-                      <div class="flex items-center justify-center gap-3 whitespace-nowrap">
-                        <TableActionButton
-                          v-if="canAttendAppointment(appointment)"
-                          variant="success"
-                          :icon="StethoscopeIcon"
-                          tooltip="Atender"
-                          @click="goToConsultation(appointment.id)"
-                        />
-                        <TableActionButton
-                          v-if="canEditAppointment(appointment)"
-                          variant="neutral"
-                          :icon="EditIcon"
-                          tooltip="Editar"
-                          @click="openEditModal(appointment.id)"
-                        />
-                        <TableActionButton
-                          v-if="canCancelAppointment(appointment)"
-                          variant="danger"
-                          :icon="TrashIcon"
-                          tooltip="Cancelar"
-                          @click="openCancelModal(appointment.id)"
-                        />
-                        <span
-                          v-if="!canAttendAppointment(appointment) && !canEditAppointment(appointment) && !canCancelAppointment(appointment)"
-                          class="text-xs text-muted-foreground/60 italic"
-                        >
-                          —
-                        </span>
-                      </div>
-                    </td>
-                  </tr>
-                </template>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- BEGIN: Pagination -->
-        <TablePagination :pagination="pagination" @page-change="pageChange" />
-        <!-- END: Pagination -->
       </div>
 
-      <DialogBasic id="modal-appointment-create-or-edit" size="3xl">
-        <AppointmentCreateUpdate
-          :patient-id="patientId"
-          :appointment-id="appointmentModalId"
-          :is-inside-modal="true"
-        />
-      </DialogBasic>
+      <div
+        class="col-span-12 overflow-auto lg:overflow-visible transition-opacity"
+        :class="{ 'opacity-60 pointer-events-none': isFetching }"
+      >
+        <div class="relative w-full overflow-auto">
+          <table class="w-full caption-bottom border-separate border-spacing-y-[10px] -mt-2">
+            <TableHead :columns="tableColumns" />
+            <tbody class="[&_tr:last-child]:border-0">
+              <tr v-if="!appointments?.length">
+                <td
+                  colspan="7"
+                  class="text-center shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                >
+                  El paciente no tiene citas registradas.
+                </td>
+              </tr>
+              <template v-else v-for="(appointment, index) in appointments" :key="appointment.id">
+                <tr
+                  class="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted border-b-0"
+                >
+                  <td
+                    width="4%"
+                    class="text-center shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
+                  >
+                    {{ (pagination.currentPage - 1) * pagination.perPage + index + 1 }}
+                  </td>
+                  <td
+                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r whitespace-nowrap"
+                  >
+                    <PillBadge
+                      size="xs"
+                      color="foreground"
+                      rounded="md"
+                      class="font-mono font-semibold"
+                      :label="appointment.folio || `#${appointment.id}`"
+                    />
+                  </td>
+                  <td
+                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r whitespace-nowrap"
+                  >
+                    <div class="font-medium text-foreground">
+                      {{ appointment.fecha_inicio }}
+                    </div>
+                    <div class="text-xs text-muted-foreground mt-0.5">
+                      {{ appointment.hora_inicio }} - {{ appointment.hora_termino }}
+                    </div>
+                  </td>
+                  <td
+                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r whitespace-nowrap"
+                  >
+                    {{ getAppointmentDoctorName(appointment) }}
+                  </td>
+                  <td
+                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r min-w-[200px] max-w-xs align-top"
+                  >
+                    <div
+                      v-clamp="appointment.id"
+                      class="text-xs text-foreground transition-all"
+                      :class="[
+                        isReasonExpanded(appointment.id)
+                          ? 'whitespace-normal break-words'
+                          : 'line-clamp-2 break-words',
+                      ]"
+                      :title="appointment.motivo || ''"
+                    >
+                      {{ appointment.motivo || 'Sin motivo especificado' }}
+                    </div>
+                    <button
+                      v-if="hasLongReason(appointment)"
+                      type="button"
+                      class="text-[11px] font-medium text-primary hover:underline cursor-pointer mt-1 inline-flex items-center gap-0.5"
+                      @click="toggleReasonExpanded(appointment.id)"
+                    >
+                      <span>{{
+                        isReasonExpanded(appointment.id) ? 'Ver menos' : 'Ver más...'
+                      }}</span>
+                    </button>
+                  </td>
+                  <td
+                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r whitespace-nowrap"
+                  >
+                    <PillBadge
+                      size="sm"
+                      :color="getAppointmentStatusColor(appointment.estatus)"
+                      :label="getAppointmentStatusName(appointment.estatus)"
+                    />
+                  </td>
+                  <td
+                    width="10%"
+                    class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-3 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r whitespace-nowrap"
+                  >
+                    <div class="flex items-center justify-center gap-3 whitespace-nowrap">
+                      <TableActionButton
+                        v-if="canAttendAppointment(appointment)"
+                        variant="success"
+                        :icon="StethoscopeIcon"
+                        tooltip="Atender"
+                        @click="goToConsultation(appointment.id)"
+                      />
+                      <TableActionButton
+                        v-if="canEditAppointment(appointment)"
+                        variant="neutral"
+                        :icon="EditIcon"
+                        tooltip="Editar"
+                        @click="openEditModal(appointment.id)"
+                      />
+                      <TableActionButton
+                        v-if="canCancelAppointment(appointment)"
+                        variant="danger"
+                        :icon="TrashIcon"
+                        tooltip="Cancelar"
+                        @click="openCancelModal(appointment.id)"
+                      />
+                      <span
+                        v-if="
+                          !canAttendAppointment(appointment) &&
+                          !canEditAppointment(appointment) &&
+                          !canCancelAppointment(appointment)
+                        "
+                        class="text-xs text-muted-foreground/60 italic"
+                      >
+                        —
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-      <AppointmentCancelModalQuestion
-        v-model="showCancelModalQuestion"
-        :appointmentId="selectedAppointmentId"
-        @cancelled="handleCancelled"
+      <!-- BEGIN: Pagination -->
+      <TablePagination :pagination="pagination" @page-change="pageChange" />
+      <!-- END: Pagination -->
+    </div>
+
+    <DialogBasic id="modal-appointment-create-or-edit" size="3xl">
+      <AppointmentCreateUpdate
+        :patient-id="patientId"
+        :appointment-id="appointmentModalId"
+        :is-inside-modal="true"
       />
+    </DialogBasic>
+
+    <AppointmentCancelModalQuestion
+      v-model="showCancelModalQuestion"
+      :appointmentId="selectedAppointmentId"
+      @cancelled="handleCancelled"
+    />
   </div>
 </template>
 
@@ -157,7 +184,7 @@ import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
 import { keepPreviousData, useQuery } from '@tanstack/vue-query';
 import { getAppointmentsByPatientAction } from '@/modules/appointment/actions/get-appointments-by-patient.action';
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount, type Directive } from 'vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
 import {
@@ -205,6 +232,75 @@ const searchQuery = ref<string>(route.query.search?.toString() || '');
 const showCancelModalQuestion = ref(false);
 const selectedAppointmentId = ref<null | number>(null);
 const appointmentModalId = ref<string>('create');
+
+// Estado de expansión y detección de desbordamiento en motivo
+const expandedReasonIds = ref<Set<number>>(new Set());
+const clampedReasonIds = ref<Record<number, boolean>>({});
+const monitoredElements = new Map<HTMLElement, number>();
+
+const isReasonExpanded = (id: number): boolean => {
+  return expandedReasonIds.value.has(id);
+};
+
+const toggleReasonExpanded = (id: number) => {
+  const newSet = new Set(expandedReasonIds.value);
+  if (newSet.has(id)) {
+    newSet.delete(id);
+  } else {
+    newSet.add(id);
+  }
+  expandedReasonIds.value = newSet;
+};
+
+const checkElementClamp = (el: HTMLElement, id: number) => {
+  if (expandedReasonIds.value.has(id)) return;
+  const isOverflowing = el.scrollHeight > el.clientHeight + 1;
+  if (isOverflowing) {
+    clampedReasonIds.value[id] = true;
+  }
+};
+
+const recheckAllClamps = () => {
+  monitoredElements.forEach((id, el) => {
+    if (!expandedReasonIds.value.has(id)) {
+      const isOverflowing = el.scrollHeight > el.clientHeight + 1;
+      clampedReasonIds.value[id] = isOverflowing;
+    }
+  });
+};
+
+const vClamp: Directive<HTMLElement, number> = {
+  mounted(el, binding) {
+    monitoredElements.set(el, binding.value);
+    checkElementClamp(el, binding.value);
+  },
+  updated(el, binding) {
+    monitoredElements.set(el, binding.value);
+    checkElementClamp(el, binding.value);
+  },
+  unmounted(el) {
+    monitoredElements.delete(el);
+  },
+};
+
+onMounted(() => {
+  window.addEventListener('resize', recheckAllClamps, { passive: true });
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', recheckAllClamps);
+  monitoredElements.clear();
+});
+
+const hasLongReason = (appointment: Appointment): boolean => {
+  if (expandedReasonIds.value.has(appointment.id)) {
+    return true;
+  }
+  if (clampedReasonIds.value[appointment.id] !== undefined) {
+    return clampedReasonIds.value[appointment.id];
+  }
+  return (appointment.motivo || '').length > 65;
+};
 
 const canCancelAppointment = (appointment: Appointment) => {
   const statusName = getAppointmentStatusName(appointment.estatus);
@@ -279,9 +375,6 @@ function clearSearch() {
   searchInput.value = '';
   doSearch();
 }
-
-
-
 
 const openCancelModal = (id: number) => {
   selectedAppointmentId.value = id;

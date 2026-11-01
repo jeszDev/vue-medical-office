@@ -19,7 +19,9 @@
       <component
         :is="icon"
         v-if="icon"
-        class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 shrink-0"
+        fill="currentColor"
+        fill-opacity="0.25"
+        class="size-4 stroke-[1.5] stroke-current fill-current/25 shrink-0"
         :class="[responsiveText ? 'sm:mr-1' : (label && !iconOnly ? 'mr-1' : '')]"
       />
       <span
@@ -48,7 +50,9 @@
     <component
       :is="icon"
       v-if="icon"
-      class="size-4 stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 shrink-0"
+      fill="currentColor"
+      fill-opacity="0.25"
+      class="size-4 stroke-[1.5] stroke-current fill-current/25 shrink-0"
       :class="[responsiveText ? 'sm:mr-1' : (label && !iconOnly ? 'mr-1' : '')]"
     />
     <span

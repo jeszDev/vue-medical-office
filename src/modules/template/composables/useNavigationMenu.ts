@@ -1,5 +1,6 @@
 import { computed, type Ref } from 'vue';
-import { useAuthStore } from '@/modules/auth/stores/auth.store';
+import { usePermissions } from '@/modules/auth/composables/usePermissions';
+import { PERMISSIONS, type Permission } from '@/modules/auth/constants/permissions.constant';
 import { useAppointmentRequestsCount } from '@/modules/appointment/composables/useAppointmentRequestsCount';
 
 export type MenuBadgeValue = number | string | null | undefined;
@@ -10,6 +11,9 @@ export interface MenuItem {
   routeName: string;
   iconName?: string;
   roles?: string[]; // Allowed roles. If empty/undefined, visible to all authenticated users.
+  permission?: Permission; // Required permission to view this item.
+  permissions?: Permission[]; // Required permissions to view this item.
+  matchMode?: 'any' | 'all';
   group?: string;
   params?: Record<string, unknown>;
   badge?: MenuBadge;
@@ -17,30 +21,38 @@ export interface MenuItem {
 }
 
 export function useNavigationMenu() {
-  const authStore = useAuthStore();
+  const { can, canAny, canAll, hasRole, isAdmin, userRoles } = usePermissions();
 
-  // Normalized user roles helper
-  const userRoles = computed<string[]>(() => {
-    const roles = authStore.user?.roles || [];
-    return roles.map((r) => String(r).toLowerCase());
-  });
+  const isItemAuthorized = (item: MenuItem): boolean => {
+    if (isAdmin.value) return true;
 
-  // Check if current user has any of the required roles
-  const hasRole = (allowedRoles?: string[]): boolean => {
-    if (!allowedRoles || allowedRoles.length === 0) return true;
-    if (!authStore.user) return false;
-    // Admin has access to all options
-    if (userRoles.value.includes('admin') || userRoles.value.includes('administrador')) {
-      return true;
+    // Check roles if defined
+    if (item.roles && item.roles.length > 0 && !hasRole(item.roles)) {
+      return false;
     }
 
-    return allowedRoles.some((role) => userRoles.value.includes(role.toLowerCase()));
+    // Check single permission if defined
+    if (item.permission && !can(item.permission)) {
+      return false;
+    }
+
+    // Check multiple permissions if defined
+    if (item.permissions && item.permissions.length > 0) {
+      const allowed =
+        item.matchMode === 'all' ? canAll(item.permissions) : canAny(item.permissions);
+      if (!allowed) {
+        return false;
+      }
+    }
+
+    return true;
   };
 
-  // Pending appointment requests count for authorized roles
-  const canManageRequests = computed(() =>
-    hasRole(['admin', 'administrador', 'recepcionista', 'doctor', 'medico', 'médico']),
+  // Pending appointment requests count for authorized roles/permissions
+  const canManageRequests = computed(
+    () => isAdmin.value || can(PERMISSIONS.APPOINTMENTS_CONFIRM),
   );
+
   const { count: pendingRequestsCount } = useAppointmentRequestsCount({
     enabled: canManageRequests,
   });
@@ -53,6 +65,7 @@ export function useNavigationMenu() {
       iconName: 'users',
       group: 'PACIENTES',
       roles: ['admin', 'doctor', 'recepcionista', 'médico', 'medico'],
+      permission: PERMISSIONS.PATIENTS_VIEW,
     },
     {
       title: 'Calendario de Citas',
@@ -60,6 +73,7 @@ export function useNavigationMenu() {
       iconName: 'calendar',
       group: 'CITAS Y AGENDA',
       roles: ['admin', 'doctor', 'recepcionista', 'paciente', 'médico', 'medico'],
+      permission: PERMISSIONS.APPOINTMENTS_VIEW,
     },
     {
       title: 'Solicitudes de Citas',
@@ -67,6 +81,7 @@ export function useNavigationMenu() {
       iconName: 'calendar-clock',
       group: 'CITAS Y AGENDA',
       roles: ['admin', 'administrador', 'recepcionista', 'doctor', 'medico', 'médico'],
+      permission: PERMISSIONS.APPOINTMENTS_CONFIRM,
       badge: pendingRequestsCount,
     },
     {
@@ -75,12 +90,13 @@ export function useNavigationMenu() {
       iconName: 'shield',
       group: 'ADMINISTRACIÓN',
       roles: ['admin', 'administrador'],
+      permission: PERMISSIONS.ROLES_VIEW,
     },
   ];
 
-  // Dynamically filtered menu based on user roles
+  // Dynamically filtered menu based on user roles and permissions
   const menuItems = computed(() => {
-    return allMenuItems.filter((item) => hasRole(item.roles));
+    return allMenuItems.filter(isItemAuthorized);
   });
 
   // Grouped menu items for structured navigation rendering
@@ -99,9 +115,9 @@ export function useNavigationMenu() {
   return {
     userRoles,
     hasRole,
+    can,
     menuItems,
     groupedMenuItems,
     pendingRequestsCount,
   };
 }
-

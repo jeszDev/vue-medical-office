@@ -1,5 +1,9 @@
 <template>
-  <div ref="dropdownRef" class="group/notifications relative flex h-9 items-center">
+  <div
+    v-if="canManageRequests"
+    ref="dropdownRef"
+    class="group/notifications relative flex h-9 items-center"
+  >
     <!-- Botón disparador con campana nativa Midone e indicador sutil -->
     <button
       type="button"
@@ -160,7 +164,8 @@ import {
   ExternalLink as ExternalLinkIcon,
 } from 'lucide-vue-next';
 
-import { useNavigationMenu } from '../composables/useNavigationMenu';
+import { usePermissions } from '@/modules/auth/composables/usePermissions';
+import { PERMISSIONS } from '@/modules/auth/constants/permissions.constant';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
 import { getAppointmentRequestsAction } from '@/modules/appointment/actions/get-appointment-requests.action';
 import {
@@ -181,11 +186,9 @@ onClickOutside(dropdownRef, () => {
   isOpen.value = false;
 });
 
-// Roles autorizados para gestionar solicitudes de citas
-const { hasRole } = useNavigationMenu();
-const canManageRequests = computed(() =>
-  hasRole(['admin', 'administrador', 'recepcionista', 'doctor', 'medico', 'médico']),
-);
+// Permisos autorizados para gestionar solicitudes de citas
+const { can, isAdmin } = usePermissions();
+const canManageRequests = computed(() => isAdmin.value || can(PERMISSIONS.APPOINTMENTS_CONFIRM));
 
 // Consulta periódica (polling cada 30 segundos) de solicitudes pendientes
 const { data: rawRequests, isLoading } = useQuery({

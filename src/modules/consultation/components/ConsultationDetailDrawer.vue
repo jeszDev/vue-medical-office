@@ -85,9 +85,21 @@
           </div>
           <div>
             <span class="text-foreground/60 block">Motivo:</span>
-            <span class="font-medium text-foreground truncate block">
-              {{ consultation.cita.motivo }}
-            </span>
+            <div
+              class="font-medium text-foreground break-words"
+              :class="isAppointmentReasonExpanded ? 'whitespace-normal' : 'line-clamp-1'"
+              :title="consultation.cita.motivo || ''"
+            >
+              {{ consultation.cita.motivo || 'Sin motivo' }}
+            </div>
+            <button
+              v-if="hasLongAppointmentReason"
+              type="button"
+              class="text-[11px] font-medium text-primary hover:underline cursor-pointer mt-0.5 inline-flex items-center gap-0.5"
+              @click="isAppointmentReasonExpanded = !isAppointmentReasonExpanded"
+            >
+              <span>{{ isAppointmentReasonExpanded ? 'Ver menos' : 'Ver más...' }}</span>
+            </button>
           </div>
         </div>
       </div>
@@ -250,7 +262,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import type { Consultation } from '../interfaces/consultation.interface';
@@ -295,6 +307,20 @@ const isOpen = computed({
 });
 
 const isUploadModalOpen = ref(false);
+
+const isAppointmentReasonExpanded = ref(false);
+
+const hasLongAppointmentReason = computed(() => {
+  const motivo = props.consultation?.cita?.motivo;
+  return Boolean(motivo && motivo.length > 30);
+});
+
+watch(
+  () => props.consultation?.id,
+  () => {
+    isAppointmentReasonExpanded.value = false;
+  },
+);
 
 const { data: consultationDocuments, isLoading: isLoadingDocuments } = useQuery({
   queryKey: ['consultation-documents', computed(() => props.consultation?.id)],

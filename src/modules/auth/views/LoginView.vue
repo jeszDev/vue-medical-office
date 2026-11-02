@@ -15,14 +15,29 @@
           type="text"
           placeholder="Correo electrónico"
           v-model="email"
+          @keyup.enter="handleLogin"
         />
-        <input
-          ref="passwordInputRef"
-          class="h-10 w-full rounded-md border bg-background ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-foreground placeholder:text-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/5 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 box block min-w-full px-5 py-6 xl:min-w-[28rem]"
-          type="password"
-          placeholder="Contraseña"
-          v-model="password"
-        />
+        <div class="relative min-w-full xl:min-w-[28rem]">
+          <input
+            ref="passwordInputRef"
+            class="h-10 w-full rounded-md border bg-background ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-foreground placeholder:text-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/5 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 box block min-w-full py-6 pl-5 pr-12 xl:min-w-[28rem]"
+            :type="showPassword ? 'text' : 'password'"
+            placeholder="Contraseña"
+            v-model="password"
+            @keyup.enter="handleLogin"
+          />
+          <button
+            type="button"
+            class="text-foreground/50 hover:text-foreground absolute inset-y-0 right-0 flex items-center pr-4 transition-colors cursor-pointer focus:outline-none"
+            :title="showPassword ? 'Ocultar contraseña' : 'Ver contraseña'"
+            :aria-label="showPassword ? 'Ocultar contraseña' : 'Ver contraseña'"
+            @mousedown.prevent
+            @click="showPassword = !showPassword"
+          >
+            <EyeOff v-if="showPassword" class="size-5" />
+            <Eye v-else class="size-5" />
+          </button>
+        </div>
         <div class="flex text-xs sm:text-sm">
           <!-- <div class="flex gap-2.5 mr-auto flex-row items-center">
             <div class="bg-background border-foreground/70 relative size-4 rounded-sm border">
@@ -67,10 +82,11 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '../stores/auth.store';
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
+import { Eye, EyeOff } from 'lucide-vue-next';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
+import { useAuthStore } from '../stores/auth.store';
 
 const authStore = useAuthStore();
 const emailInputRef = ref<HTMLInputElement | null>(null);
@@ -78,6 +94,7 @@ const passwordInputRef = ref<HTMLInputElement | null>(null);
 
 const email = ref('');
 const password = ref('');
+const showPassword = ref(false);
 const isLoading = ref(false);
 
 const toast = useToast();

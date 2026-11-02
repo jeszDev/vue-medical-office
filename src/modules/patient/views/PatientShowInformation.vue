@@ -97,8 +97,12 @@
           </div>
 
           <!-- Acciones integradas del paciente -->
-          <div class="border-t border-foreground/10 pt-4 mt-5 space-y-2">
+          <div
+            v-if="can(PERMISSIONS.PATIENTS_UPDATE) || can(PERMISSIONS.PATIENTS_DELETE)"
+            class="border-t border-foreground/10 pt-4 mt-5 space-y-2"
+          >
             <ButtonBase
+              v-if="can(PERMISSIONS.PATIENTS_UPDATE)"
               text="Editar datos del paciente"
               :icon="UserEditIcon"
               color="secondary"
@@ -107,6 +111,7 @@
               data-tw-target="#modal-patient-create-or-edit"
             />
             <ButtonBase
+              v-if="can(PERMISSIONS.PATIENTS_DELETE)"
               text="Eliminar paciente"
               :icon="UserDeleteIcon"
               color="danger"
@@ -136,6 +141,7 @@
             </div>
 
             <button
+              v-if="can(PERMISSIONS.PATIENTS_UPDATE)"
               type="button"
               data-tw-toggle="modal"
               data-tw-target="#modal-patient-create-or-edit"
@@ -173,6 +179,7 @@
               Puedes registrar antecedentes, alergias o notas médicas relevantes editando los datos del paciente.
             </p>
             <button
+              v-if="can(PERMISSIONS.PATIENTS_UPDATE)"
               type="button"
               data-tw-toggle="modal"
               data-tw-target="#modal-patient-create-or-edit"
@@ -194,6 +201,7 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
             <!-- Agenda -->
             <div
+              v-if="can(PERMISSIONS.APPOINTMENTS_VIEW)"
               @click="goToTab('appointments')"
               class="group cursor-pointer rounded-xl border border-foreground/10 bg-background/60 p-4 transition-all hover:border-primary/40 hover:shadow-xs hover:-translate-y-0.5 select-none"
             >
@@ -215,6 +223,7 @@
 
             <!-- Historial Clínico -->
             <div
+              v-if="can(PERMISSIONS.CONSULTATIONS_VIEW)"
               @click="goToTab('consultations')"
               class="group cursor-pointer rounded-xl border border-foreground/10 bg-background/60 p-4 transition-all hover:border-success/40 hover:shadow-xs hover:-translate-y-0.5 select-none"
             >
@@ -288,6 +297,10 @@ import {
 } from 'lucide-vue-next';
 
 import type { Patient } from '../interfaces/patient.interface';
+import { usePermissions } from '@/modules/auth/composables/usePermissions';
+import { PERMISSIONS } from '@/modules/auth/constants/permissions.constant';
+
+const { can } = usePermissions();
 
 interface Props {
   patient: Patient | undefined;

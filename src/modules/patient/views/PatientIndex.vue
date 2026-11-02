@@ -7,6 +7,7 @@
         <div class="grid grid-cols-12 gap-6">
           <div class="col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
             <ButtonBase
+              v-if="can(PERMISSIONS.PATIENTS_CREATE)"
               text="Registrar nuevo paciente"
               color="primary"
               class="mr-2"
@@ -108,12 +109,14 @@
                     >
                       <div class="flex items-center justify-center gap-3 whitespace-nowrap">
                         <TableActionButton
+                          v-if="can(PERMISSIONS.PATIENTS_VIEW)"
                           variant="primary"
                           :icon="EyeIcon"
                           tooltip="Ver"
                           :to="`patients/${patient.id}`"
                         />
                         <TableActionButton
+                          v-if="can(PERMISSIONS.PATIENTS_UPDATE)"
                           variant="neutral"
                           :icon="EditIcon"
                           tooltip="Editar"
@@ -156,6 +159,10 @@ import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
 import TemplateView from '@/modules/template/components/TemplateView.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 import type { Patient } from '../interfaces/patient.interface';
+import { usePermissions } from '@/modules/auth/composables/usePermissions';
+import { PERMISSIONS } from '@/modules/auth/constants/permissions.constant';
+
+const { can } = usePermissions();
 
 const route = useRoute();
 const router = useRouter();

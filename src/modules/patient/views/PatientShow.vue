@@ -102,7 +102,10 @@
                   Fecha de registro:<br />
                   <span class="font-medium text-foreground text-sm">{{ patient?.creado_el || 'Reciente' }}</span>
                 </div>
-                <div class="flex flex-wrap gap-2 justify-center lg:justify-end">
+                <div
+                  v-if="can(PERMISSIONS.PATIENTS_UPDATE)"
+                  class="flex flex-wrap gap-2 justify-center lg:justify-end"
+                >
                   <ButtonBase
                     text="Editar datos"
                     :icon="UserEditIcon"
@@ -225,6 +228,8 @@ import PatientAppointmentsIndex from '@/modules/patient/views/PatientAppointment
 import PatientShowInformation from '@/modules/patient/views/PatientShowInformation.vue';
 import PatientConsultationsIndex from '@/modules/patient/views/PatientConsultationsIndex.vue';
 import PatientDocumentsTab from '@/modules/clinical-document/components/PatientDocumentsTab.vue';
+import { usePermissions } from '@/modules/auth/composables/usePermissions';
+import { PERMISSIONS } from '@/modules/auth/constants/permissions.constant';
 
 interface Props {
   patientId: string;
@@ -238,6 +243,7 @@ const route = useRoute();
 const router = useRouter();
 const activeTab = ref<PatientTab>((route.query.tab as PatientTab) || 'information');
 const { setBreadcrumbs } = useBreadcrumb();
+const { can } = usePermissions();
 
 // Al cambiar de tab actualizas la query sin recargar:
 const changeTab = (tab: PatientTab) => {

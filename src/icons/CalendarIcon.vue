@@ -9,7 +9,7 @@
     stroke-width="2"
     stroke-linecap="round"
     stroke-linejoin="round"
-    class="lucide lucide-calendar-icon lucide-calendar stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 mr-2 size-4"
+    class="lucide lucide-calendar-icon lucide-calendar stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
   >
     <path d="M8 2v4" />
     <path d="M16 2v4" />

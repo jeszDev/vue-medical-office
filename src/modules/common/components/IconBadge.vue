@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-(--color)/20 border-(--color)/60 text-(--color) border flex items-center justify-center shrink-0"
+    class="bg-(--color)/20 border-(--color)/60 text-(--color) border flex items-center justify-center shrink-0 [&_svg]:!m-0"
     :class="[sizeClasses, roundedClasses]"
     :style="colorStyle"
   >

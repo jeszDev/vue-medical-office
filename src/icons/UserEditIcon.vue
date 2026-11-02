@@ -9,7 +9,7 @@
     stroke-width="2"
     stroke-linecap="round"
     stroke-linejoin="round"
-    class="lucide lucide-user-round-pen-icon lucide-user-round-pen stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 mr-2 size-4"
+    class="lucide lucide-user-round-pen-icon lucide-user-round-pen stroke-[1.5] [--color:currentColor] stroke-(--color) fill-(--color)/25 size-4"
   >
     <path d="M2 21a8 8 0 0 1 10.821-7.487" />
     <path

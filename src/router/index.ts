@@ -159,6 +159,14 @@ const router = createRouter({
             ],
           },
         },
+        {
+          path: 'profile',
+          name: 'profile',
+          component: () => import('@/modules/profile/views/ProfileView.vue'),
+          meta: {
+            breadcrumbs: [{ title: 'Mi Perfil' }],
+          },
+        },
       ],
     },
   ],

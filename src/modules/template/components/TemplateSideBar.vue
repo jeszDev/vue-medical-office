@@ -7,7 +7,7 @@
       <div class="relative size-10 flex-none">
         <AvatarBase
           :src="authStore.user?.avatar"
-          :name="authStore.user?.name"
+          :name="authStore.user?.nombre_completo || authStore.user?.name"
           fallback-text="U"
           size="sm"
           color="current"
@@ -18,7 +18,7 @@
       >
         <div class="w-28">
           <div class="w-full truncate font-medium text-white/90">
-            {{ authStore.user?.name || 'Usuario' }}
+            {{ authStore.user?.nombre_completo || authStore.user?.name || 'Usuario' }}
           </div>
           <div class="w-full truncate text-xs opacity-60 capitalize">
             {{ authStore.user?.roles?.[0] || 'Personal' }}

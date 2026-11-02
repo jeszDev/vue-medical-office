@@ -55,6 +55,15 @@
         <div class="flex flex-col gap-0.5">
           <button
             type="button"
+            class="hover:bg-foreground/5 text-foreground -mx-3 flex items-center gap-2.5 rounded-lg px-4 py-1.5 text-xs font-medium w-[calc(100%+1.5rem)] text-left transition-colors cursor-pointer"
+            @click="handleProfile"
+          >
+            <UserIcon class="size-4 stroke-[1.5] stroke-current fill-current/25" />
+            <span>Perfil</span>
+          </button>
+
+          <button
+            type="button"
             class="hover:bg-destructive/10 text-destructive -mx-3 flex items-center gap-2.5 rounded-lg px-4 py-1.5 text-xs font-semibold w-[calc(100%+1.5rem)] text-left transition-colors cursor-pointer"
             @click="handleLogout"
           >
@@ -70,7 +79,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { onClickOutside } from '@vueuse/core';
-import { LogOut as LogOutIcon } from 'lucide-vue-next';
+import { LogOut as LogOutIcon, User as UserIcon } from 'lucide-vue-next';
+import { useToast } from 'vue-toastification';
 
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import { useLogoutModal } from '@/modules/auth/composables/useLogoutModal';
@@ -78,6 +88,7 @@ import AvatarBase from '@/modules/common/components/AvatarBase.vue';
 
 const authStore = useAuthStore();
 const { open: openLogoutModal } = useLogoutModal();
+const toast = useToast();
 
 const dropdownRef = ref<HTMLElement | null>(null);
 const isOpen = ref(false);
@@ -90,11 +101,23 @@ onClickOutside(dropdownRef, () => {
   isOpen.value = false;
 });
 
-const userName = computed(() => authStore.user?.name || 'Usuario');
+const userName = computed(() => {
+  return (
+    authStore.user?.nombre_completo ||
+    authStore.user?.name ||
+    authStore.user?.nombre ||
+    'Usuario'
+  );
+});
 
 const userRole = computed(() => {
   return authStore.user?.roles?.[0] || 'Personal';
 });
+
+const handleProfile = () => {
+  isOpen.value = false;
+  toast.info('El módulo de perfil se encuentra en construcción.');
+};
 
 const handleLogout = () => {
   isOpen.value = false;

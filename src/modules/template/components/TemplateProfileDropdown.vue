@@ -55,6 +55,15 @@
         <div class="flex flex-col gap-0.5">
           <button
             type="button"
+            class="hover:bg-foreground/5 text-foreground -mx-3 flex items-center gap-2.5 rounded-lg px-4 py-1.5 text-xs font-semibold w-[calc(100%+1.5rem)] text-left transition-colors cursor-pointer"
+            @click="goToProfile"
+          >
+            <UserIcon class="size-4 stroke-[1.5] stroke-current fill-current/25" />
+            <span>Mi Perfil</span>
+          </button>
+
+          <button
+            type="button"
             class="hover:bg-destructive/10 text-destructive -mx-3 flex items-center gap-2.5 rounded-lg px-4 py-1.5 text-xs font-semibold w-[calc(100%+1.5rem)] text-left transition-colors cursor-pointer"
             @click="handleLogout"
           >
@@ -69,8 +78,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { onClickOutside } from '@vueuse/core';
-import { LogOut as LogOutIcon } from 'lucide-vue-next';
+import { LogOut as LogOutIcon, User as UserIcon } from 'lucide-vue-next';
 
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import { useLogoutModal } from '@/modules/auth/composables/useLogoutModal';
@@ -96,8 +106,15 @@ const userRole = computed(() => {
   return authStore.user?.roles?.[0] || 'Personal';
 });
 
+const router = useRouter();
+
 const handleLogout = () => {
   isOpen.value = false;
   openLogoutModal();
+};
+
+const goToProfile = () => {
+  isOpen.value = false;
+  router.push({ name: 'profile' });
 };
 </script>

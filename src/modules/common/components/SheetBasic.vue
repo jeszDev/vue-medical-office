@@ -19,8 +19,8 @@
         >
           <!-- Botón de cierre flotante exterior estilo Midone custom-close-sheet -->
           <a
-            v-if="showCloseButton && (closeButtonPosition === 'outside-left' || closeButtonPosition === 'both')"
-            class="bg-background/80 hover:bg-background absolute inset-y-0 left-0 my-auto -ml-16 hidden sm:flex size-9 items-center justify-center rounded-full border border-foreground/10 shadow backdrop-blur cursor-pointer text-foreground/70 hover:text-foreground transition-colors"
+            v-if="showCloseButton && closeButtonPosition === 'outside-left'"
+            class="bg-background/80 hover:bg-background absolute inset-y-0 left-0 my-auto -ml-16 flex size-9 items-center justify-center rounded-full border border-foreground/10 shadow backdrop-blur cursor-pointer text-foreground/70 hover:text-foreground transition-colors"
             data-tw-dismiss="modal"
             href="#"
             aria-label="Cerrar panel"
@@ -29,13 +29,10 @@
             <CloseIcon />
           </a>
 
-          <!-- Botón de cierre superior derecho (visible en móvil o cuando se configure inside-right o both) -->
+          <!-- Botón de cierre superior derecho (solo cuando se configure inside-right) -->
           <a
-            v-if="showCloseButton && (closeButtonPosition === 'inside-right' || closeButtonPosition === 'both' || closeButtonPosition === 'outside-left')"
-            :class="[
-              'bg-background/80 hover:bg-background absolute right-0 top-0 -mr-3 -mt-3 flex size-9 items-center justify-center rounded-full border border-foreground/10 shadow backdrop-blur cursor-pointer text-foreground/70 hover:text-foreground transition-colors z-20',
-              closeButtonPosition === 'outside-left' ? 'sm:hidden' : '',
-            ]"
+            v-if="showCloseButton && closeButtonPosition === 'inside-right'"
+            class="bg-background/80 hover:bg-background absolute right-0 top-0 -mr-3 -mt-3 flex size-9 items-center justify-center rounded-full border border-foreground/10 shadow backdrop-blur cursor-pointer text-foreground/70 hover:text-foreground transition-colors z-20"
             data-tw-dismiss="modal"
             href="#"
             aria-label="Cerrar panel"
@@ -88,7 +85,7 @@ interface Props {
   title?: string;
   description?: string;
   showCloseButton?: boolean;
-  closeButtonPosition?: 'outside-left' | 'inside-right' | 'both';
+  closeButtonPosition?: 'outside-left' | 'inside-right';
   backdrop?: 'static' | 'auto';
   teleport?: boolean;
 }
@@ -100,7 +97,7 @@ const props = withDefaults(defineProps<Props>(), {
   title: '',
   description: '',
   showCloseButton: true,
-  closeButtonPosition: 'both',
+  closeButtonPosition: 'outside-left',
   backdrop: 'auto',
   teleport: true,
 });

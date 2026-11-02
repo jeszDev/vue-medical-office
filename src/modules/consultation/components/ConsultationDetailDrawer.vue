@@ -2,7 +2,6 @@
   <SheetBasic
     v-model="isOpen"
     size="3xl"
-    close-button-position="both"
     @close="close"
   >
     <!-- Slot Header -->

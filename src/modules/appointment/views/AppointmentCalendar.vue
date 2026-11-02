@@ -84,26 +84,37 @@
     </div>
 
     <!-- Botones de Acción en pie del modal -->
-    <div class="mt-4 pt-3.5 border-t border-foreground/10 flex flex-wrap items-center justify-end gap-2.5 w-full">
+    <div
+      v-if="
+        can(PERMISSIONS.CONSULTATIONS_CREATE) ||
+        can(PERMISSIONS.APPOINTMENTS_COMPLETE) ||
+        can(PERMISSIONS.APPOINTMENTS_UPDATE) ||
+        can(PERMISSIONS.APPOINTMENTS_CANCEL)
+      "
+      class="mt-4 pt-3.5 border-t border-foreground/10 flex flex-wrap items-center justify-end gap-2.5 w-full"
+    >
       <ButtonBase
+        v-if="can(PERMISSIONS.CONSULTATIONS_CREATE) || can(PERMISSIONS.APPOINTMENTS_COMPLETE)"
         text="Atender cita"
         :icon="stethoscopeIcon"
         color="primary"
-        :disabled="statusName === 'Cancelada' || isPendingCancelAppointment"
+        :disabled="statusName === 'Cancelada' || statusName === 'Atendida' || isPendingCancelAppointment"
         @click="goToConsultation()"
       />
       <ButtonBase
+        v-if="can(PERMISSIONS.APPOINTMENTS_UPDATE)"
         text="Editar cita"
         :icon="EditIcon"
         color="secondary"
-        :disabled="statusName === 'Cancelada' || isPendingCancelAppointment"
+        :disabled="statusName === 'Cancelada' || statusName === 'Atendida' || isPendingCancelAppointment"
         @click="onEdit"
       />
       <ButtonBase
+        v-if="can(PERMISSIONS.APPOINTMENTS_CANCEL)"
         text="Cancelar cita"
         :icon="CancelIcon"
         color="danger"
-        :disabled="statusName === 'Cancelada' || isPendingCancelAppointment"
+        :disabled="statusName === 'Cancelada' || statusName === 'Atendida' || isPendingCancelAppointment"
         data-tw-toggle="modal"
         data-tw-target="#modal-appointment-cancel"
       />
@@ -141,6 +152,8 @@ import MessageIcon from '@/icons/MessageIcon.vue';
 import stethoscopeIcon from '@/icons/stethoscopeIcon.vue';
 import ObservationsIcon from '@/icons/ObservationsIcon.vue';
 import { useCancelAppointment } from '../composables/useCancelAppointment';
+import { usePermissions } from '@/modules/auth/composables/usePermissions';
+import { PERMISSIONS } from '@/modules/auth/constants/permissions.constant';
 import {
   getAppointmentDoctorName,
   getAppointmentStatusColor,
@@ -160,6 +173,7 @@ const emit = defineEmits<{
 }>();
 
 const { functionCancelAppointment, isPendingCancelAppointment } = useCancelAppointment();
+const { can } = usePermissions();
 
 const statusName = computed(() => {
   return getAppointmentStatusName(props.appointment?.estatus);

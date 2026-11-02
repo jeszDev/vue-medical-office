@@ -113,7 +113,7 @@ import DocumentViewerModal from './DocumentViewerModal.vue';
 import ModalQuestion from '@/modules/common/components/ModalQuestion.vue';
 import SearchInput from '@/modules/common/components/SearchInput.vue';
 import { FileBox } from 'lucide-vue-next';
-import { useAuthStore } from '@/modules/auth/stores/auth.store';
+import { usePermissions } from '@/modules/auth/composables/usePermissions';
 import { useToast } from 'vue-toastification';
 
 interface Props {
@@ -136,7 +136,6 @@ const emit = defineEmits<{
 }>();
 
 const toast = useToast();
-const authStore = useAuthStore();
 
 const searchQuery = ref('');
 const selectedType = ref('all');
@@ -149,13 +148,7 @@ const isDeleteModalOpen = ref(false);
 const docToDelete = ref<ClinicalDocument | null>(null);
 const isDeleting = ref(false);
 
-const isAdmin = computed(() => {
-  const roles = authStore.user?.roles || [];
-  return roles.some((r) => {
-    const lower = r.toLowerCase();
-    return lower === 'admin' || lower === 'administrador';
-  });
-});
+const { isAdmin } = usePermissions();
 
 const filteredDocuments = computed(() => {
   return props.documents.filter((doc) => {

@@ -3,7 +3,12 @@
   <div v-else>
     <div class="grid grid-cols-12 gap-6">
       <div class="col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
-        <ButtonBase text="Agendar nueva cita" color="primary" @click="openCreateModal" />
+        <ButtonBase
+          v-if="can(PERMISSIONS.APPOINTMENTS_CREATE)"
+          text="Agendar nueva cita"
+          color="primary"
+          @click="openCreateModal"
+        />
 
         <div class="mx-auto hidden opacity-70 md:block">
           <span v-if="pagination.total === 0">0 citas</span>
@@ -182,6 +187,8 @@ import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import SearchInput from '@/modules/common/components/SearchInput.vue';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
+import { usePermissions } from '@/modules/auth/composables/usePermissions';
+import { PERMISSIONS } from '@/modules/auth/constants/permissions.constant';
 import { keepPreviousData, useQuery } from '@tanstack/vue-query';
 import { getAppointmentsByPatientAction } from '@/modules/appointment/actions/get-appointments-by-patient.action';
 import { computed, ref, onMounted, onBeforeUnmount, type Directive } from 'vue';
@@ -213,6 +220,7 @@ const props = defineProps<Props>();
 
 const router = useRouter();
 const route = useRoute();
+const { can } = usePermissions();
 
 const tableColumns: TableColumn[] = [
   { key: 'index', label: '#', align: 'center', width: 'w-12' },
@@ -303,11 +311,13 @@ const hasLongReason = (appointment: Appointment): boolean => {
 };
 
 const canCancelAppointment = (appointment: Appointment) => {
+  if (!can(PERMISSIONS.APPOINTMENTS_CANCEL)) return false;
   const statusName = getAppointmentStatusName(appointment.estatus);
   return statusName !== 'Cancelada' && statusName !== 'Atendida';
 };
 
 const canEditAppointment = (appointment: Appointment) => {
+  if (!can(PERMISSIONS.APPOINTMENTS_UPDATE)) return false;
   const statusName = getAppointmentStatusName(appointment.estatus);
   return statusName !== 'Cancelada' && statusName !== 'Atendida';
 };
@@ -393,6 +403,9 @@ const goToConsultation = (appointmentId: number) => {
 };
 
 const canAttendAppointment = (appointment: Appointment) => {
+  if (!can(PERMISSIONS.CONSULTATIONS_CREATE) && !can(PERMISSIONS.APPOINTMENTS_COMPLETE)) {
+    return false;
+  }
   const statusName = getAppointmentStatusName(appointment.estatus);
   if (statusName === 'Cancelada' || statusName === 'Atendida') {
     return false;

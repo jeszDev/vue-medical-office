@@ -6,6 +6,7 @@
         <div class="col-span-12 mt-2 flex flex-wrap items-center justify-between gap-4">
           <div class="flex items-center gap-3">
             <ButtonBase
+              v-if="can(PERMISSIONS.APPOINTMENTS_CREATE)"
               text="Agendar nueva cita"
               color="primary"
               class="mr-2"
@@ -147,6 +148,10 @@ import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import AppointmentCalendar from '@/modules/appointment/views/AppointmentCalendar.vue';
 import AppointmentCreateUpdate from '@/modules/appointment/views/AppointmentCreateUpdate.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
+import { usePermissions } from '@/modules/auth/composables/usePermissions';
+import { PERMISSIONS } from '@/modules/auth/constants/permissions.constant';
+
+const { can } = usePermissions();
 
 import { ref, computed, nextTick } from 'vue';
 import { VueCal } from 'vue-cal';
@@ -271,6 +276,11 @@ const onCellClick = (cellData: unknown) => {
     currentViewDate.value = startDate;
     currentSelectedDate.value = startDate;
     currentView.value = 'day';
+    return;
+  }
+
+  // Si no tiene permiso de crear citas, no abrir el modal
+  if (!can(PERMISSIONS.APPOINTMENTS_CREATE)) {
     return;
   }
 

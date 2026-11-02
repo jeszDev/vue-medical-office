@@ -198,12 +198,14 @@
                   >
                     <div class="flex items-center justify-center gap-3">
                       <TableActionButton
+                        v-if="can(PERMISSIONS.APPOINTMENTS_CONFIRM)"
                         variant="success"
                         :icon="CalendarCheckIcon"
                         tooltip="Asignar"
                         @click="openAssignModal(request)"
                       />
                       <TableActionButton
+                        v-if="can(PERMISSIONS.APPOINTMENTS_CANCEL)"
                         variant="danger"
                         :icon="TrashIcon"
                         tooltip="Cancelar"
@@ -259,6 +261,10 @@ import {
 
 import type { Appointment } from '../interfaces/appointment.interface';
 import { getAppointmentRequestsAction } from '../actions/get-appointment-requests.action';
+import { usePermissions } from '@/modules/auth/composables/usePermissions';
+import { PERMISSIONS } from '@/modules/auth/constants/permissions.constant';
+
+const { can } = usePermissions();
 import {
   getShiftBadgeColor,
   getShiftBadgeLabel,

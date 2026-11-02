@@ -2,59 +2,34 @@
   <FullScreenLoader v-if="!patient" />
   <div v-else class="space-y-6">
     <div class="grid grid-cols-12 gap-6">
-      <!-- Columna Izquierda: Ficha de Identidad & Contacto -->
+      <!-- Columna Izquierda: Ficha de Identificación Técnica -->
       <div class="col-span-12 lg:col-span-5 xl:col-span-4">
         <div class="rounded-xl border border-foreground/10 bg-background/60 p-5 shadow-xs">
-          <!-- Cabecera con Avatar e Identificación -->
-          <div class="flex items-center gap-4">
-            <span
-              class="border-(--color)/10 relative block overflow-hidden rounded-full border-3 ring-1 ring-(--color)/25 [--color:var(--color-primary)] bg-background size-16 shrink-0 shadow-sm"
-            >
-              <!-- 🖼️ 1. Si el paciente tiene foto -->
-              <img
-                v-if="patient.avatar"
-                class="absolute top-0 size-full object-cover"
-                :src="patient.avatar"
-                :alt="patient.nombre_completo"
-              />
-
-              <!-- 🔤 2. Si NO tiene foto: Muestra la Letra Inicial centrada -->
-              <div
-                v-else
-                class="absolute top-0 size-full bg-primary/10 text-primary flex items-center justify-center text-xl font-bold uppercase"
-              >
-                {{ patient.nombre ? patient.nombre.charAt(0).toUpperCase() : 'P' }}
-              </div>
-            </span>
-
-            <div class="min-w-0 flex-1">
-              <div class="flex items-center gap-2">
-                <span class="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  PACIENTE
-                </span>
-                <span
-                  class="bg-(--color)/20 border-(--color)/60 text-(--color) inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium leading-none [--color:var(--color-success)]"
-                >
-                  Expediente activo
-                </span>
-              </div>
-              <h3 class="text-base font-bold text-foreground truncate mt-0.5" :title="patient.nombre_completo">
-                {{ patient.nombre_completo }}
-              </h3>
-              <div class="mt-1 flex items-center gap-2">
-                <span class="text-xs font-mono text-muted-foreground">
-                  #PAC-{{ String(patient.id).padStart(5, '0') }}
-                </span>
-                <PillBadge v-if="patient.edad" size="xs" color="primary" :label="`${patient.edad} años`" />
+          <!-- Cabecera de la ficha técnica -->
+          <div class="flex items-center justify-between border-b border-foreground/10 pb-3.5 mb-4">
+            <div class="flex items-center gap-2.5">
+              <IconBadge color="primary">
+                <UserIcon class="size-4" />
+              </IconBadge>
+              <div>
+                <h4 class="text-sm font-semibold text-foreground">
+                  Ficha Técnica del Paciente
+                </h4>
+                <p class="text-xs text-muted-foreground">
+                  Datos de registro y contacto oficial
+                </p>
               </div>
             </div>
           </div>
 
-          <!-- Divisor sutil -->
-          <div class="border-t border-foreground/10 my-4"></div>
-
           <!-- Listado con Puntos Indicadores de Midone (Componente atómico DetailListItem) -->
           <div class="space-y-3.5">
+            <!-- Nombre Completo -->
+            <DetailListItem
+              label="Nombre"
+              dot-color="primary"
+              :value="patient.nombre_completo"
+            />
             <!-- Teléfono -->
             <DetailListItem label="Teléfono" dot-color="success">
               <a
@@ -147,11 +122,9 @@
         <div class="rounded-xl border border-foreground/10 bg-background/60 p-5 shadow-xs">
           <div class="flex items-center justify-between border-b border-foreground/10 pb-3.5 mb-4">
             <div class="flex items-center gap-2.5">
-              <div
-                class="bg-(--color)/20 border-(--color)/60 text-(--color) size-8 rounded-lg border flex items-center justify-center shrink-0 [--color:var(--color-primary)]"
-              >
+              <IconBadge color="primary">
                 <MessageSquareText class="size-4" />
-              </div>
+              </IconBadge>
               <div>
                 <h4 class="text-sm font-semibold text-foreground">
                   Antecedentes y Observaciones Clínicas
@@ -225,11 +198,9 @@
               class="group cursor-pointer rounded-xl border border-foreground/10 bg-background/60 p-4 transition-all hover:border-primary/40 hover:shadow-xs hover:-translate-y-0.5 select-none"
             >
               <div class="flex items-center justify-between mb-2.5">
-                <div
-                  class="bg-(--color)/20 border-(--color)/60 text-(--color) size-8 rounded-lg border flex items-center justify-center shrink-0 [--color:var(--color-primary)]"
-                >
+                <IconBadge color="primary">
                   <Calendar class="size-4" />
-                </div>
+                </IconBadge>
                 <ArrowRight
                   class="size-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all"
                 />
@@ -248,11 +219,9 @@
               class="group cursor-pointer rounded-xl border border-foreground/10 bg-background/60 p-4 transition-all hover:border-success/40 hover:shadow-xs hover:-translate-y-0.5 select-none"
             >
               <div class="flex items-center justify-between mb-2.5">
-                <div
-                  class="bg-(--color)/20 border-(--color)/60 text-(--color) size-8 rounded-lg border flex items-center justify-center shrink-0 [--color:var(--color-success)]"
-                >
+                <IconBadge color="success">
                   <Stethoscope class="size-4" />
-                </div>
+                </IconBadge>
                 <ArrowRight
                   class="size-4 text-muted-foreground group-hover:text-success group-hover:translate-x-0.5 transition-all"
                 />
@@ -271,11 +240,9 @@
               class="group cursor-pointer rounded-xl border border-foreground/10 bg-background/60 p-4 transition-all hover:border-warning/40 hover:shadow-xs hover:-translate-y-0.5 select-none"
             >
               <div class="flex items-center justify-between mb-2.5">
-                <div
-                  class="bg-(--color)/20 border-(--color)/60 text-(--color) size-8 rounded-lg border flex items-center justify-center shrink-0 [--color:var(--color-warning)]"
-                >
+                <IconBadge color="warning">
                   <FolderArchive class="size-4" />
-                </div>
+                </IconBadge>
                 <ArrowRight
                   class="size-4 text-muted-foreground group-hover:text-warning group-hover:translate-x-0.5 transition-all"
                 />
@@ -291,11 +258,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Modal para editar paciente (Mismo componente ya integrado) -->
-    <DialogBasic id="modal-patient-create-or-edit" size="3xl">
-      <PatientCreate :patient-id="String(patient.id)" :is-inside-modal="true" />
-    </DialogBasic>
   </div>
 </template>
 
@@ -306,11 +268,10 @@ import { useToast } from 'vue-toastification';
 
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
-import PillBadge from '@/modules/common/components/PillBadge.vue';
-import DialogBasic from '@/modules/common/components/DialogBasic.vue';
-import PatientCreate from '@/modules/patient/views/PatientCreate.vue';
 import DetailListItem from '@/modules/common/components/DetailListItem.vue';
+import IconBadge from '@/modules/common/components/IconBadge.vue';
 
+import UserIcon from '@/icons/UserIcon.vue';
 import UserEditIcon from '@/icons/UserEditIcon.vue';
 import UserDeleteIcon from '@/icons/UserDeleteIcon.vue';
 

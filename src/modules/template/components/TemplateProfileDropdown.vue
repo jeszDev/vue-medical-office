@@ -8,23 +8,15 @@
       aria-label="Menú de usuario"
       @click="toggleDropdown"
     >
-      <span
-        class="border-(--color)/5 block relative flex-none overflow-hidden rounded-full border-3 ring-1 ring-(--color)/40 size-full [--color:var(--color-nav-foreground)] transition-transform hover:scale-105"
+      <AvatarBase
+        :src="authStore.user?.avatar"
+        :name="authStore.user?.name"
+        fallback-text="U"
+        size="full"
+        color="nav"
+        class="transition-transform hover:scale-105"
         :class="{ 'ring-(--color)/80': isOpen }"
-      >
-        <img
-          v-if="authStore.user?.avatar"
-          class="absolute top-0 size-full object-cover"
-          :src="authStore.user.avatar"
-          alt="Foto de perfil"
-        />
-        <div
-          v-else
-          class="flex size-full items-center justify-center font-bold text-xs uppercase bg-(--color)/15 text-(--color)"
-        >
-          {{ userInitial }}
-        </div>
-      </span>
+      />
     </button>
 
     <!-- Menú desplegable con diseño de doble tarjeta flotante Midone -->
@@ -82,6 +74,7 @@ import { LogOut as LogOutIcon } from 'lucide-vue-next';
 
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import { useLogoutModal } from '@/modules/auth/composables/useLogoutModal';
+import AvatarBase from '@/modules/common/components/AvatarBase.vue';
 
 const authStore = useAuthStore();
 const { open: openLogoutModal } = useLogoutModal();
@@ -98,13 +91,6 @@ onClickOutside(dropdownRef, () => {
 });
 
 const userName = computed(() => authStore.user?.name || 'Usuario');
-
-const userInitial = computed(() => {
-  if (authStore.user?.name) {
-    return authStore.user.name.trim().charAt(0).toUpperCase();
-  }
-  return 'U';
-});
 
 const userRole = computed(() => {
   return authStore.user?.roles?.[0] || 'Personal';

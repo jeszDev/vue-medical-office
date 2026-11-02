@@ -5,22 +5,13 @@
       class="border-background/20 dark:border-foreground/[.09] flex items-center justify-center border-t px-5 py-3.5 opacity-90 xl:border-b"
     >
       <div class="relative size-10 flex-none">
-        <span
-          class="border-(--color)/5 block relative flex-none overflow-hidden rounded-full border-3 ring-1 ring-(--color)/40 size-full [--color:currentColor]"
-        >
-          <img
-            v-if="authStore.user?.avatar"
-            class="absolute top-0 size-full object-cover"
-            :src="authStore.user.avatar"
-            alt="Avatar"
-          />
-          <div
-            v-else
-            class="flex size-full items-center justify-center font-bold text-xs uppercase bg-(--color)/15 text-(--color)"
-          >
-            {{ userInitial }}
-          </div>
-        </span>
+        <AvatarBase
+          :src="authStore.user?.avatar"
+          :name="authStore.user?.name"
+          fallback-text="U"
+          size="sm"
+          color="current"
+        />
       </div>
       <div
         class="ms-3 flex w-full items-center overflow-hidden transition-opacity group-[.side-menu--collapsed.side-menu--on-hover]:ms-3 group-[.side-menu--collapsed.side-menu--on-hover]:w-full group-[.side-menu--collapsed.side-menu--on-hover]:opacity-100 xl:group-[.side-menu--collapsed]:ms-0 xl:group-[.side-menu--collapsed]:w-0 xl:group-[.side-menu--collapsed]:opacity-0"
@@ -71,8 +62,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, isRef } from 'vue';
+import { isRef } from 'vue';
 import SimpleBar from 'simplebar-vue';
+import AvatarBase from '@/modules/common/components/AvatarBase.vue';
 import { useAuthStore } from '../../auth/stores/auth.store';
 import { useNavigationMenu, type MenuItem } from '../composables/useNavigationMenu';
 import {
@@ -87,13 +79,6 @@ import {
 
 const authStore = useAuthStore();
 const { groupedMenuItems } = useNavigationMenu();
-
-const userInitial = computed(() => {
-  if (authStore.user?.name) {
-    return authStore.user.name.trim().charAt(0).toUpperCase();
-  }
-  return 'U';
-});
 
 const getBadgeValue = (badge?: MenuItem['badge']): string | number | null => {
   if (badge === undefined || badge === null) return null;

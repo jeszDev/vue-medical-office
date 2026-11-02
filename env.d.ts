@@ -18,3 +18,15 @@ interface Window {
     Accordion?: any;
   };
 }
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    breadcrumbs?: import('@/modules/common/interfaces/breadcrumb.interface').BreadcrumbItem[];
+    permission?: import('@/modules/auth/constants/permissions.constant').Permission;
+    permissions?: import('@/modules/auth/constants/permissions.constant').Permission[];
+    roles?: string[];
+    matchMode?: 'any' | 'all';
+    requiresAuth?: boolean;
+  }
+}
+

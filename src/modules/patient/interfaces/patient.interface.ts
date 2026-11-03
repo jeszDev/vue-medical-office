@@ -12,6 +12,7 @@ export interface Patient {
   observaciones: string | null;
   creado_el: string;
   avatar?: string | null;
+  es_dependiente: boolean;
 }
 
 export interface PatientSingleResponse {

@@ -54,8 +54,16 @@
                       class="shadow-[3px_3px_5px_#0000000b] first:rounded-l-xl last:rounded-r-xl box rounded-none p-4 [&:has([role=checkbox])]:pr-0 border-y border-foreground/10 bg-background first:border-l last:border-r"
                     >
                       <div class="font-medium text-foreground">{{ patient.nombre_completo }}</div>
-                      <div v-if="patient.edad" class="text-xs text-muted-foreground mt-0.5">
-                        {{ patient.edad }} años
+                      <div class="flex items-center gap-1.5 mt-0.5">
+                        <span v-if="patient.edad" class="text-xs text-muted-foreground">
+                          {{ patient.edad }} años
+                        </span>
+                        <PillBadge
+                          v-if="patient.es_dependiente"
+                          size="xs"
+                          color="warning"
+                          label="Dependiente"
+                        />
                       </div>
                     </td>
                     <td
@@ -148,7 +156,8 @@ import { computed, ref, watch } from 'vue';
 import { getPatientsAction } from '../actions/get-patients.action';
 import TablePagination from '@/modules/common/components/TablePagination.vue';
 import TableHead, { type TableColumn } from '@/modules/common/components/TableHead.vue';
-import { Pagination } from '../../common/interfaces/pagination.interface';
+import type { Pagination } from '../../common/interfaces/pagination.interface';
+import PillBadge from '@/modules/common/components/PillBadge.vue';
 import { useRoute, useRouter } from 'vue-router';
 import DialogBasic from '@/modules/common/components/DialogBasic.vue';
 import TableActionButton from '@/modules/common/components/TableActionButton.vue';

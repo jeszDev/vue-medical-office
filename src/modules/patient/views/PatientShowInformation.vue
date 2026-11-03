@@ -94,6 +94,25 @@
               dot-color="foreground"
               :value="patient.creado_el || 'Reciente'"
             />
+
+            <!-- Condición / Dependencia -->
+            <DetailListItem
+              label="Condición"
+              :dot-color="patient.es_dependiente ? 'warning' : 'success'"
+            >
+              <span
+                v-if="patient.es_dependiente"
+                class="inline-flex items-center gap-1 text-xs font-semibold text-warning"
+              >
+                Dependiente
+              </span>
+              <span
+                v-else
+                class="inline-flex items-center gap-1 text-xs font-semibold text-success"
+              >
+                Titular / Independiente
+              </span>
+            </DetailListItem>
           </div>
 
           <!-- Acciones integradas del paciente -->
@@ -190,6 +209,129 @@
           </div>
         </div>
 
+        <!-- Tarjeta de Tutores y Contactos Responsables (Solo si es dependiente) -->
+        <div
+          v-if="patient.es_dependiente"
+          class="rounded-xl border border-foreground/10 bg-background/60 p-5 shadow-xs"
+        >
+          <div class="flex items-center justify-between border-b border-foreground/10 pb-3.5 mb-4">
+            <div class="flex items-center gap-2.5">
+              <IconBadge color="warning">
+                <Users class="size-4" />
+              </IconBadge>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h4 class="text-sm font-semibold text-foreground">
+                    Tutores y Contactos Responsables
+                  </h4>
+                  <PillBadge
+                    size="xs"
+                    color="warning"
+                    :label="
+                      guardiansResponse?.tutores?.length
+                        ? `${guardiansResponse.tutores.length} ${
+                            guardiansResponse.tutores.length === 1 ? 'tutor' : 'tutores'
+                          }`
+                        : 'Dependiente'
+                    "
+                  />
+                </div>
+                <p class="text-xs text-muted-foreground">
+                  Personas legalmente responsables o de contacto directo asignadas
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading state -->
+          <div
+            v-if="isLoadingGuardians"
+            class="flex items-center justify-center py-6 text-muted-foreground gap-2 text-xs"
+          >
+            <div class="size-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <span>Cargando información de tutores...</span>
+          </div>
+
+          <!-- Error state -->
+          <div
+            v-else-if="isErrorGuardians"
+            class="rounded-xl border border-danger/20 bg-danger/[0.03] p-4 text-xs text-danger"
+          >
+            No se pudo cargar la información de los tutores del paciente.
+          </div>
+
+          <!-- Listado de tutores -->
+          <div
+            v-else-if="guardiansResponse?.tutores && guardiansResponse.tutores.length > 0"
+            class="space-y-3"
+          >
+            <div
+              v-for="tutor in guardiansResponse.tutores"
+              :key="tutor.id"
+              class="rounded-xl border border-foreground/10 bg-foreground/[0.015] hover:border-primary/30 p-4 transition-all"
+            >
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="space-y-1.5">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-sm font-semibold text-foreground">
+                      {{ tutor.nombre_completo }}
+                    </span>
+                    <PillBadge
+                      size="xs"
+                      color="primary"
+                      :label="tutor.relacion_texto || tutor.relacion"
+                    />
+                    <PillBadge
+                      v-if="tutor.es_contacto_principal"
+                      size="xs"
+                      color="success"
+                      label="Contacto Principal"
+                    />
+                  </div>
+                  <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground mt-1">
+                    <span v-if="tutor.email" class="flex items-center gap-1.5">
+                      <Mail class="size-3.5 text-muted-foreground" />
+                      <a :href="`mailto:${tutor.email}`" class="text-primary hover:underline">
+                        {{ tutor.email }}
+                      </a>
+                    </span>
+                    <span v-if="tutor.curp" class="flex items-center gap-1.5 font-mono">
+                      <FileText class="size-3.5 text-muted-foreground" />
+                      <span>{{ tutor.curp }}</span>
+                      <button
+                        type="button"
+                        @click="copyCurp(tutor.curp)"
+                        class="text-muted-foreground hover:text-foreground transition-colors p-0.5 rounded cursor-pointer"
+                        title="Copiar CURP del tutor"
+                      >
+                        <Copy class="size-3" />
+                      </button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty state si no tiene tutores aún -->
+          <div
+            v-else
+            class="rounded-xl border border-dashed border-foreground/15 p-6 text-center bg-foreground/[0.01]"
+          >
+            <div
+              class="mx-auto size-10 rounded-full bg-foreground/5 flex items-center justify-center text-muted-foreground mb-2"
+            >
+              <Users class="size-5" />
+            </div>
+            <p class="text-sm font-medium text-foreground/80">
+              Sin tutores asignados
+            </p>
+            <p class="text-xs text-muted-foreground mt-1">
+              Este paciente está catalogado como dependiente, pero aún no tiene tutores o contactos responsables vinculados en el sistema.
+            </p>
+          </div>
+        </div>
+
         <!-- Atajos Rápidos del Expediente (Estilo Midone Profile Overview) -->
         <div>
           <div class="flex items-center justify-between mb-3 px-0.5">
@@ -271,14 +413,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
+import { useQuery } from '@tanstack/vue-query';
 
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
 import FullScreenLoader from '@/modules/common/components/FullScreenLoader.vue';
 import DetailListItem from '@/modules/common/components/DetailListItem.vue';
 import IconBadge from '@/modules/common/components/IconBadge.vue';
+import PillBadge from '@/modules/common/components/PillBadge.vue';
 
 import UserIcon from '@/icons/UserIcon.vue';
 import UserEditIcon from '@/icons/UserEditIcon.vue';
@@ -294,9 +438,13 @@ import {
   Check,
   ClipboardList,
   MessageSquareText,
+  Users,
+  Mail,
+  FileText,
 } from 'lucide-vue-next';
 
 import type { Patient } from '../interfaces/patient.interface';
+import { getPatientGuardiansAction } from '../actions';
 import { usePermissions } from '@/modules/auth/composables/usePermissions';
 import { PERMISSIONS } from '@/modules/auth/constants/permissions.constant';
 
@@ -306,13 +454,23 @@ interface Props {
   patient: Patient | undefined;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
 
 const copiedCurp = ref(false);
+
+const {
+  data: guardiansResponse,
+  isLoading: isLoadingGuardians,
+  isError: isErrorGuardians,
+} = useQuery({
+  queryKey: ['patient-guardians', computed(() => props.patient?.id)],
+  queryFn: () => getPatientGuardiansAction(props.patient!.id),
+  enabled: computed(() => Boolean(props.patient?.id && props.patient?.es_dependiente)),
+});
 
 const copyCurp = async (curpText: string) => {
   if (!curpText) return;

@@ -46,6 +46,18 @@
                       color="primary"
                       :label="`${patient.edad} años`"
                     />
+                    <PillBadge
+                      v-if="patient?.es_dependiente"
+                      size="xs"
+                      color="warning"
+                      label="Dependiente"
+                    />
+                    <PillBadge
+                      v-else-if="patient"
+                      size="xs"
+                      color="secondary"
+                      label="Titular"
+                    />
                   </div>
                 </div>
               </div>

@@ -25,6 +25,7 @@ const updatePatient = async (patient: Partial<Patient>) => {
   delete patient.creado_el;
   delete patient.edad;
   delete patient.avatar;
+  delete patient.es_dependiente;
 
   try {
     const { data } = await medicalOfficeApi.patch<Patient>(`/patients/${patientId}`, patient);

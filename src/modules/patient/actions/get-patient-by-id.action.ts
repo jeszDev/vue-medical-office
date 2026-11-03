@@ -16,6 +16,7 @@ export const getPatientByIdAction = async (patientId: string): Promise<Patient> 
       observaciones: '',
       creado_el: '',
       nombre_completo: '',
+      es_dependiente: false,
     };
   }
 

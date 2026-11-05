@@ -10,6 +10,11 @@ medicalOfficeApi.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`
   }
 
+  const activeRole = localStorage.getItem('active_role')
+  if (activeRole) {
+    config.headers['X-Active-Role'] = activeRole
+  }
+
   return config
 })
 

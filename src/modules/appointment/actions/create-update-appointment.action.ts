@@ -12,9 +12,14 @@ export const createUpdateAppointmentAction = async (appointment: Partial<Appoint
       return await updateappointment(appointment);
     }
 
+    const effectiveDoctorId =
+      appointment.medico_id ||
+      authStore.user?.doctor?.id ||
+      authStore.user?.id;
+
     const { data } = await medicalOfficeApi.post<Appointment>(
       `/patients/${appointment.patient_id}/appointments`,
-      { ...appointment, medico_id: authStore.user!.id },
+      { ...appointment, medico_id: effectiveDoctorId },
     );
 
     console.log(data);

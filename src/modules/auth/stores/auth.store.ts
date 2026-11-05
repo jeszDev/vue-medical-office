@@ -11,6 +11,43 @@ export const useAuthStore = defineStore('auth', () => {
   const authStatus = ref<AuthStatus>(AuthStatus.Checking);
   const user = ref<User | undefined>();
   const token = ref(useLocalStorage('token', ''));
+  const activeRole = ref(useLocalStorage<string>('active_role', ''));
+
+  const resolveDefaultRole = (userObj?: User): string => {
+    if (!userObj?.roles || userObj.roles.length === 0) return '';
+    const normalizedRoles = userObj.roles.map((r) => String(r).toLowerCase().trim());
+
+    // Si ya existe un activeRole guardado y es válido para este usuario, conservarlo
+    if (activeRole.value && normalizedRoles.includes(activeRole.value.toLowerCase().trim())) {
+      return activeRole.value.toLowerCase().trim();
+    }
+
+    // Jerarquía de inicialización por defecto: admin -> doctor -> recepcionista -> patient
+    if (normalizedRoles.includes('admin') || normalizedRoles.includes('administrador')) return 'admin';
+    if (
+      normalizedRoles.includes('doctor') ||
+      normalizedRoles.includes('medico') ||
+      normalizedRoles.includes('médico')
+    ) {
+      return 'doctor';
+    }
+    if (normalizedRoles.includes('recepcionista') || normalizedRoles.includes('receptionist')) {
+      return 'recepcionista';
+    }
+    if (normalizedRoles.includes('patient') || normalizedRoles.includes('paciente')) {
+      return 'patient';
+    }
+    return normalizedRoles[0] || '';
+  };
+
+  const switchActiveRole = (newRole: string) => {
+    const normalized = newRole.toLowerCase().trim();
+    const userRoles = (user.value?.roles || []).map((r) => String(r).toLowerCase().trim());
+    if (userRoles.includes(normalized)) {
+      activeRole.value = normalized;
+      localStorage.setItem('active_role', normalized);
+    }
+  };
 
   const login = async (email: string, password: string) => {
     try {
@@ -26,6 +63,9 @@ export const useAuthStore = defineStore('auth', () => {
       authStatus.value = AuthStatus.Authenticated;
 
       localStorage.setItem('token', token.value);
+      const defaultRole = resolveDefaultRole(user.value);
+      activeRole.value = defaultRole;
+      localStorage.setItem('active_role', defaultRole);
 
       return true;
     } catch (error) {
@@ -50,7 +90,9 @@ export const useAuthStore = defineStore('auth', () => {
     authStatus.value = AuthStatus.Unauthenticated;
     user.value = undefined;
     token.value = '';
+    activeRole.value = '';
     localStorage.removeItem('token');
+    localStorage.removeItem('active_role');
     return false;
   };
 
@@ -66,6 +108,11 @@ export const useAuthStore = defineStore('auth', () => {
       authStatus.value = AuthStatus.Authenticated;
       user.value = statusResp.user;
       token.value = statusResp.token;
+
+      const defaultRole = resolveDefaultRole(user.value);
+      activeRole.value = defaultRole;
+      localStorage.setItem('active_role', defaultRole);
+
       return true;
     } catch (error) {
       console.log(error);
@@ -78,14 +125,31 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     token,
     authStatus,
+    activeRole,
 
     // getters
     isChecking: computed(() => authStatus.value === AuthStatus.Checking),
     isAuthenticated: computed(() => authStatus.value === AuthStatus.Authenticated),
+    isDualUser: computed(() => {
+      const roles = (user.value?.roles || []).map((r) => String(r).toLowerCase().trim());
+      const hasDoc =
+        roles.includes('doctor') ||
+        roles.includes('medico') ||
+        roles.includes('médico') ||
+        !!user.value?.doctor;
+      const hasPat =
+        roles.includes('patient') ||
+        roles.includes('paciente') ||
+        !!user.value?.patient;
+      return hasDoc && hasPat;
+    }),
+    activeDoctorProfile: computed(() => user.value?.doctor ?? null),
+    activePatientProfile: computed(() => user.value?.patient ?? null),
 
     // actions
     login,
     logout,
     checkAuthStatus,
+    switchActiveRole,
   };
 });

@@ -19,6 +19,10 @@ export function usePermissions() {
     return userRoles.value.includes('admin') || userRoles.value.includes('administrador');
   });
 
+  const activeRole = computed<string>(() => {
+    return authStore.activeRole?.toLowerCase().trim() || '';
+  });
+
   const hasRole = (roles?: string | string[]): boolean => {
     if (!roles) return true;
     const targetRoles = Array.isArray(roles) ? roles : [roles];
@@ -27,6 +31,29 @@ export function usePermissions() {
     if (isAdmin.value) return true;
 
     return targetRoles.some((role) => userRoles.value.includes(role.toLowerCase().trim()));
+  };
+
+  const hasActiveRole = (roles?: string | string[]): boolean => {
+    if (!roles) return true;
+    if (isAdmin.value) return true;
+    const targetRoles = Array.isArray(roles) ? roles : [roles];
+    if (targetRoles.length === 0) return true;
+    if (!authStore.user) return false;
+
+    const current = activeRole.value;
+    if (current) {
+      const isDoctorRole = ['doctor', 'medico', 'médico'].includes(current);
+      const isPatientRole = ['patient', 'paciente'].includes(current);
+
+      return targetRoles.some((r) => {
+        const norm = r.toLowerCase().trim();
+        if (isDoctorRole && ['doctor', 'medico', 'médico'].includes(norm)) return true;
+        if (isPatientRole && ['patient', 'paciente'].includes(norm)) return true;
+        return norm === current;
+      });
+    }
+
+    return hasRole(roles);
   };
 
   const can = (permission?: Permission): boolean => {
@@ -58,7 +85,9 @@ export function usePermissions() {
     isAdmin,
     userRoles,
     userPermissions,
+    activeRole,
     hasRole,
+    hasActiveRole,
     can,
     canAny,
     canAll,

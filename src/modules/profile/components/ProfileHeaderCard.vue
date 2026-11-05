@@ -37,6 +37,12 @@
               :label="roleDisplayName"
             />
             <PillBadge
+              v-if="authStore.isDualUser"
+              color="primary"
+              size="xs"
+              label="Médico y Paciente"
+            />
+            <PillBadge
               color="success"
               size="xs"
               label="Cuenta activa"
@@ -273,6 +279,7 @@ import { computed } from 'vue';
 import type { UserProfileData, ProfileTabType } from '../interfaces';
 import AvatarBase from '@/modules/common/components/AvatarBase.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
+import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import UserIcon from '@/icons/UserIcon.vue';
 import UserEditIcon from '@/icons/UserEditIcon.vue';
 import {
@@ -297,11 +304,17 @@ defineEmits<{
   (e: 'change-avatar'): void;
 }>();
 
+const authStore = useAuthStore();
+const activeRole = computed(() => authStore.activeRole?.toLowerCase().trim() || '');
+
 const rolesNormalized = computed(() => {
   return (props.user.roles || []).map((r) => String(r).toLowerCase());
 });
 
 const isDoctor = computed(() => {
+  if (authStore.isDualUser) {
+    return activeRole.value === 'doctor';
+  }
   return rolesNormalized.value.some((r) => ['doctor', 'medico', 'médico'].includes(r));
 });
 
@@ -310,6 +323,9 @@ const isReceptionist = computed(() => {
 });
 
 const isPatient = computed(() => {
+  if (authStore.isDualUser) {
+    return activeRole.value === 'patient';
+  }
   return rolesNormalized.value.some((r) => ['paciente', 'patient'].includes(r));
 });
 

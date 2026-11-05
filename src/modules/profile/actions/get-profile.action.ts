@@ -25,18 +25,29 @@ export const getProfileAction = async (): Promise<UserProfileData> => {
 
   return {
     id: currentUser?.id || 1,
-    name: currentUser?.name || 'Usuario',
+    name:
+      currentUser?.nombre_completo ||
+      currentUser?.patient?.nombre_completo ||
+      currentUser?.name ||
+      'Usuario',
     email: currentUser?.email || '',
-    telefono: '',
-    avatar: undefined,
+    telefono:
+      currentUser?.doctor?.telefono_consultorio ||
+      currentUser?.patient?.telefono ||
+      '',
+    avatar: currentUser?.avatar || undefined,
     roles,
     permissions: currentUser?.permissions || [],
 
-    // Valores para Doctor (cuando el endpoint no provee aún datos extendidos)
+    // Valores para Doctor
     ...(isDoctor && {
-      especialidad: 'Medicina General',
-      cedula_profesional: '',
-      consultorio: 'Consultorio Central',
+      especialidad:
+        currentUser?.doctor?.especialidades?.find((e) => e.es_principal)?.nombre ||
+        currentUser?.doctor?.especialidades?.[0]?.nombre ||
+        'Medicina General',
+      cedula_profesional: currentUser?.doctor?.cedula_profesional || '',
+      consultorio:
+        currentUser?.doctor?.direccion_consultorio || 'Consultorio Central',
       horario_atencion: 'Lunes a Viernes',
       total_consultas: 0,
       citas_hoy: 0,
@@ -52,11 +63,15 @@ export const getProfileAction = async (): Promise<UserProfileData> => {
 
     // Valores para Paciente
     ...(isPatient && {
-      curp: '',
-      folio_paciente: currentUser?.id ? `#PAC-${String(currentUser.id).padStart(5, '0')}` : undefined,
-      fecha_nacimiento: '',
-      edad: undefined,
-      direccion: '',
+      curp: currentUser?.patient?.curp || currentUser?.curp || '',
+      folio_paciente: currentUser?.patient?.id
+        ? `#PAC-${String(currentUser.patient.id).padStart(5, '0')}`
+        : currentUser?.id
+          ? `#PAC-${String(currentUser.id).padStart(5, '0')}`
+          : undefined,
+      fecha_nacimiento: currentUser?.patient?.fecha_nacimiento || '',
+      edad: currentUser?.patient?.edad || undefined,
+      direccion: currentUser?.doctor?.direccion_consultorio || '',
       contacto_emergencia_nombre: '',
       contacto_emergencia_telefono: '',
       es_tutor: false,

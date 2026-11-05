@@ -115,7 +115,12 @@ const rolesNormalized = computed(() => {
   );
 });
 
+const activeRole = computed(() => authStore.activeRole?.toLowerCase().trim() || '');
+
 const isDoctor = computed(() => {
+  if (authStore.isDualUser) {
+    return activeRole.value === 'doctor';
+  }
   return rolesNormalized.value.some((r) => ['doctor', 'medico', 'médico'].includes(r));
 });
 
@@ -124,6 +129,9 @@ const isReceptionist = computed(() => {
 });
 
 const isPatient = computed(() => {
+  if (authStore.isDualUser) {
+    return activeRole.value === 'patient';
+  }
   return rolesNormalized.value.some((r) => ['paciente', 'patient'].includes(r));
 });
 

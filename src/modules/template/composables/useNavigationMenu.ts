@@ -21,13 +21,13 @@ export interface MenuItem {
 }
 
 export function useNavigationMenu() {
-  const { can, canAny, canAll, hasRole, isAdmin, userRoles } = usePermissions();
+  const { can, canAny, canAll, hasRole, hasActiveRole, isAdmin, userRoles } = usePermissions();
 
   const isItemAuthorized = (item: MenuItem): boolean => {
     if (isAdmin.value) return true;
 
-    // Check roles if defined
-    if (item.roles && item.roles.length > 0 && !hasRole(item.roles)) {
+    // Check roles against active role if defined
+    if (item.roles && item.roles.length > 0 && !hasActiveRole(item.roles)) {
       return false;
     }
 

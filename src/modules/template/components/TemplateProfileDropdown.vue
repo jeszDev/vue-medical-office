@@ -37,8 +37,14 @@
           <div class="font-medium text-foreground truncate" :title="userName">
             {{ userName }}
           </div>
-          <div class="text-xs opacity-70 truncate capitalize">
-            {{ userRole }}
+          <div class="text-xs opacity-70 truncate capitalize flex items-center gap-1.5">
+            <span>{{ userRoleLabel }}</span>
+            <span
+              v-if="authStore.isDualUser"
+              class="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-semibold"
+            >
+              Dual
+            </span>
           </div>
           <div
             v-if="authStore.user?.email"
@@ -46,6 +52,46 @@
             :title="authStore.user.email"
           >
             {{ authStore.user.email }}
+          </div>
+        </div>
+
+        <!-- Conmutador de Rol Activo para usuarios bivalentes (Médico y Paciente) -->
+        <div
+          v-if="authStore.isDualUser"
+          class="bg-foreground/5 rounded-xl p-2 flex flex-col gap-1.5 my-0.5"
+        >
+          <div class="text-[10px] font-bold text-foreground/60 uppercase tracking-wider px-0.5">
+            Modo Operativo
+          </div>
+          <div
+            class="grid grid-cols-2 gap-1 bg-background/60 p-0.5 rounded-lg border border-foreground/10"
+          >
+            <button
+              type="button"
+              class="text-xs py-1 px-1.5 rounded-md font-medium transition-all text-center flex items-center justify-center gap-1 cursor-pointer"
+              :class="
+                currentActiveRole === 'doctor'
+                  ? 'bg-primary text-white shadow-xs font-semibold'
+                  : 'text-foreground/75 hover:text-foreground hover:bg-foreground/5'
+              "
+              @click="handleRoleSwitch('doctor')"
+            >
+              <span>👨‍⚕️</span>
+              <span>Médico</span>
+            </button>
+            <button
+              type="button"
+              class="text-xs py-1 px-1.5 rounded-md font-medium transition-all text-center flex items-center justify-center gap-1 cursor-pointer"
+              :class="
+                currentActiveRole === 'patient'
+                  ? 'bg-primary text-white shadow-xs font-semibold'
+                  : 'text-foreground/75 hover:text-foreground hover:bg-foreground/5'
+              "
+              @click="handleRoleSwitch('patient')"
+            >
+              <span>👤</span>
+              <span>Paciente</span>
+            </button>
           </div>
         </div>
 
@@ -81,6 +127,8 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { onClickOutside } from '@vueuse/core';
 import { LogOut as LogOutIcon, User as UserIcon } from 'lucide-vue-next';
+import { useQueryClient } from '@tanstack/vue-query';
+import { useToast } from 'vue-toastification';
 
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import { useLogoutModal } from '@/modules/auth/composables/useLogoutModal';
@@ -89,6 +137,8 @@ import AvatarBase from '@/modules/common/components/AvatarBase.vue';
 const authStore = useAuthStore();
 const { open: openLogoutModal } = useLogoutModal();
 const router = useRouter();
+const queryClient = useQueryClient();
+const toast = useToast();
 
 const dropdownRef = ref<HTMLElement | null>(null);
 const isOpen = ref(false);
@@ -110,9 +160,29 @@ const userName = computed(() => {
   );
 });
 
-const userRole = computed(() => {
-  return authStore.user?.roles?.[0] || 'Personal';
+const currentActiveRole = computed(() => {
+  return authStore.activeRole?.toLowerCase().trim() || '';
 });
+
+const userRoleLabel = computed(() => {
+  const role = currentActiveRole.value || authStore.user?.roles?.[0] || '';
+  if (['doctor', 'medico', 'médico'].includes(role)) return 'Médico / Especialista';
+  if (['patient', 'paciente'].includes(role)) return 'Paciente Titular';
+  if (['admin', 'administrador'].includes(role)) return 'Administrador';
+  if (['recepcionista', 'receptionist'].includes(role)) return 'Recepcionista';
+  return role || 'Personal';
+});
+
+const handleRoleSwitch = (newRole: string) => {
+  if (currentActiveRole.value === newRole) return;
+  authStore.switchActiveRole(newRole);
+  queryClient.invalidateQueries();
+  toast.info(
+    newRole === 'doctor'
+      ? 'Has cambiado al Modo Médico (Atención Clínica)'
+      : 'Has cambiado al Modo Paciente (Portal de Salud)',
+  );
+};
 
 const handleLogout = () => {
   isOpen.value = false;

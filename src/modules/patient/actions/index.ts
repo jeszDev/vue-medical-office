@@ -3,3 +3,4 @@ export * from './get-patient-by-id.action';
 export * from './create-update-petient.action';
 export * from './get-all-patients.action';
 export * from './get-patient-guardians.action';
+export * from './get-my-patients.action';

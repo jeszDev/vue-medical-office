@@ -13,6 +13,11 @@ export interface Patient {
   creado_el: string;
   avatar?: string | null;
   es_dependiente: boolean;
+  vinculo_familiar?: {
+    relacion: string;
+    relacion_texto: string;
+    es_contacto_principal: boolean;
+  };
 }
 
 export interface PatientSingleResponse {

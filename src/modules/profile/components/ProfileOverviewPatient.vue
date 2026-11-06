@@ -134,11 +134,11 @@
           <span class="text-xs text-muted-foreground">Acciones disponibles para tu atención:</span>
           <div class="flex flex-wrap items-center gap-2">
             <ButtonBase
-              text="Agendar Cita Médica"
+              text="Solicitar Cita Médica"
               :icon="CalendarIcon"
               color="primary"
               size="sm"
-              @click="$router.push({ name: 'appointments.create' })"
+              @click="isRequestModalOpen = true"
             />
             <ButtonBase
               text="Ver Mis Citas"
@@ -151,16 +151,23 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal de Solicitud de Cita Médica para el Paciente -->
+    <AppointmentPatientRequestModal
+      v-model="isRequestModalOpen"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import type { UserProfileData, ProfileTabType } from '../interfaces';
 import DetailListItem from '@/modules/common/components/DetailListItem.vue';
 import IconBadge from '@/modules/common/components/IconBadge.vue';
 import PillBadge from '@/modules/common/components/PillBadge.vue';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
+import AppointmentPatientRequestModal from '@/modules/appointment/components/AppointmentPatientRequestModal.vue';
 import UserIcon from '@/icons/UserIcon.vue';
 import CalendarIcon from '@/icons/CalendarIcon.vue';
 import {
@@ -180,4 +187,5 @@ defineEmits<{
 }>();
 
 const $router = useRouter();
+const isRequestModalOpen = ref(false);
 </script>

@@ -96,14 +96,23 @@
           <!-- Acciones para el dependiente -->
           <div class="mt-4 pt-3 border-t border-foreground/10 flex flex-wrap items-center justify-end gap-2">
             <ButtonBase
+              v-if="isPatientMode"
+              text="Solicitar Cita"
+              :icon="CalendarIcon"
+              color="primary"
+              size="sm"
+              @click="openRequestModal(dep.id)"
+            />
+            <ButtonBase
+              v-else
               text="Agendar Cita"
               :icon="CalendarIcon"
               color="secondary"
               size="sm"
-              @click="$router.push({ name: 'appointments.create' })"
+              @click="$router.push({ name: 'appointments.create', query: { patientId: String(dep.id) } })"
             />
             <ButtonBase
-              v-if="dep.id"
+              v-if="dep.id && canViewClinicalExpediente"
               text="Ver Expediente"
               :icon="PreviewIcon"
               color="primary"
@@ -125,10 +134,17 @@
         </p>
       </div>
     </div>
+
+    <!-- Modal de solicitud de cita médica para dependientes -->
+    <AppointmentPatientRequestModal
+      v-model="isRequestModalOpen"
+      :initial-patient-id="selectedDependentId"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import type { ProfileDependent } from '../interfaces';
 import IconBadge from '@/modules/common/components/IconBadge.vue';
@@ -136,6 +152,9 @@ import PillBadge from '@/modules/common/components/PillBadge.vue';
 import AvatarBase from '@/modules/common/components/AvatarBase.vue';
 import DetailListItem from '@/modules/common/components/DetailListItem.vue';
 import ButtonBase from '@/modules/common/components/ButtonBase.vue';
+import AppointmentPatientRequestModal from '@/modules/appointment/components/AppointmentPatientRequestModal.vue';
+import { useAuthStore } from '@/modules/auth/stores/auth.store';
+import { usePermissions } from '@/modules/auth/composables/usePermissions';
 import CalendarIcon from '@/icons/CalendarIcon.vue';
 import PreviewIcon from '@/icons/PreviewIcon.vue';
 import { Users as UsersIcon } from 'lucide-vue-next';
@@ -149,4 +168,19 @@ withDefaults(defineProps<Props>(), {
 });
 
 const $router = useRouter();
+const authStore = useAuthStore();
+const { hasActiveRole } = usePermissions();
+
+const isPatientMode = computed(() => authStore.isPatientMode);
+const canViewClinicalExpediente = computed(() =>
+  hasActiveRole(['admin', 'administrador', 'doctor', 'medico', 'médico', 'recepcionista']),
+);
+
+const isRequestModalOpen = ref(false);
+const selectedDependentId = ref<number | string | undefined>(undefined);
+
+const openRequestModal = (patientId: number | string) => {
+  selectedDependentId.value = patientId;
+  isRequestModalOpen.value = true;
+};
 </script>

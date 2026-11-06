@@ -11,7 +11,7 @@ const isAuthenticatedGuard = async (
   console.log(authStore.authStatus);
 
   if (authStore.isAuthenticated) {
-    return next({ name: 'patients.index' });
+    return next({ name: authStore.isPatientMode ? 'appointments.index' : 'patients.index' });
   }
 
   return next();

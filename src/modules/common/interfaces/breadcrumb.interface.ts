@@ -10,5 +10,9 @@ export interface BreadcrumbItem {
 declare module 'vue-router' {
   interface RouteMeta {
     breadcrumbs?: BreadcrumbItem[];
+    roles?: string[];
+    permission?: string;
+    permissions?: string[];
+    matchMode?: 'any' | 'all';
   }
 }

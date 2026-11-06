@@ -8,6 +8,23 @@ import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import { usePermissions } from '@/modules/auth/composables/usePermissions';
 import { useToast } from 'vue-toastification';
 
+const CLINICAL_STAFF_ROLES = [
+  'admin',
+  'administrador',
+  'doctor',
+  'medico',
+  'médico',
+  'recepcionista',
+];
+
+const MEDICAL_STAFF_ROLES = [
+  'admin',
+  'administrador',
+  'doctor',
+  'medico',
+  'médico',
+];
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -27,6 +44,7 @@ const router = createRouter({
           name: 'patients.index',
           component: () => import('@/modules/patient/views/PatientIndex.vue'),
           meta: {
+            roles: CLINICAL_STAFF_ROLES,
             permission: PERMISSIONS.PATIENTS_VIEW,
             breadcrumbs: [{ title: 'Pacientes' }],
           },
@@ -36,6 +54,7 @@ const router = createRouter({
           name: 'patients.create',
           component: () => import('@/modules/patient/views/PatientCreate.vue'),
           meta: {
+            roles: CLINICAL_STAFF_ROLES,
             permission: PERMISSIONS.PATIENTS_CREATE,
             breadcrumbs: [
               { title: 'Pacientes', routeName: 'patients.index' },
@@ -49,6 +68,7 @@ const router = createRouter({
           props: true,
           component: () => import('@/modules/patient/views/PatientShow.vue'),
           meta: {
+            roles: CLINICAL_STAFF_ROLES,
             permission: PERMISSIONS.PATIENTS_VIEW,
             breadcrumbs: [
               { title: 'Pacientes', routeName: 'patients.index' },
@@ -62,6 +82,7 @@ const router = createRouter({
           props: true,
           component: () => import('@/modules/patient/views/PatientCreate.vue'),
           meta: {
+            roles: CLINICAL_STAFF_ROLES,
             permission: PERMISSIONS.PATIENTS_UPDATE,
             breadcrumbs: [
               { title: 'Pacientes', routeName: 'patients.index' },
@@ -76,6 +97,7 @@ const router = createRouter({
           props: true,
           component: () => import('@/modules/patient/views/PatientAppointmentsIndex.vue'),
           meta: {
+            roles: CLINICAL_STAFF_ROLES,
             permission: PERMISSIONS.APPOINTMENTS_VIEW,
             breadcrumbs: [
               { title: 'Pacientes', routeName: 'patients.index' },
@@ -90,6 +112,7 @@ const router = createRouter({
           props: true,
           component: () => import('@/modules/appointment/views/AppointmentCreateUpdate.vue'),
           meta: {
+            roles: CLINICAL_STAFF_ROLES,
             permission: PERMISSIONS.APPOINTMENTS_CREATE,
             breadcrumbs: [
               { title: 'Citas', routeName: 'appointments.index' },
@@ -112,6 +135,7 @@ const router = createRouter({
           name: 'appointments.requests',
           component: () => import('@/modules/appointment/views/AppointmentRequestsIndex.vue'),
           meta: {
+            roles: CLINICAL_STAFF_ROLES,
             permission: PERMISSIONS.APPOINTMENTS_CONFIRM,
             breadcrumbs: [
               { title: 'Citas', routeName: 'appointments.index' },
@@ -125,6 +149,7 @@ const router = createRouter({
           props: true,
           component: () => import('@/modules/appointment/views/AppointmentConsultationCreate.vue'),
           meta: {
+            roles: MEDICAL_STAFF_ROLES,
             permission: PERMISSIONS.CONSULTATIONS_CREATE,
             breadcrumbs: [
               { title: 'Citas', routeName: 'appointments.index' },
@@ -138,6 +163,7 @@ const router = createRouter({
           props: true,
           component: () => import('@/modules/appointment/views/AppointmentConsultationCreate.vue'),
           meta: {
+            roles: MEDICAL_STAFF_ROLES,
             permission: PERMISSIONS.CONSULTATIONS_UPDATE,
             breadcrumbs: [
               { title: 'Citas', routeName: 'appointments.index' },
@@ -151,6 +177,7 @@ const router = createRouter({
           props: true,
           component: () => import('@/modules/appointment/views/AppointmentConsultationCreate.vue'),
           meta: {
+            roles: MEDICAL_STAFF_ROLES,
             permission: PERMISSIONS.CONSULTATIONS_CREATE,
             breadcrumbs: [
               { title: 'Pacientes', routeName: 'patients.index' },
@@ -186,28 +213,34 @@ router.beforeEach(async (to, from) => {
     return { name: 'login' };
   }
 
-  // Redirigir a pacientes si ya está autenticado e intenta ir al login
+  // Redirigir según el rol activo si ya está autenticado e intenta ir al login
   if (isAuthRoute && authStore.isAuthenticated) {
-    return { name: 'patients.index' };
+    return authStore.isPatientMode ? { name: 'appointments.index' } : { name: 'patients.index' };
   }
 
   // Evaluación de permisos en rutas autenticadas
-  const { can, canAny, canAll, hasRole, isAdmin } = usePermissions();
+  const { can, canAny, canAll, hasActiveRole, isAdmin } = usePermissions();
 
   if (!isAdmin.value) {
+    const isPatientMode = authStore.isPatientMode;
+
     const resolveFallbackRoute = () => {
-      if (can(PERMISSIONS.PATIENTS_VIEW)) return { name: 'patients.index' };
-      if (can(PERMISSIONS.APPOINTMENTS_VIEW)) return { name: 'appointments.index' };
-      return { name: 'login' };
+      if (hasActiveRole(CLINICAL_STAFF_ROLES) && can(PERMISSIONS.PATIENTS_VIEW)) {
+        return { name: 'patients.index' };
+      }
+      if (can(PERMISSIONS.APPOINTMENTS_VIEW)) {
+        if (to.name === 'appointments.create' && isPatientMode) {
+          return { name: 'appointments.index', query: { solicitar: 'true' } };
+        }
+        return { name: 'appointments.index' };
+      }
+      return { name: 'profile' };
     };
 
-    // Validar roles si están definidos
-    if (to.meta.roles && to.meta.roles.length > 0 && !hasRole(to.meta.roles)) {
+    // Validar roles si están definidos contra el rol activo
+    if (to.meta.roles && to.meta.roles.length > 0 && !hasActiveRole(to.meta.roles)) {
       const toast = useToast();
-      toast.warning('No tienes permisos para acceder a esta sección.');
-      if (from.name && from.name !== to.name) {
-        return false;
-      }
+      toast.warning('No tienes permisos para acceder a esta sección en tu rol actual.');
       return resolveFallbackRoute();
     }
 
@@ -215,9 +248,6 @@ router.beforeEach(async (to, from) => {
     if (to.meta.permission && !can(to.meta.permission)) {
       const toast = useToast();
       toast.warning('No tienes permisos para acceder a esta sección.');
-      if (from.name && from.name !== to.name) {
-        return false;
-      }
       return resolveFallbackRoute();
     }
 
@@ -231,9 +261,6 @@ router.beforeEach(async (to, from) => {
       if (!allowed) {
         const toast = useToast();
         toast.warning('No tienes permisos para acceder a esta sección.');
-        if (from.name && from.name !== to.name) {
-          return false;
-        }
         return resolveFallbackRoute();
       }
     }

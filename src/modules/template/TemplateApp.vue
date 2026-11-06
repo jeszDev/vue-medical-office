@@ -1,12 +1,11 @@
 <script setup lang="ts">
-// import { RouterLink, RouterView } from 'vue-router'
-
-import { onMounted } from 'vue';
-// import { ChartNoAxesColumn, ChevronLeft, X, Power as PowerIcon } from 'lucide-vue-next'; // Importa el icono que necesites
+import { onMounted, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '../auth/stores/auth.store';
+import { usePermissions } from '../auth/composables/usePermissions';
 
 import { useMenuReactive } from './composables/useMenuReactive';
 
-// import TemplateContent from './components/TemplateContent.vue';
 import TemplateSideBar from './components/TemplateSideBar.vue';
 import TemplateBreadcrumb from './components/TemplateBreadcrumb.vue';
 import TemplateNotificationDropdown from './components/TemplateNotificationDropdown.vue';
@@ -14,6 +13,21 @@ import TemplateProfileDropdown from './components/TemplateProfileDropdown.vue';
 import BurguerMenuIcon from '@/icons/BurguerMenuIcon.vue';
 import ArrowLeftIcon from '@/icons/ArrowLeftIcon.vue';
 import AuthLogoutModalQuestion from '../auth/components/AuthLogoutModalQuestion.vue';
+
+const router = useRouter();
+const authStore = useAuthStore();
+const { hasActiveRole } = usePermissions();
+
+// Guardia reactiva: si cambia el rol activo y la ruta actual ya no está permitida, redirigir
+watch(
+  () => authStore.activeRole,
+  () => {
+    const currentRoute = router.currentRoute.value;
+    if (currentRoute.meta?.roles && !hasActiveRole(currentRoute.meta.roles as string[])) {
+      router.replace({ name: 'appointments.index' });
+    }
+  },
+);
 
 const {
   initMenu,

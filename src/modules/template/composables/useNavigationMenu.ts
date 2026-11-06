@@ -72,7 +72,7 @@ export function useNavigationMenu() {
       routeName: 'appointments.index',
       iconName: 'calendar',
       group: 'CITAS Y AGENDA',
-      roles: ['admin', 'doctor', 'recepcionista', 'paciente', 'médico', 'medico'],
+      roles: ['admin', 'doctor', 'recepcionista', 'paciente', 'patient', 'médico', 'medico'],
       permission: PERMISSIONS.APPOINTMENTS_VIEW,
     },
     {

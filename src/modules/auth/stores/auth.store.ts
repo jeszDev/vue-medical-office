@@ -58,14 +58,15 @@ export const useAuthStore = defineStore('auth', () => {
         return cleanStore();
       }
 
+      const defaultRole = resolveDefaultRole(loginResp.user);
       user.value = loginResp.user;
       token.value = loginResp.token;
-      authStatus.value = AuthStatus.Authenticated;
+      activeRole.value = defaultRole;
 
       localStorage.setItem('token', token.value);
-      const defaultRole = resolveDefaultRole(user.value);
-      activeRole.value = defaultRole;
       localStorage.setItem('active_role', defaultRole);
+
+      authStatus.value = AuthStatus.Authenticated;
 
       return true;
     } catch (error) {
@@ -105,13 +106,15 @@ export const useAuthStore = defineStore('auth', () => {
         return cleanStore();
       }
 
-      authStatus.value = AuthStatus.Authenticated;
+      const defaultRole = resolveDefaultRole(statusResp.user);
       user.value = statusResp.user;
       token.value = statusResp.token;
-
-      const defaultRole = resolveDefaultRole(user.value);
       activeRole.value = defaultRole;
+
+      localStorage.setItem('token', token.value);
       localStorage.setItem('active_role', defaultRole);
+
+      authStatus.value = AuthStatus.Authenticated;
 
       return true;
     } catch (error) {
@@ -130,6 +133,20 @@ export const useAuthStore = defineStore('auth', () => {
     // getters
     isChecking: computed(() => authStatus.value === AuthStatus.Checking),
     isAuthenticated: computed(() => authStatus.value === AuthStatus.Authenticated),
+    isPatientMode: computed(() => {
+      const current = activeRole.value?.toLowerCase().trim();
+      if (current === 'patient' || current === 'paciente') return true;
+      if (!current) {
+        const roles = (user.value?.roles || []).map((r) => String(r).toLowerCase().trim());
+        return (
+          roles.includes('patient') &&
+          !roles.some((r) =>
+            ['doctor', 'medico', 'médico', 'admin', 'administrador', 'recepcionista'].includes(r),
+          )
+        );
+      }
+      return false;
+    }),
     isDualUser: computed(() => {
       const roles = (user.value?.roles || []).map((r) => String(r).toLowerCase().trim());
       const hasDoc =

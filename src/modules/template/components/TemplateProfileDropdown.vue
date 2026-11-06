@@ -131,10 +131,12 @@ import { useQueryClient } from '@tanstack/vue-query';
 import { useToast } from 'vue-toastification';
 
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
+import { usePermissions } from '@/modules/auth/composables/usePermissions';
 import { useLogoutModal } from '@/modules/auth/composables/useLogoutModal';
 import AvatarBase from '@/modules/common/components/AvatarBase.vue';
 
 const authStore = useAuthStore();
+const { hasActiveRole } = usePermissions();
 const { open: openLogoutModal } = useLogoutModal();
 const router = useRouter();
 const queryClient = useQueryClient();
@@ -173,7 +175,7 @@ const userRoleLabel = computed(() => {
   return role || 'Personal';
 });
 
-const handleRoleSwitch = (newRole: string) => {
+const handleRoleSwitch = async (newRole: string) => {
   if (currentActiveRole.value === newRole) return;
   authStore.switchActiveRole(newRole);
   queryClient.invalidateQueries();
@@ -182,6 +184,13 @@ const handleRoleSwitch = (newRole: string) => {
       ? 'Has cambiado al Modo Médico (Atención Clínica)'
       : 'Has cambiado al Modo Paciente (Portal de Salud)',
   );
+  isOpen.value = false;
+
+  // Redirigir inmediatamente si la sección actual no está permitida en el nuevo modo
+  const currentRoute = router.currentRoute.value;
+  if (currentRoute.meta?.roles && !hasActiveRole(currentRoute.meta.roles as string[])) {
+    await router.replace({ name: 'appointments.index' });
+  }
 };
 
 const handleLogout = () => {

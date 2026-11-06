@@ -21,7 +21,7 @@ authStore.$subscribe(
     }
 
     if (route.path.includes('/auth') && state.authStatus === AuthStatus.Authenticated) {
-      router.replace({ name: 'patients.index' })
+      router.replace({ name: authStore.isPatientMode ? 'appointments.index' : 'patients.index' })
       return
     }
   },

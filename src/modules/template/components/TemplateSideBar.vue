@@ -21,7 +21,7 @@
             {{ authStore.user?.nombre_completo || authStore.user?.name || 'Usuario' }}
           </div>
           <div class="w-full truncate text-xs opacity-60 capitalize">
-            {{ authStore.user?.roles?.[0] || 'Personal' }}
+            {{ userRoleLabel }}
           </div>
         </div>
       </div>
@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { isRef } from 'vue';
+import { computed, isRef } from 'vue';
 import SimpleBar from 'simplebar-vue';
 import AvatarBase from '@/modules/common/components/AvatarBase.vue';
 import { useAuthStore } from '../../auth/stores/auth.store';
@@ -79,6 +79,15 @@ import {
 
 const authStore = useAuthStore();
 const { groupedMenuItems } = useNavigationMenu();
+
+const userRoleLabel = computed(() => {
+  const role = authStore.activeRole?.toLowerCase().trim() || authStore.user?.roles?.[0] || '';
+  if (['doctor', 'medico', 'médico'].includes(role)) return 'Médico';
+  if (['patient', 'paciente'].includes(role)) return 'Paciente';
+  if (['admin', 'administrador'].includes(role)) return 'Administrador';
+  if (['recepcionista', 'receptionist'].includes(role)) return 'Recepcionista';
+  return role || 'Personal';
+});
 
 const getBadgeValue = (badge?: MenuItem['badge']): string | number | null => {
   if (badge === undefined || badge === null) return null;
